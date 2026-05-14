@@ -1,5 +1,4 @@
 import json
-import itertools
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -7,7 +6,21 @@ from zoneinfo import ZoneInfo
 
 RACE_PATH = Path("docs/race.json")
 RACE_UPDATE_PATH = Path("docs/race_update.json")
+
+# 常にトップページが読む最新予想
 OUTPUT_PATH = Path("docs/prediction.json")
+
+# 予想実行履歴
+PREDICTION_RUNS_PATH = Path("docs/prediction_runs.json")
+
+
+STAGE_FILE_MAP = {
+    "PRE_NIGHT": Path("docs/prediction_pre_night.json"),
+    "MORNING": Path("docs/prediction_morning.json"),
+    "PRE_EXHIBITION": Path("docs/prediction_pre_exhibition.json"),
+    "POST_EXHIBITION": Path("docs/prediction_post_exhibition.json"),
+    "FINAL": Path("docs/prediction_final.json")
+}
 
 
 def now_jst():
@@ -23,6 +36,13 @@ def load_json(path: Path, default=None):
 
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)
+
+
+def save_json(path: Path, data):
+    path.parent.mkdir(parents=True, exist_ok=True)
+
+    with path.open("w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 def to_float(value, default=0.0):
@@ -43,6 +63,76 @@ def to_int(value, default=0):
         return default
 
 
+def normalize_stage(stage):
+    stage = str(stage or "PRE_NIGHT").upper()
+
+    allowed = {
+        "PRE_NIGHT",
+        "MORNING",
+        "PRE_EXHIBITION",
+        "POST_EXHIBITION",
+        "FINAL"
+    }
+
+    if stage not in allowed:
+        return "PRE_NIGHT"
+
+    return stage
+
+
+def stage_usage(stage):
+    """
+    ステージごとに、どの情報を使うか決める。
+
+    重要：
+    PRE_NIGHT では当日情報を使わない。
+    これにより、前日予想に未来情報が混ざることを防ぐ。
+    """
+
+    stage = normalize_stage(stage)
+
+    if stage == "PRE_NIGHT":
+        return {
+            "use_weather": False,
+            "use_exhibition": False,
+            "use_odds": False
+        }
+
+    if stage == "MORNING":
+        return {
+            "use_weather": True,
+            "use_exhibition": False,
+            "use_odds": False
+        }
+
+    if stage == "PRE_EXHIBITION":
+        return {
+            "use_weather": True,
+            "use_exhibition": False,
+            "use_odds": True
+        }
+
+    if stage == "POST_EXHIBITION":
+        return {
+            "use_weather": True,
+            "use_exhibition": True,
+            "use_odds": True
+        }
+
+    if stage == "FINAL":
+        return {
+            "use_weather": True,
+            "use_exhibition": True,
+            "use_odds": True
+        }
+
+    return {
+        "use_weather": False,
+        "use_exhibition": False,
+        "use_odds": False
+    }
+
+
 def default_race_data():
     today = now_jst().strftime("%Y-%m-%d")
 
@@ -55,12 +145,54 @@ def default_race_data():
             "deadline": "16:30"
         },
         "boats": [
-            {"boat": 1, "course": 1, "driver": "山田 太郎", "win_rate": 7.20, "motor_rate": 45.0, "avg_st": 0.13},
-            {"boat": 2, "course": 2, "driver": "佐藤 次郎", "win_rate": 6.10, "motor_rate": 38.0, "avg_st": 0.15},
-            {"boat": 3, "course": 3, "driver": "鈴木 三郎", "win_rate": 6.60, "motor_rate": 41.5, "avg_st": 0.14},
-            {"boat": 4, "course": 4, "driver": "田中 四郎", "win_rate": 5.80, "motor_rate": 35.0, "avg_st": 0.16},
-            {"boat": 5, "course": 5, "driver": "高橋 五郎", "win_rate": 5.20, "motor_rate": 33.0, "avg_st": 0.17},
-            {"boat": 6, "course": 6, "driver": "伊藤 六郎", "win_rate": 4.90, "motor_rate": 29.0, "avg_st": 0.18}
+            {
+                "boat": 1,
+                "course": 1,
+                "driver": "山田 太郎",
+                "win_rate": 7.20,
+                "motor_rate": 45.0,
+                "avg_st": 0.13
+            },
+            {
+                "boat": 2,
+                "course": 2,
+                "driver": "佐藤 次郎",
+                "win_rate": 6.10,
+                "motor_rate": 38.0,
+                "avg_st": 0.15
+            },
+            {
+                "boat": 3,
+                "course": 3,
+                "driver": "鈴木 三郎",
+                "win_rate": 6.60,
+                "motor_rate": 41.5,
+                "avg_st": 0.14
+            },
+            {
+                "boat": 4,
+                "course": 4,
+                "driver": "田中 四郎",
+                "win_rate": 5.80,
+                "motor_rate": 35.0,
+                "avg_st": 0.16
+            },
+            {
+                "boat": 5,
+                "course": 5,
+                "driver": "高橋 五郎",
+                "win_rate": 5.20,
+                "motor_rate": 33.0,
+                "avg_st": 0.17
+            },
+            {
+                "boat": 6,
+                "course": 6,
+                "driver": "伊藤 六郎",
+                "win_rate": 4.90,
+                "motor_rate": 29.0,
+                "avg_st": 0.18
+            }
         ]
     }
 
@@ -83,14 +215,9 @@ def load_race_data():
 
 
 def load_update_data():
-    """
-    docs/race_update.json があれば読み込む。
-    なければ空データとして扱う。
-    """
-
     update = load_json(RACE_UPDATE_PATH, default={})
 
-    stage = update.get("stage", "PRE_NIGHT")
+    stage = normalize_stage(update.get("stage", "PRE_NIGHT"))
     weather = update.get("weather", {})
     update_boats = update.get("boats", [])
 
@@ -98,6 +225,7 @@ def load_update_data():
 
     for item in update_boats:
         boat_no = to_int(item.get("boat"), 0)
+
         if boat_no:
             update_by_boat[boat_no] = item
 
@@ -110,11 +238,6 @@ def load_update_data():
 
 
 def course_bonus(course):
-    """
-    ボートレースは一般的に内側コースが有利になりやすいため、
-    1コースを高め、外側を低めにする。
-    """
-
     course = to_int(course, 6)
 
     bonus_map = {
@@ -145,15 +268,13 @@ def mark_for_rank(rank):
 
 
 def calculate_base_score(boat):
-    """
-    前日夜でも使える基本スコア。
-    選手勝率、モーター率、平均ST、コースを使う。
-    """
-
     win_rate = to_float(boat.get("win_rate"), 0)
     motor_rate = to_float(boat.get("motor_rate"), 0)
     avg_st = to_float(boat.get("avg_st"), 0.18)
-    course = to_int(boat.get("course", boat.get("boat")), to_int(boat.get("boat"), 6))
+    course = to_int(
+        boat.get("course", boat.get("boat")),
+        to_int(boat.get("boat"), 6)
+    )
 
     win_score = win_rate * 12
     motor_score = motor_rate * 0.7
@@ -164,12 +285,6 @@ def calculate_base_score(boat):
 
 
 def rank_values_by_small_is_good(items, key):
-    """
-    展示タイムや展示STのように、小さいほど良い値を順位化する。
-    戻り値：
-      {boat_no: rank}
-    """
-
     valid = []
 
     for item in items:
@@ -194,10 +309,6 @@ def rank_values_by_small_is_good(items, key):
 
 
 def exhibition_rank_bonus(rank):
-    """
-    展示順位による加点。
-    """
-
     bonus_map = {
         1: 10,
         2: 7,
@@ -211,10 +322,6 @@ def exhibition_rank_bonus(rank):
 
 
 def st_rank_bonus(rank):
-    """
-    展示ST順位による加点。
-    """
-
     bonus_map = {
         1: 7,
         2: 5,
@@ -228,12 +335,6 @@ def st_rank_bonus(rank):
 
 
 def tilt_bonus(tilt):
-    """
-    チルトの簡易補正。
-    本格的には場・天候・選手ごとに評価するが、
-    ここでは大きくしすぎない。
-    """
-
     tilt = to_float(tilt, 0)
 
     if tilt >= 0.5:
@@ -245,12 +346,6 @@ def tilt_bonus(tilt):
 
 
 def odds_bonus(win_odds):
-    """
-    単勝オッズを市場評価の目安として少しだけ反映する。
-    低オッズほど人気＝強いと見なして加点する。
-    ただし、オッズだけで予想が決まりすぎないよう小さめにする。
-    """
-
     odds = to_float(win_odds, 0)
 
     if odds <= 0:
@@ -269,28 +364,19 @@ def odds_bonus(win_odds):
 
 
 def weather_adjustment(weather, boat):
-    """
-    水面情報による簡易補正。
-    ここでは全艇に大きな差をつけず、外枠やSTに少し影響させる。
-
-    強風・高波：
-      外側や平均STが遅い艇を少し減点
-    追い風：
-      スタートが早い艇を少し加点
-    向かい風：
-      内側を少し加点
-    """
-
     wind_speed = to_float(weather.get("wind_speed"), 0)
     wave_height = to_float(weather.get("wave_height"), 0)
     wind_direction = str(weather.get("wind_direction", ""))
 
-    course = to_int(boat.get("course", boat.get("boat")), to_int(boat.get("boat"), 6))
+    course = to_int(
+        boat.get("course", boat.get("boat")),
+        to_int(boat.get("boat"), 6)
+    )
+
     avg_st = to_float(boat.get("avg_st"), 0.18)
 
     adjustment = 0
 
-    # 強風・高波は難しい水面として扱う
     if wind_speed >= 5:
         if course >= 5:
             adjustment -= 2
@@ -315,10 +401,6 @@ def weather_adjustment(weather, boat):
 
 
 def normalize_confidence(score, min_score, max_score):
-    """
-    スコアを 50〜95% の信頼度に変換する。
-    """
-
     if max_score == min_score:
         return 70
 
@@ -327,7 +409,10 @@ def normalize_confidence(score, min_score, max_score):
 
 
 def build_boats(race_boats, update_data):
-    weather = update_data.get("weather", {})
+    stage = update_data.get("stage", "PRE_NIGHT")
+    usage = stage_usage(stage)
+
+    weather = update_data.get("weather", {}) if usage["use_weather"] else {}
     update_by_boat = update_data.get("boats", {})
 
     merged_boats = []
@@ -343,10 +428,12 @@ def build_boats(race_boats, update_data):
             "win_rate": to_float(boat.get("win_rate"), 0),
             "motor_rate": to_float(boat.get("motor_rate"), 0),
             "avg_st": to_float(boat.get("avg_st"), 0.18),
-            "exhibition_time": update.get("exhibition_time"),
-            "exhibition_st": update.get("exhibition_st"),
-            "tilt": update.get("tilt"),
-            "win_odds": update.get("win_odds")
+
+            # 以下はステージによって使う・使わないを分ける
+            "exhibition_time": update.get("exhibition_time") if usage["use_exhibition"] else None,
+            "exhibition_st": update.get("exhibition_st") if usage["use_exhibition"] else None,
+            "tilt": update.get("tilt") if usage["use_exhibition"] else None,
+            "win_odds": update.get("win_odds") if usage["use_odds"] else None
         }
 
         merged_boats.append(item)
@@ -361,26 +448,31 @@ def build_boats(race_boats, update_data):
 
         base_score = calculate_base_score(boat)
 
-        weather_score = weather_adjustment(weather, boat)
+        weather_score = 0
+        if usage["use_weather"]:
+            weather_score = weather_adjustment(weather, boat)
 
         exhibition_time_rank = exhibition_time_ranks.get(boat_no)
         exhibition_st_rank = exhibition_st_ranks.get(boat_no)
 
         exhibition_score = 0
 
-        if exhibition_time_rank:
-            exhibition_score += exhibition_rank_bonus(exhibition_time_rank)
+        if usage["use_exhibition"]:
+            if exhibition_time_rank:
+                exhibition_score += exhibition_rank_bonus(exhibition_time_rank)
 
-        if exhibition_st_rank:
-            exhibition_score += st_rank_bonus(exhibition_st_rank)
+            if exhibition_st_rank:
+                exhibition_score += st_rank_bonus(exhibition_st_rank)
 
-        tilt_score = 0
-        if boat.get("tilt") is not None:
-            tilt_score = tilt_bonus(boat.get("tilt"))
+            if boat.get("tilt") is not None:
+                exhibition_score += tilt_bonus(boat.get("tilt"))
 
-        odds_score = odds_bonus(boat.get("win_odds"))
+        odds_score = 0
 
-        total_score = base_score + weather_score + exhibition_score + tilt_score + odds_score
+        if usage["use_odds"]:
+            odds_score = odds_bonus(boat.get("win_odds"))
+
+        total_score = base_score + weather_score + exhibition_score + odds_score
 
         boat["base_score"] = round(base_score, 2)
         boat["weather_score"] = round(weather_score, 2)
@@ -410,10 +502,6 @@ def build_boats(race_boats, update_data):
 
 
 def make_ticket_groups(boats):
-    """
-    買い目を本線・押さえ・穴狙いに分類する。
-    """
-
     if len(boats) < 3:
         return []
 
@@ -518,25 +606,23 @@ def flatten_tickets(ticket_groups):
 
 
 def estimate_ticket_probability(ticket, boats):
-    """
-    3連単の簡易確率を作る。
-    本格的な確率モデルではなく、スコア比率による目安。
-    """
-
     boat_map = {b["boat"]: b for b in boats}
-    parts = [to_int(x) for x in str(ticket).split("-")]
+
+    try:
+        parts = [to_int(x) for x in str(ticket).split("-")]
+    except Exception:
+        return 0
 
     if len(parts) != 3:
         return 0
 
     score_sum = sum(max(1, b["score"]) for b in boats)
-
     prob = 1.0
-
     remaining_sum = score_sum
 
     for boat_no in parts:
         b = boat_map.get(boat_no)
+
         if not b:
             return 0
 
@@ -551,10 +637,6 @@ def estimate_ticket_probability(ticket, boats):
 
 
 def add_ticket_probabilities(ticket_groups, boats):
-    """
-    買い目ごとに簡易確率を付ける。
-    """
-
     for group in ticket_groups:
         for ticket in group.get("tickets", []):
             ticket_text = ticket.get("ticket")
@@ -563,10 +645,27 @@ def add_ticket_probabilities(ticket_groups, boats):
     return ticket_groups
 
 
+def make_race_id(race):
+    date = race.get("date", "")
+    place = race.get("place") or race.get("stadium") or race.get("venue") or ""
+    race_no = race.get("race_no", "")
+
+    return f"{date}_{place}_{race_no}"
+
+
+def stage_file_path(stage):
+    stage = normalize_stage(stage)
+    return STAGE_FILE_MAP.get(stage, Path("docs/prediction_pre_night.json"))
+
+
 def build_prediction_json():
     current_time = now_jst()
+
     race, race_boats = load_race_data()
     update_data = load_update_data()
+
+    stage = normalize_stage(update_data.get("stage", "PRE_NIGHT"))
+    usage = stage_usage(stage)
 
     boats = build_boats(race_boats, update_data)
 
@@ -592,18 +691,23 @@ def build_prediction_json():
     ticket_groups = make_ticket_groups(boats)
     ticket_groups = add_ticket_probabilities(ticket_groups, boats)
 
+    normalized_race = {
+        "date": race.get("date", current_time.strftime("%Y-%m-%d")),
+        "place": race.get("place") or race.get("stadium") or race.get("venue") or "未設定",
+        "stadium": race.get("stadium") or race.get("place") or race.get("venue") or "未設定",
+        "race_no": race.get("race_no", "未設定"),
+        "title": race.get("title", ""),
+        "deadline": race.get("deadline", "")
+    }
+
     data = {
+        "prediction_run_id": current_time.strftime("%Y%m%d%H%M%S"),
         "updated_at": current_time.strftime("%Y-%m-%d %H:%M:%S"),
-        "stage": update_data.get("stage", "PRE_NIGHT"),
-        "race": {
-            "date": race.get("date", current_time.strftime("%Y-%m-%d")),
-            "place": race.get("place") or race.get("stadium") or race.get("venue") or "未設定",
-            "stadium": race.get("stadium") or race.get("place") or race.get("venue") or "未設定",
-            "race_no": race.get("race_no", "未設定"),
-            "title": race.get("title", ""),
-            "deadline": race.get("deadline", "")
-        },
-        "weather": update_data.get("weather", {}),
+        "stage": stage,
+        "stage_usage": usage,
+        "race_id": make_race_id(normalized_race),
+        "race": normalized_race,
+        "weather": update_data.get("weather", {}) if usage["use_weather"] else {},
         "predictions": predictions,
         "all_boats": boats,
         "ticket_groups": ticket_groups,
@@ -612,7 +716,8 @@ def build_prediction_json():
         "source": {
             "race_file": str(RACE_PATH),
             "update_file": str(RACE_UPDATE_PATH),
-            "update_file_exists": RACE_UPDATE_PATH.exists()
+            "update_file_exists": RACE_UPDATE_PATH.exists(),
+            "stage_file": str(stage_file_path(stage))
         },
         "notice": "このページは学習用・分析練習用です。実際の購入や利益を保証するものではありません。"
     }
@@ -620,17 +725,77 @@ def build_prediction_json():
     return data
 
 
+def make_run_summary(prediction_data, stage_specific_path):
+    predictions = prediction_data.get("predictions", [])
+    tickets = prediction_data.get("tickets", [])
+
+    top_boats = []
+
+    for item in predictions:
+        top_boats.append({
+            "rank": item.get("rank"),
+            "mark": item.get("mark"),
+            "boat": item.get("boat"),
+            "driver": item.get("driver"),
+            "score": item.get("score")
+        })
+
+    return {
+        "prediction_run_id": prediction_data.get("prediction_run_id"),
+        "updated_at": prediction_data.get("updated_at"),
+        "stage": prediction_data.get("stage"),
+        "race_id": prediction_data.get("race_id"),
+        "race": prediction_data.get("race", {}),
+        "stage_file": str(stage_specific_path),
+        "top_boats": top_boats,
+        "tickets": tickets,
+        "total_amount": prediction_data.get("total_amount", 0)
+    }
+
+
+def update_prediction_runs(prediction_data, stage_specific_path):
+    runs_data = load_json(PREDICTION_RUNS_PATH, default={
+        "updated_at": "",
+        "runs": []
+    })
+
+    runs = runs_data.get("runs", [])
+    runs.append(make_run_summary(prediction_data, stage_specific_path))
+
+    # 多くなりすぎないよう、最新100件だけ残す
+    runs = runs[-100:]
+
+    runs_data["updated_at"] = now_jst().strftime("%Y-%m-%d %H:%M:%S")
+    runs_data["runs"] = runs
+
+    save_json(PREDICTION_RUNS_PATH, runs_data)
+
+
+def save_prediction_outputs(prediction_data):
+    stage = normalize_stage(prediction_data.get("stage", "PRE_NIGHT"))
+    stage_path = stage_file_path(stage)
+
+    # 1. 現在表示用を保存
+    save_json(OUTPUT_PATH, prediction_data)
+
+    # 2. ステージ別にも保存
+    save_json(stage_path, prediction_data)
+
+    # 3. 実行履歴を保存
+    update_prediction_runs(prediction_data, stage_path)
+
+    return stage_path
+
+
 def main():
     data = build_prediction_json()
-
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-
-    with OUTPUT_PATH.open("w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    stage_path = save_prediction_outputs(data)
 
     print("prediction.json を作成しました。")
     print(f"stage: {data.get('stage')}")
-    print(f"output: {OUTPUT_PATH}")
+    print(f"latest output: {OUTPUT_PATH}")
+    print(f"stage output: {stage_path}")
+    print(f"runs output: {PREDICTION_RUNS_PATH}")
 
 
 if __name__ == "__main__":
