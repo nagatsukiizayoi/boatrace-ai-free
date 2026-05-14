@@ -1,302 +1,578 @@
 import json
-import os
-from datetime import datetime, timezone
+import itertools
+from pathlib import Path
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 
-def default_race_info():
-    """
-    レース情報の初期値です。
-    docs/race.json がない場合や、項目が足りない場合に使います。
-    """
-    return {
-        "place": "サンプル競艇場",
-        "race_no": "12R",
-        "title": "AI予想",
-        "date": "",
-        "deadline": "",
-        "weather": "",
-        "wind": "",
-        "wave": "",
-        "distance": "1800m",
-    }
+RACE_PATH = Path("docs/race.json")
+RACE_UPDATE_PATH = Path("docs/race_update.json")
+OUTPUT_PATH = Path("docs/prediction.json")
 
 
-def normalize_race_info(data):
-    """
-    race.json から読み込んだレース情報を整えます。
-    """
-    race = default_race_info()
-
-    if not isinstance(data, dict):
-        return race
-
-    # race という入れ子がある場合はそれを使う
-    if isinstance(data.get("race"), dict):
-        source = data["race"]
-    else:
-        source = data
-
-    for key in race.keys():
-        if key in source:
-            race[key] = source[key]
-
-    return race
+def now_jst():
+    return datetime.now(ZoneInfo("Asia/Tokyo"))
 
 
-def mark_for_rank(rank):
-    """
-    順位に応じて予想印を返します。
-    """
-    marks = {
-        1: ("◎", "本命"),
-        2: ("○", "対抗"),
-        3: ("▲", "単穴"),
-        4: ("△", "連下"),
-        5: ("☆", "穴"),
-        6: ("×", "押さえ"),
-    }
+def load_json(path: Path, default=None):
+    if default is None:
+        default = {}
 
-    return marks.get(rank, ("", ""))
+    if not path.exists():
+        return default
+
+    with path.open("r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 def to_float(value, default=0.0):
-    """
-    数値に変換できない値が来てもエラーにならないようにします。
-    """
     try:
-        if value is None:
+        if value is None or value == "":
             return default
         return float(value)
-    except (TypeError, ValueError):
+    except Exception:
         return default
 
 
-def load_race_source():
+def to_int(value, default=0):
+    try:
+        if value is None or value == "":
+            return default
+        return int(value)
+    except Exception:
+        return default
+
+
+def default_race_data():
+    today = now_jst().strftime("%Y-%m-%d")
+
+    return {
+        "race": {
+            "date": today,
+            "place": "サンプル競艇場",
+            "race_no": "12R",
+            "title": "サンプルレース",
+            "deadline": "16:30"
+        },
+        "boats": [
+            {"boat": 1, "course": 1, "driver": "山田 太郎", "win_rate": 7.20, "motor_rate": 45.0, "avg_st": 0.13},
+            {"boat": 2, "course": 2, "driver": "佐藤 次郎", "win_rate": 6.10, "motor_rate": 38.0, "avg_st": 0.15},
+            {"boat": 3, "course": 3, "driver": "鈴木 三郎", "win_rate": 6.60, "motor_rate": 41.5, "avg_st": 0.14},
+            {"boat": 4, "course": 4, "driver": "田中 四郎", "win_rate": 5.80, "motor_rate": 35.0, "avg_st": 0.16},
+            {"boat": 5, "course": 5, "driver": "高橋 五郎", "win_rate": 5.20, "motor_rate": 33.0, "avg_st": 0.17},
+            {"boat": 6, "course": 6, "driver": "伊藤 六郎", "win_rate": 4.90, "motor_rate": 29.0, "avg_st": 0.18}
+        ]
+    }
+
+
+def load_race_data():
+    data = load_json(RACE_PATH)
+
+    if not data:
+        data = default_race_data()
+
+    race = data.get("race", {})
+    boats = data.get("boats", [])
+
+    if not boats:
+        data = default_race_data()
+        race = data.get("race", {})
+        boats = data.get("boats", [])
+
+    return race, boats
+
+
+def load_update_data():
     """
-    出走データとレース情報を読み込みます。
-
-    優先順位：
-    1. data/race.json
-    2. data/boats.json
-    3. docs/race.json
-
-    基本的には docs/race.json を編集すればOKです。
+    docs/race_update.json があれば読み込む。
+    なければ空データとして扱う。
     """
 
-    possible_files = [
-        "data/race.json",
-        "data/boats.json",
-        "docs/race.json",
-    ]
+    update = load_json(RACE_UPDATE_PATH, default={})
 
-    for path in possible_files:
-        if not os.path.exists(path):
+    stage = update.get("stage", "PRE_NIGHT")
+    weather = update.get("weather", {})
+    update_boats = update.get("boats", [])
+
+    update_by_boat = {}
+
+    for item in update_boats:
+        boat_no = to_int(item.get("boat"), 0)
+        if boat_no:
+            update_by_boat[boat_no] = item
+
+    return {
+        "stage": stage,
+        "weather": weather,
+        "boats": update_by_boat,
+        "raw": update
+    }
+
+
+def course_bonus(course):
+    """
+    ボートレースは一般的に内側コースが有利になりやすいため、
+    1コースを高め、外側を低めにする。
+    """
+
+    course = to_int(course, 6)
+
+    bonus_map = {
+        1: 18,
+        2: 12,
+        3: 8,
+        4: 5,
+        5: 2,
+        6: 0
+    }
+
+    return bonus_map.get(course, 0)
+
+
+def mark_for_rank(rank):
+    if rank == 1:
+        return "◎", "本命"
+    elif rank == 2:
+        return "○", "対抗"
+    elif rank == 3:
+        return "▲", "単穴"
+    elif rank == 4:
+        return "△", "連下"
+    elif rank == 5:
+        return "☆", "穴"
+    else:
+        return "×", "押さえ"
+
+
+def calculate_base_score(boat):
+    """
+    前日夜でも使える基本スコア。
+    選手勝率、モーター率、平均ST、コースを使う。
+    """
+
+    win_rate = to_float(boat.get("win_rate"), 0)
+    motor_rate = to_float(boat.get("motor_rate"), 0)
+    avg_st = to_float(boat.get("avg_st"), 0.18)
+    course = to_int(boat.get("course", boat.get("boat")), to_int(boat.get("boat"), 6))
+
+    win_score = win_rate * 12
+    motor_score = motor_rate * 0.7
+    st_score = max(0, (0.22 - avg_st) * 140)
+    course_score = course_bonus(course)
+
+    return win_score + motor_score + st_score + course_score
+
+
+def rank_values_by_small_is_good(items, key):
+    """
+    展示タイムや展示STのように、小さいほど良い値を順位化する。
+    戻り値：
+      {boat_no: rank}
+    """
+
+    valid = []
+
+    for item in items:
+        value = item.get(key)
+
+        if value is None or value == "":
             continue
 
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        # JSONが辞書形式の場合
-        if isinstance(data, dict):
-            race = normalize_race_info(data)
-
-            if "boats" in data:
-                return {
-                    "race": race,
-                    "boats": normalize_boats(data["boats"]),
-                    "source_file": path,
-                }
-
-            if "racers" in data:
-                return {
-                    "race": race,
-                    "boats": normalize_boats(data["racers"]),
-                    "source_file": path,
-                }
-
-            if "entries" in data:
-                return {
-                    "race": race,
-                    "boats": normalize_boats(data["entries"]),
-                    "source_file": path,
-                }
-
-        # JSONが配列形式の場合
-        if isinstance(data, list):
-            return {
-                "race": default_race_info(),
-                "boats": normalize_boats(data),
-                "source_file": path,
-            }
-
-    # ファイルがない場合はサンプルを使う
-    return {
-        "race": default_race_info(),
-        "boats": sample_boats(),
-        "source_file": "sample",
-    }
-
-
-def normalize_boats(items):
-    """
-    読み込んだデータのキー名が多少違っても使えるように整えます。
-    """
-    boats = []
-
-    for index, item in enumerate(items, start=1):
-        boat_no = item.get("boat", item.get("boat_no", item.get("number", index)))
-        course = item.get("course", item.get("course_no", boat_no))
-        driver = item.get("driver", item.get("name", item.get("racer", f"選手{index}")))
-
-        win_rate = item.get("win_rate", item.get("rate", item.get("racer_rate", 5.0)))
-        motor_rate = item.get("motor_rate", item.get("motor", item.get("motor_win_rate", 30.0)))
-        avg_st = item.get("avg_st", item.get("st", item.get("start_timing", 0.16)))
-
-        boats.append({
-            "boat": int(to_float(boat_no, index)),
-            "course": int(to_float(course, boat_no)),
-            "driver": str(driver),
-            "win_rate": to_float(win_rate, 5.0),
-            "motor_rate": to_float(motor_rate, 30.0),
-            "avg_st": to_float(avg_st, 0.16),
+        valid.append({
+            "boat": item["boat"],
+            "value": to_float(value)
         })
 
-    return boats
+    valid.sort(key=lambda x: x["value"])
+
+    ranks = {}
+
+    for index, item in enumerate(valid, start=1):
+        ranks[item["boat"]] = index
+
+    return ranks
 
 
-def sample_boats():
+def exhibition_rank_bonus(rank):
     """
-    データファイルがない場合に使うサンプルデータです。
+    展示順位による加点。
     """
-    return [
+
+    bonus_map = {
+        1: 10,
+        2: 7,
+        3: 4,
+        4: 2,
+        5: 0,
+        6: -2
+    }
+
+    return bonus_map.get(rank, 0)
+
+
+def st_rank_bonus(rank):
+    """
+    展示ST順位による加点。
+    """
+
+    bonus_map = {
+        1: 7,
+        2: 5,
+        3: 3,
+        4: 1,
+        5: 0,
+        6: -2
+    }
+
+    return bonus_map.get(rank, 0)
+
+
+def tilt_bonus(tilt):
+    """
+    チルトの簡易補正。
+    本格的には場・天候・選手ごとに評価するが、
+    ここでは大きくしすぎない。
+    """
+
+    tilt = to_float(tilt, 0)
+
+    if tilt >= 0.5:
+        return 1.5
+    elif tilt <= -0.5:
+        return 0.5
+    else:
+        return 1.0
+
+
+def odds_bonus(win_odds):
+    """
+    単勝オッズを市場評価の目安として少しだけ反映する。
+    低オッズほど人気＝強いと見なして加点する。
+    ただし、オッズだけで予想が決まりすぎないよう小さめにする。
+    """
+
+    odds = to_float(win_odds, 0)
+
+    if odds <= 0:
+        return 0
+
+    if odds <= 2:
+        return 6
+    elif odds <= 4:
+        return 4
+    elif odds <= 8:
+        return 2
+    elif odds <= 15:
+        return 0
+    else:
+        return -1
+
+
+def weather_adjustment(weather, boat):
+    """
+    水面情報による簡易補正。
+    ここでは全艇に大きな差をつけず、外枠やSTに少し影響させる。
+
+    強風・高波：
+      外側や平均STが遅い艇を少し減点
+    追い風：
+      スタートが早い艇を少し加点
+    向かい風：
+      内側を少し加点
+    """
+
+    wind_speed = to_float(weather.get("wind_speed"), 0)
+    wave_height = to_float(weather.get("wave_height"), 0)
+    wind_direction = str(weather.get("wind_direction", ""))
+
+    course = to_int(boat.get("course", boat.get("boat")), to_int(boat.get("boat"), 6))
+    avg_st = to_float(boat.get("avg_st"), 0.18)
+
+    adjustment = 0
+
+    # 強風・高波は難しい水面として扱う
+    if wind_speed >= 5:
+        if course >= 5:
+            adjustment -= 2
+        if avg_st >= 0.18:
+            adjustment -= 1
+
+    if wave_height >= 5:
+        if course >= 5:
+            adjustment -= 2
+        if avg_st >= 0.18:
+            adjustment -= 1
+
+    if "追" in wind_direction:
+        if avg_st <= 0.15:
+            adjustment += 2
+
+    if "向" in wind_direction:
+        if course <= 2:
+            adjustment += 1.5
+
+    return adjustment
+
+
+def normalize_confidence(score, min_score, max_score):
+    """
+    スコアを 50〜95% の信頼度に変換する。
+    """
+
+    if max_score == min_score:
+        return 70
+
+    value = 50 + ((score - min_score) / (max_score - min_score)) * 45
+    return int(round(max(50, min(95, value))))
+
+
+def build_boats(race_boats, update_data):
+    weather = update_data.get("weather", {})
+    update_by_boat = update_data.get("boats", {})
+
+    merged_boats = []
+
+    for boat in race_boats:
+        boat_no = to_int(boat.get("boat"), 0)
+        update = update_by_boat.get(boat_no, {})
+
+        item = {
+            "boat": boat_no,
+            "course": to_int(boat.get("course", boat_no), boat_no),
+            "driver": boat.get("driver", f"{boat_no}号艇"),
+            "win_rate": to_float(boat.get("win_rate"), 0),
+            "motor_rate": to_float(boat.get("motor_rate"), 0),
+            "avg_st": to_float(boat.get("avg_st"), 0.18),
+            "exhibition_time": update.get("exhibition_time"),
+            "exhibition_st": update.get("exhibition_st"),
+            "tilt": update.get("tilt"),
+            "win_odds": update.get("win_odds")
+        }
+
+        merged_boats.append(item)
+
+    exhibition_time_ranks = rank_values_by_small_is_good(merged_boats, "exhibition_time")
+    exhibition_st_ranks = rank_values_by_small_is_good(merged_boats, "exhibition_st")
+
+    scored_boats = []
+
+    for boat in merged_boats:
+        boat_no = boat["boat"]
+
+        base_score = calculate_base_score(boat)
+
+        weather_score = weather_adjustment(weather, boat)
+
+        exhibition_time_rank = exhibition_time_ranks.get(boat_no)
+        exhibition_st_rank = exhibition_st_ranks.get(boat_no)
+
+        exhibition_score = 0
+
+        if exhibition_time_rank:
+            exhibition_score += exhibition_rank_bonus(exhibition_time_rank)
+
+        if exhibition_st_rank:
+            exhibition_score += st_rank_bonus(exhibition_st_rank)
+
+        tilt_score = 0
+        if boat.get("tilt") is not None:
+            tilt_score = tilt_bonus(boat.get("tilt"))
+
+        odds_score = odds_bonus(boat.get("win_odds"))
+
+        total_score = base_score + weather_score + exhibition_score + tilt_score + odds_score
+
+        boat["base_score"] = round(base_score, 2)
+        boat["weather_score"] = round(weather_score, 2)
+        boat["exhibition_score"] = round(exhibition_score, 2)
+        boat["odds_score"] = round(odds_score, 2)
+        boat["score"] = round(total_score, 2)
+        boat["exhibition_time_rank"] = exhibition_time_rank
+        boat["exhibition_st_rank"] = exhibition_st_rank
+
+        scored_boats.append(boat)
+
+    scored_boats.sort(key=lambda x: x["score"], reverse=True)
+
+    scores = [b["score"] for b in scored_boats]
+    min_score = min(scores)
+    max_score = max(scores)
+
+    for index, boat in enumerate(scored_boats, start=1):
+        mark, mark_name = mark_for_rank(index)
+
+        boat["rank"] = index
+        boat["mark"] = mark
+        boat["mark_name"] = mark_name
+        boat["confidence"] = normalize_confidence(boat["score"], min_score, max_score)
+
+    return scored_boats
+
+
+def make_ticket_groups(boats):
+    """
+    買い目を本線・押さえ・穴狙いに分類する。
+    """
+
+    if len(boats) < 3:
+        return []
+
+    top1 = boats[0]
+    top2 = boats[1]
+    top3 = boats[2]
+
+    top4 = boats[3] if len(boats) >= 4 else boats[2]
+    top5 = boats[4] if len(boats) >= 5 else boats[2]
+
+    b1 = top1["boat"]
+    b2 = top2["boat"]
+    b3 = top3["boat"]
+    b4 = top4["boat"]
+    b5 = top5["boat"]
+
+    ticket_groups = [
         {
-            "boat": 1,
-            "course": 1,
-            "driver": "選手A",
-            "win_rate": 7.20,
-            "motor_rate": 45.0,
-            "avg_st": 0.13,
+            "name": "本線",
+            "description": "◎本命を1着に固定した中心買い目です。",
+            "risk": "低リスク",
+            "tickets": [
+                {
+                    "ticket": f"{b1}-{b2}-{b3}",
+                    "amount": 300,
+                    "reason": "◎→○→▲ の基本形"
+                },
+                {
+                    "ticket": f"{b1}-{b3}-{b2}",
+                    "amount": 300,
+                    "reason": "◎→▲→○ の入れ替わり"
+                }
+            ]
         },
         {
-            "boat": 2,
-            "course": 2,
-            "driver": "選手B",
-            "win_rate": 6.10,
-            "motor_rate": 38.0,
-            "avg_st": 0.15,
+            "name": "押さえ",
+            "description": "○や▲が上位に来る場合を押さえます。",
+            "risk": "中リスク",
+            "tickets": [
+                {
+                    "ticket": f"{b2}-{b1}-{b3}",
+                    "amount": 200,
+                    "reason": "○が◎を逆転する形"
+                },
+                {
+                    "ticket": f"{b1}-{b2}-{b4}",
+                    "amount": 200,
+                    "reason": "3着に△が入る形"
+                },
+                {
+                    "ticket": f"{b1}-{b4}-{b2}",
+                    "amount": 100,
+                    "reason": "2着に△が浮上する形"
+                }
+            ]
         },
         {
-            "boat": 3,
-            "course": 3,
-            "driver": "選手C",
-            "win_rate": 6.60,
-            "motor_rate": 41.5,
-            "avg_st": 0.14,
-        },
-        {
-            "boat": 4,
-            "course": 4,
-            "driver": "選手D",
-            "win_rate": 5.80,
-            "motor_rate": 35.0,
-            "avg_st": 0.16,
-        },
-        {
-            "boat": 5,
-            "course": 5,
-            "driver": "選手E",
-            "win_rate": 5.20,
-            "motor_rate": 33.0,
-            "avg_st": 0.17,
-        },
-        {
-            "boat": 6,
-            "course": 6,
-            "driver": "選手F",
-            "win_rate": 4.90,
-            "motor_rate": 29.0,
-            "avg_st": 0.18,
-        },
+            "name": "穴狙い",
+            "description": "△や☆が絡む高配当狙いです。",
+            "risk": "高リスク",
+            "tickets": [
+                {
+                    "ticket": f"{b3}-{b1}-{b2}",
+                    "amount": 100,
+                    "reason": "▲が1着に来る波乱"
+                },
+                {
+                    "ticket": f"{b1}-{b3}-{b4}",
+                    "amount": 100,
+                    "reason": "3着に△が絡む形"
+                },
+                {
+                    "ticket": f"{b1}-{b2}-{b5}",
+                    "amount": 100,
+                    "reason": "3着に☆が絡む形"
+                }
+            ]
+        }
     ]
 
+    return ticket_groups
 
-def calculate_score(boat):
+
+def calculate_total_amount(ticket_groups):
+    total = 0
+
+    for group in ticket_groups:
+        for ticket in group.get("tickets", []):
+            total += to_int(ticket.get("amount"), 0)
+
+    return total
+
+
+def flatten_tickets(ticket_groups):
+    tickets = []
+
+    for group in ticket_groups:
+        for ticket in group.get("tickets", []):
+            tickets.append(ticket.get("ticket"))
+
+    return tickets
+
+
+def estimate_ticket_probability(ticket, boats):
     """
-    各艇のスコアを計算します。
-
-    点数の考え方：
-    - 勝率が高いほどプラス
-    - モーター率が高いほどプラス
-    - 平均STが早いほどプラス
-    - 内側コースを少し有利にする
-    """
-
-    win_rate = boat["win_rate"]
-    motor_rate = boat["motor_rate"]
-    avg_st = boat["avg_st"]
-    course = boat["course"]
-
-    course_bonus_map = {
-        1: 18,
-        2: 10,
-        3: 7,
-        4: 4,
-        5: 1,
-        6: 0,
-    }
-
-    course_bonus = course_bonus_map.get(course, 0)
-
-    # 平均STは小さいほど良いので、0.25との差を点数化します
-    start_score = max(0, (0.25 - avg_st) * 100)
-
-    score = (
-        win_rate * 10
-        + motor_rate * 1.2
-        + start_score
-        + course_bonus
-    )
-
-    return round(score, 2)
-
-
-def make_confidence_scores(boats):
-    """
-    順位に応じて信頼度を付けます。
-    """
-    confidence_map = {
-        1: 95,
-        2: 88,
-        3: 80,
-        4: 70,
-        5: 60,
-        6: 50,
-    }
-
-    for boat in boats:
-        rank = boat.get("rank", 6)
-        boat["confidence"] = confidence_map.get(rank, 50)
-
-    return boats
-
-
-def make_predictions(boats):
-    """
-    予想順位のデータを作ります。
+    3連単の簡易確率を作る。
+    本格的な確率モデルではなく、スコア比率による目安。
     """
 
-    labels = {
-        1: "1着候補",
-        2: "2着候補",
-        3: "3着候補",
-        4: "4着候補",
-        5: "5着候補",
-        6: "6着候補",
-    }
+    boat_map = {b["boat"]: b for b in boats}
+    parts = [to_int(x) for x in str(ticket).split("-")]
+
+    if len(parts) != 3:
+        return 0
+
+    score_sum = sum(max(1, b["score"]) for b in boats)
+
+    prob = 1.0
+
+    remaining_sum = score_sum
+
+    for boat_no in parts:
+        b = boat_map.get(boat_no)
+        if not b:
+            return 0
+
+        score = max(1, b["score"])
+        prob *= score / remaining_sum
+        remaining_sum -= score
+
+        if remaining_sum <= 0:
+            break
+
+    return round(prob, 5)
+
+
+def add_ticket_probabilities(ticket_groups, boats):
+    """
+    買い目ごとに簡易確率を付ける。
+    """
+
+    for group in ticket_groups:
+        for ticket in group.get("tickets", []):
+            ticket_text = ticket.get("ticket")
+            ticket["probability"] = estimate_ticket_probability(ticket_text, boats)
+
+    return ticket_groups
+
+
+def build_prediction_json():
+    current_time = now_jst()
+    race, race_boats = load_race_data()
+    update_data = load_update_data()
+
+    boats = build_boats(race_boats, update_data)
 
     predictions = []
 
-    for boat in boats:
+    for boat in boats[:3]:
         predictions.append({
             "rank": boat["rank"],
             "mark": boat["mark"],
@@ -304,212 +580,57 @@ def make_predictions(boats):
             "boat": boat["boat"],
             "course": boat["course"],
             "driver": boat["driver"],
-            "label": labels.get(boat["rank"], f"{boat['rank']}着候補"),
-            "win_rate": boat["win_rate"],
-            "motor_rate": boat["motor_rate"],
-            "avg_st": boat["avg_st"],
-            "score": boat["score"],
+            "label": f"{boat['rank']}着候補",
             "confidence": boat["confidence"],
+            "score": boat["score"],
+            "base_score": boat["base_score"],
+            "weather_score": boat["weather_score"],
+            "exhibition_score": boat["exhibition_score"],
+            "odds_score": boat["odds_score"]
         })
 
-    return predictions
-
-
-def ticket_text(a, b, c):
-    """
-    3連単の買い目文字列を作ります。
-    """
-    return f"{a}-{b}-{c}"
-
-
-def make_ticket_groups(boats):
-    """
-    買い目を 本線・押さえ・穴狙い に分けて作ります。
-    """
-
-    if len(boats) < 3:
-        return []
-
-    first = boats[0]
-    second = boats[1]
-    third = boats[2]
-    fourth = boats[3] if len(boats) >= 4 else boats[2]
-    fifth = boats[4] if len(boats) >= 5 else boats[2]
-
-    first_no = first["boat"]
-    second_no = second["boat"]
-    third_no = third["boat"]
-    fourth_no = fourth["boat"]
-    fifth_no = fifth["boat"]
-
-    ticket_groups = [
-        {
-            "name": "本線",
-            "description": "AI評価上位の◎・○・▲を中心にした買い目です。",
-            "risk": "低め",
-            "tickets": [
-                {
-                    "ticket": ticket_text(first_no, second_no, third_no),
-                    "reason": "◎を1着、○を2着、▲を3着にした基本形",
-                    "amount": 400,
-                },
-                {
-                    "ticket": ticket_text(first_no, third_no, second_no),
-                    "reason": "◎を1着固定、○と▲の2・3着入れ替え",
-                    "amount": 300,
-                },
-                {
-                    "ticket": ticket_text(first_no, second_no, fourth_no),
-                    "reason": "◎と○を信頼し、3着に△を入れる形",
-                    "amount": 200,
-                },
-            ],
-        },
-        {
-            "name": "押さえ",
-            "description": "○や▲が1着に来る展開も少し押さえます。",
-            "risk": "中",
-            "tickets": [
-                {
-                    "ticket": ticket_text(second_no, first_no, third_no),
-                    "reason": "○が◎を逆転するパターン",
-                    "amount": 200,
-                },
-                {
-                    "ticket": ticket_text(third_no, first_no, second_no),
-                    "reason": "▲が攻めて1着になるパターン",
-                    "amount": 100,
-                },
-                {
-                    "ticket": ticket_text(second_no, third_no, first_no),
-                    "reason": "◎が3着に残る押さえパターン",
-                    "amount": 100,
-                },
-            ],
-        },
-        {
-            "name": "穴狙い",
-            "description": "△や☆が絡んで配当が上がる可能性を狙います。",
-            "risk": "高め",
-            "tickets": [
-                {
-                    "ticket": ticket_text(first_no, fourth_no, second_no),
-                    "reason": "◎を1着固定、△が2着に入る穴寄りの形",
-                    "amount": 100,
-                },
-                {
-                    "ticket": ticket_text(first_no, second_no, fifth_no),
-                    "reason": "◎・○から、3着に☆を入れる形",
-                    "amount": 100,
-                },
-                {
-                    "ticket": ticket_text(fourth_no, first_no, second_no),
-                    "reason": "△の一発を狙う高配当パターン",
-                    "amount": 100,
-                },
-            ],
-        },
-    ]
-
-    return ticket_groups
-
-
-def flatten_tickets(ticket_groups):
-    """
-    ticket_groups から買い目だけのリストも作ります。
-    古い表示形式との互換用です。
-    """
-    tickets = []
-
-    for group in ticket_groups:
-        for item in group.get("tickets", []):
-            tickets.append(item.get("ticket"))
-
-    return tickets
-
-
-def calculate_total_amount(ticket_groups):
-    """
-    推奨購入金額の合計を計算します。
-    """
-    total = 0
-
-    for group in ticket_groups:
-        for item in group.get("tickets", []):
-            total += int(item.get("amount", 0))
-
-    return total
-
-
-def build_prediction_json():
-    """
-    prediction.json に出力する全体データを作ります。
-    """
-
-    source = load_race_source()
-
-    race = source["race"]
-    boats = source["boats"]
-    source_file = source["source_file"]
-
-    # スコア計算
-    for boat in boats:
-        boat["score"] = calculate_score(boat)
-
-    # スコアが高い順に並べ替え
-    boats.sort(key=lambda x: x["score"], reverse=True)
-
-    # 順位と予想印を付ける
-    for index, boat in enumerate(boats, start=1):
-        boat["rank"] = index
-
-        mark, mark_name = mark_for_rank(index)
-        boat["mark"] = mark
-        boat["mark_name"] = mark_name
-
-    # 信頼度を付ける
-    boats = make_confidence_scores(boats)
-
-    predictions = make_predictions(boats)
-
-    # 買い目をグループ化
     ticket_groups = make_ticket_groups(boats)
-    tickets = flatten_tickets(ticket_groups)
-    total_amount = calculate_total_amount(ticket_groups)
+    ticket_groups = add_ticket_probabilities(ticket_groups, boats)
 
-    result = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "source_file": source_file,
-        "race": race,
+    data = {
+        "updated_at": current_time.strftime("%Y-%m-%d %H:%M:%S"),
+        "stage": update_data.get("stage", "PRE_NIGHT"),
+        "race": {
+            "date": race.get("date", current_time.strftime("%Y-%m-%d")),
+            "place": race.get("place") or race.get("stadium") or race.get("venue") or "未設定",
+            "stadium": race.get("stadium") or race.get("place") or race.get("venue") or "未設定",
+            "race_no": race.get("race_no", "未設定"),
+            "title": race.get("title", ""),
+            "deadline": race.get("deadline", "")
+        },
+        "weather": update_data.get("weather", {}),
         "predictions": predictions,
         "all_boats": boats,
         "ticket_groups": ticket_groups,
-        "tickets": tickets,
-        "total_amount": total_amount,
+        "tickets": flatten_tickets(ticket_groups),
+        "total_amount": calculate_total_amount(ticket_groups),
+        "source": {
+            "race_file": str(RACE_PATH),
+            "update_file": str(RACE_UPDATE_PATH),
+            "update_file_exists": RACE_UPDATE_PATH.exists()
+        },
+        "notice": "このページは学習用・分析練習用です。実際の購入や利益を保証するものではありません。"
     }
 
-    return result
-
-
-def save_prediction_json(data):
-    """
-    docs/prediction.json に保存します。
-    """
-
-    os.makedirs("docs", exist_ok=True)
-
-    output_path = "docs/prediction.json"
-
-    with open(output_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-    print(f"{output_path} を作成しました。")
-    print(f"読み込み元: {data.get('source_file')}")
+    return data
 
 
 def main():
     data = build_prediction_json()
-    save_prediction_json(data)
+
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+
+    with OUTPUT_PATH.open("w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    print("prediction.json を作成しました。")
+    print(f"stage: {data.get('stage')}")
+    print(f"output: {OUTPUT_PATH}")
 
 
 if __name__ == "__main__":
