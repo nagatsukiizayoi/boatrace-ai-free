@@ -32,7 +32,7 @@
     }
 
     main {
-      max-width: 900px;
+      max-width: 1000px;
       margin: 24px auto;
       padding: 0 16px 40px;
     }
@@ -152,6 +152,73 @@
       font-size: 18px;
     }
 
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 12px 10px;
+      text-align: left;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #374151;
+      font-weight: bold;
+    }
+
+    tr.rank-1 {
+      background: #eff6ff;
+    }
+
+    tr.rank-2 {
+      background: #f0fdf4;
+    }
+
+    tr.rank-3 {
+      background: #fff7ed;
+    }
+
+    .rank-badge {
+      display: inline-block;
+      min-width: 42px;
+      text-align: center;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      font-weight: bold;
+    }
+
+    .rank-1 .rank-badge {
+      background: #2563eb;
+      color: white;
+    }
+
+    .rank-2 .rank-badge {
+      background: #16a34a;
+      color: white;
+    }
+
+    .rank-3 .rank-badge {
+      background: #f97316;
+      color: white;
+    }
+
+    .score {
+      font-weight: bold;
+      color: #111827;
+    }
+
     .notice {
       font-size: 13px;
       line-height: 1.7;
@@ -197,6 +264,32 @@
     </div>
 
     <div class="card">
+      <div class="section-title">全艇評価</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>順位</th>
+              <th>艇番</th>
+              <th>選手名</th>
+              <th>コース</th>
+              <th>勝率</th>
+              <th>モーター率</th>
+              <th>平均ST</th>
+              <th>スコア</th>
+              <th>信頼度</th>
+            </tr>
+          </thead>
+          <tbody id="all-boats">
+            <tr>
+              <td colspan="9">読み込み中...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
       <div class="section-title">買い目候補</div>
       <div id="tickets" class="tickets">
         読み込み中...
@@ -225,6 +318,7 @@
 
         renderRace(data);
         renderPredictions(data.predictions || []);
+        renderAllBoats(data.all_boats || []);
         renderTickets(data.tickets || []);
         renderNotice(data.notice || "");
 
@@ -233,10 +327,12 @@
 
         document.getElementById("race-title").textContent = "読み込みエラー";
         document.getElementById("predictions").innerHTML =
-          '<div class="error">prediction.json の読み込みに失敗しました。GitHub Actionsで prediction.json が作成されているか確認してください。</div>';
+          '<div class="error">prediction.json の読み込みに失敗しました。</div>';
+        document.getElementById("all-boats").innerHTML =
+          '<tr><td colspan="9">全艇評価を読み込めませんでした。</td></tr>';
         document.getElementById("tickets").textContent = "-";
         document.getElementById("notice").textContent =
-          "エラーが発生しました。";
+          "エラーが発生しました。GitHub Actionsで prediction.json が作成されているか確認してください。";
       }
     }
 
@@ -271,34 +367,34 @@
         const course = item.course ?? "-";
         const driver = item.driver ?? "選手名なし";
         const label = item.label ?? `${rank}着候補`;
-        const confidence = item.confidence ?? 0;
+        const confidence = clampNumber(item.confidence ?? 0, 0, 100);
         const score = item.score ?? "-";
 
         const div = document.createElement("div");
         div.className = "prediction-item";
 
         div.innerHTML = `
-          <div class="rank">${label}</div>
+          <div class="rank">${escapeHtml(label)}</div>
 
           <div class="boat-line">
-            <span class="boat-number">${boat}号艇</span>
+            <span class="boat-number">${escapeHtml(boat)}号艇</span>
             ${escapeHtml(driver)}
           </div>
 
           <div class="details">
             <div class="detail-box">
               <div class="detail-label">順位</div>
-              <div class="detail-value">${rank}位</div>
+              <div class="detail-value">${escapeHtml(rank)}位</div>
             </div>
 
             <div class="detail-box">
               <div class="detail-label">コース</div>
-              <div class="detail-value">${course}コース</div>
+              <div class="detail-value">${escapeHtml(course)}コース</div>
             </div>
 
             <div class="detail-box">
               <div class="detail-label">スコア</div>
-              <div class="detail-value">${score}</div>
+              <div class="detail-value">${escapeHtml(score)}</div>
             </div>
 
             <div class="detail-box">
@@ -312,6 +408,43 @@
         `;
 
         container.appendChild(div);
+      });
+    }
+
+    function renderAllBoats(boats) {
+      const tbody = document.getElementById("all-boats");
+
+      if (!boats.length) {
+        tbody.innerHTML = '<tr><td colspan="9">全艇評価データがありません。</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = "";
+
+      boats.forEach((boat) => {
+        const tr = document.createElement("tr");
+
+        if (boat.rank === 1) {
+          tr.className = "rank-1";
+        } else if (boat.rank === 2) {
+          tr.className = "rank-2";
+        } else if (boat.rank === 3) {
+          tr.className = "rank-3";
+        }
+
+        tr.innerHTML = `
+          <td><span class="rank-badge">${escapeHtml(boat.rank ?? "-")}位</span></td>
+          <td>${escapeHtml(boat.boat ?? "-")}号艇</td>
+          <td>${escapeHtml(boat.driver ?? "-")}</td>
+          <td>${escapeHtml(boat.course ?? "-")}</td>
+          <td>${escapeHtml(formatNumber(boat.win_rate, 2))}</td>
+          <td>${escapeHtml(formatNumber(boat.motor_rate, 1))}%</td>
+          <td>${escapeHtml(formatNumber(boat.avg_st, 2))}</td>
+          <td class="score">${escapeHtml(formatNumber(boat.score, 2))}</td>
+          <td>${escapeHtml(boat.confidence ?? "-")}%</td>
+        `;
+
+        tbody.appendChild(tr);
       });
     }
 
@@ -338,6 +471,26 @@
         notice || "このページは学習用のサンプルです。";
     }
 
+    function formatNumber(value, digits) {
+      const num = Number(value);
+
+      if (Number.isNaN(num)) {
+        return "-";
+      }
+
+      return num.toFixed(digits);
+    }
+
+    function clampNumber(value, min, max) {
+      const num = Number(value);
+
+      if (Number.isNaN(num)) {
+        return min;
+      }
+
+      return Math.min(Math.max(num, min), max);
+    }
+
     function escapeHtml(text) {
       return String(text)
         .replaceAll("&", "&amp;")
@@ -351,4 +504,3 @@
   </script>
 </body>
 </html>
-
