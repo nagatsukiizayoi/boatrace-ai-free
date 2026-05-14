@@ -1,6 +1,6 @@
 {
-  "stage": "POST_EXHIBITION",
-  "updated_memo": "当日情報のサンプルです。展示・オッズ・水面情報をここに入力します。",
+  "stage": "PRE_NIGHT",
+  "updated_memo": "前日夜予想です。当日情報はスコアに使いません。",
   "weather": {
     "weather": "晴れ",
     "wind_direction": "追い風",
@@ -9,6 +9,7 @@
     "temperature": 24
   },
   "boats": [
+
     {
       "boat": 1,
       "exhibition_time": 6.78,
