@@ -2,9 +2,8 @@ name: Make Prediction JSON
 
 on:
   workflow_dispatch:
-
   schedule:
-    - cron: "0 3 * * *"
+    - cron: "0 12 * * *"
 
 permissions:
   contents: write
@@ -17,19 +16,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Run prediction script
+      - name: Make prediction JSON
         run: python src/make_prediction.py
 
-      - name: Commit and push prediction.json
+      - name: Commit prediction files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
           git add docs/prediction.json
-          git commit -m "Update prediction.json" || echo "No changes to commit"
+          git add docs/prediction_*.json || true
+          git add docs/prediction_runs.json || true
+          git commit -m "Update prediction files" || echo "No changes to commit"
           git push
