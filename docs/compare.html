@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>予想比較</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    header {
+      background: linear-gradient(135deg, #ea580c, #9a3412);
+      color: white;
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .info-box {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .info-label {
+      color: #6b7280;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-weight: 800;
+      font-size: 17px;
+    }
+
+    .stage-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stage-card {
+      border-radius: 16px;
+      padding: 14px;
+      color: white;
+    }
+
+    .stage-pre {
+      background: linear-gradient(135deg, #475569, #1e293b);
+    }
+
+    .stage-post {
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+    }
+
+    .stage-final {
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    }
+
+    .stage-name {
+      font-weight: 900;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .stage-detail {
+      font-size: 13px;
+      line-height: 1.6;
+      opacity: 0.94;
+    }
+
+    .status-ok {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    .status-ng {
+      display: inline-block;
+      background: #fee2e2;
+      color: #991b1b;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    .compare-note {
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      color: #9a3412;
+      border-radius: 12px;
+      padding: 12px;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 900px;
+      font-size: 14px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #374151;
+    }
+
+    .boat-number {
+      display: inline-block;
+      background: #111827;
+      color: white;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-weight: 900;
+    }
+
+    .mark {
+      font-weight: 900;
+      color: #dc2626;
+      font-size: 18px;
+    }
+
+    .up {
+      color: #dc2626;
+      font-weight: 900;
+    }
+
+    .down {
+      color: #2563eb;
+      font-weight: 900;
+    }
+
+    .same {
+      color: #6b7280;
+      font-weight: 800;
+    }
+
+    .new-ticket {
+      background: #dcfce7;
+      color: #166534;
+      border-radius: 8px;
+      padding: 4px 8px;
+      display: inline-block;
+      font-weight: 800;
+    }
+
+    .removed-ticket {
+      background: #fee2e2;
+      color: #991b1b;
+      border-radius: 8px;
+      padding: 4px 8px;
+      display: inline-block;
+      font-weight: 800;
+    }
+
+    .kept-ticket {
+      background: #e0f2fe;
+      color: #075985;
+      border-radius: 8px;
+      padding: 4px 8px;
+      display: inline-block;
+      font-weight: 800;
+    }
+
+    .ticket-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .ticket-pill {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 800;
+    }
+
+    .links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .link-button {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #ea580c;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .loading {
+      color: #6b7280;
+      padding: 12px;
+    }
+
+    .error {
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+      color: #991b1b;
+      border-radius: 12px;
+      padding: 12px;
+      line-height: 1.7;
+    }
+
+    .notice {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 12px;
+      padding: 24px 16px;
+    }
+
+    @media (max-width: 700px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stage-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>予想比較</h1>
+    <p>前日予想・展示後予想・最終予想の変化を確認します</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>比較対象</h2>
+
+      <div id="stage-status" class="stage-grid">
+        <div class="loading">ステージ別予想ファイルを読み込み中...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>比較の見方</h2>
+      <div class="compare-note">
+        このページでは、前日夜予想と当日更新後の予想を比べます。<br>
+        順位が上がった艇、スコアが上がった艇、買い目に追加されたもの・消えたものを確認できます。<br>
+        最初は <strong>PRE_NIGHT → POST_EXHIBITION</strong> の比較をおすすめします。
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>レース情報</h2>
+
+      <div class="summary-grid">
+        <div class="info-box">
+          <div class="info-label">日付</div>
+          <div class="info-value" id="race-date">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">場</div>
+          <div class="info-value" id="race-place">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">レース</div>
+          <div class="info-value" id="race-no">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">比較</div>
+          <div class="info-value" id="compare-target">読み込み中...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>順位・スコア変化</h2>
+      <p class="notice">スマホでは表を左右にスクロールできます。</p>
+      <div id="rank-compare">
+        <div class="loading">比較表を作成中...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>買い目の変化</h2>
+      <div id="ticket-compare">
+        <div class="loading">買い目を比較中...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>ステージ別 買い目一覧</h2>
+      <div id="ticket-lists">
+        <div class="loading">買い目一覧を作成中...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>ページ移動</h2>
+      <div class="links">
+        <a class="link-button" href="./index.html">予想ページへ</a>
+        <a class="link-button" href="./prediction_pre_night.json">前日予想JSON</a>
+        <a class="link-button" href="./prediction_post_exhibition.json">展示後予想JSON</a>
+        <a class="link-button" href="./prediction_final.json">最終予想JSON</a>
+        <a class="link-button" href="./prediction_runs.json">予想履歴JSON</a>
+      </div>
+    </section>
+
+    <section class="card notice">
+      このページは学習用・分析練習用です。実際の購入や利益を保証するものではありません。
+      比較結果は、予想ロジックの変化を確認するためのものです。
+    </section>
+  </main>
+
+  <footer>
+    boatrace-ai-free / prediction stage compare
+  </footer>
+
+  <script>
+    const FILES = [
+      {
+        key: "PRE_NIGHT",
+        label: "前日夜予想",
+        file: "./prediction_pre_night.json",
+        className: "stage-pre"
+      },
+      {
+        key: "POST_EXHIBITION",
+        label: "展示後予想",
+        file: "./prediction_post_exhibition.json",
+        className: "stage-post"
+      },
+      {
+        key: "FINAL",
+        label: "最終予想",
+        file: "./prediction_final.json",
+        className: "stage-final"
+      }
+    ];
+
+    function escapeHtml(value) {
+      if (value === null || value === undefined) return "";
+
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function displayValue(value, emptyText = "-") {
+      if (value === null || value === undefined || value === "") {
+        return emptyText;
+      }
+
+      return escapeHtml(value);
+    }
+
+    function getPlace(race) {
+      if (!race) return "未設定";
+      return race.place || race.stadium || race.venue || "未設定";
+    }
+
+    function getBoatMap(predictionData) {
+      const map = {};
+
+      const boats = predictionData?.all_boats || [];
+
+      boats.forEach((boat) => {
+        map[String(boat.boat)] = boat;
+      });
+
+      return map;
+    }
+
+    function getTickets(predictionData) {
+      if (!predictionData) return [];
+
+      if (Array.isArray(predictionData.tickets)) {
+        return predictionData.tickets.map(String);
+      }
+
+      const result = [];
+      const groups = predictionData.ticket_groups || [];
+
+      groups.forEach((group) => {
+        (group.tickets || []).forEach((ticket) => {
+          if (ticket.ticket) {
+            result.push(String(ticket.ticket));
+          }
+        });
+      });
+
+      return result;
+    }
+
+    function differenceText(value, type) {
+      const num = Number(value || 0);
+
+      if (num > 0) {
+        if (type === "rank") {
+          return `<span class="up">↑ ${num}</span>`;
+        }
+
+        return `<span class="up">+${num.toFixed(2)}</span>`;
+      }
+
+      if (num < 0) {
+        if (type === "rank") {
+          return `<span class="down">↓ ${Math.abs(num)}</span>`;
+        }
+
+        return `<span class="down">${num.toFixed(2)}</span>`;
+      }
+
+      return `<span class="same">±0</span>`;
+    }
+
+    function makeStageCard(fileInfo, data) {
+      const exists = Boolean(data);
+      const stage = data?.stage || fileInfo.key;
+      const updatedAt = data?.updated_at || "-";
+      const race = data?.race || {};
+      const top = data?.predictions?.[0];
+
+      let topText = "-";
+
+      if (top) {
+        topText = `${top.mark || ""} ${top.boat}号艇 ${top.driver || ""}`;
+      }
+
+      return `
+        <div class="stage-card ${fileInfo.className}">
+          <div class="stage-name">${escapeHtml(fileInfo.label)}</div>
+          <div class="stage-detail">
+            ファイル：${escapeHtml(fileInfo.file.replace("./", ""))}<br>
+            stage：${escapeHtml(stage)}<br>
+            更新：${escapeHtml(updatedAt)}<br>
+            レース：${escapeHtml(getPlace(race))} ${escapeHtml(race.race_no || "")}<br>
+            1位：${escapeHtml(topText)}
+          </div>
+          <div class="${exists ? "status-ok" : "status-ng"}">
+            ${exists ? "読み込み成功" : "未作成 / 読み込み失敗"}
+          </div>
+        </div>
+      `;
+    }
+
+    async function loadJsonOrNull(file) {
+      try {
+        const response = await fetch(file + "?cache=" + Date.now());
+
+        if (!response.ok) {
+          return null;
+        }
+
+        return await response.json();
+      } catch (error) {
+        return null;
+      }
+    }
+
+    async function loadAll() {
+      const loaded = {};
+
+      for (const fileInfo of FILES) {
+        loaded[fileInfo.key] = await loadJsonOrNull(fileInfo.file);
+      }
+
+      return loaded;
+    }
+
+    function pickComparePair(dataMap) {
+      const pre = dataMap.PRE_NIGHT || null;
+
+      let target = null;
+      let targetKey = "";
+
+      if (dataMap.FINAL) {
+        target = dataMap.FINAL;
+        targetKey = "FINAL";
+      } else if (dataMap.POST_EXHIBITION) {
+        target = dataMap.POST_EXHIBITION;
+        targetKey = "POST_EXHIBITION";
+      }
+
+      return {
+        base: pre,
+        baseKey: "PRE_NIGHT",
+        target,
+        targetKey
+      };
+    }
+
+    function renderStageStatus(dataMap) {
+      const container = document.getElementById("stage-status");
+
+      let html = "";
+
+      FILES.forEach((fileInfo) => {
+        html += makeStageCard(fileInfo, dataMap[fileInfo.key]);
+      });
+
+      container.innerHTML = html;
+    }
+
+    function renderRaceInfo(base, target, targetKey) {
+      const source = target || base || {};
+      const race = source.race || {};
+
+      document.getElementById("race-date").textContent = race.date || "未設定";
+      document.getElementById("race-place").textContent = getPlace(race);
+      document.getElementById("race-no").textContent = race.race_no || "未設定";
+
+      if (base && target) {
+        document.getElementById("compare-target").textContent = `PRE_NIGHT → ${targetKey}`;
+      } else if (base && !target) {
+        document.getElementById("compare-target").textContent = "比較先がありません";
+      } else {
+        document.getElementById("compare-target").textContent = "前日予想がありません";
+      }
+    }
+
+    function renderRankCompare(base, target) {
+      const container = document.getElementById("rank-compare");
+
+      if (!base || !target) {
+        container.innerHTML = `
+          <div class="error">
+            比較に必要なファイルが足りません。<br>
+            prediction_pre_night.json と prediction_post_exhibition.json、または prediction_final.json を作成してください。
+          </div>
+        `;
+        return;
+      }
+
+      const baseMap = getBoatMap(base);
+      const targetMap = getBoatMap(target);
+
+      const boatNos = Array.from(
+        new Set([
+          ...Object.keys(baseMap),
+          ...Object.keys(targetMap)
+        ])
+      ).sort((a, b) => Number(a) - Number(b));
+
+      let rows = "";
+
+      boatNos.forEach((boatNo) => {
+        const before = baseMap[boatNo] || {};
+        const after = targetMap[boatNo] || {};
+
+        const beforeRank = Number(before.rank || 0);
+        const afterRank = Number(after.rank || 0);
+
+        let rankChange = 0;
+
+        if (beforeRank && afterRank) {
+          // 順位は数字が小さいほど良いので、before - after がプラスなら上昇
+          rankChange = beforeRank - afterRank;
+        }
+
+        const beforeScore = Number(before.score || 0);
+        const afterScore = Number(after.score || 0);
+        const scoreChange = afterScore - beforeScore;
+
+        rows += `
+          <tr>
+            <td><span class="boat-number">${escapeHtml(boatNo)}号艇</span></td>
+            <td>${escapeHtml(after.driver || before.driver || "")}</td>
+
+            <td><span class="mark">${escapeHtml(before.mark || "")}</span><br>${displayValue(before.rank)}</td>
+            <td><span class="mark">${escapeHtml(after.mark || "")}</span><br>${displayValue(after.rank)}</td>
+            <td>${differenceText(rankChange, "rank")}</td>
+
+            <td>${displayValue(before.score)}</td>
+            <td>${displayValue(after.score)}</td>
+            <td>${differenceText(scoreChange, "score")}</td>
+
+            <td>${displayValue(after.base_score)}</td>
+            <td>${displayValue(after.weather_score)}</td>
+            <td>${displayValue(after.exhibition_score)}</td>
+            <td>${displayValue(after.odds_score)}</td>
+
+            <td>${displayValue(after.exhibition_time)}</td>
+            <td>${displayValue(after.exhibition_st)}</td>
+            <td>${displayValue(after.win_odds)}</td>
+          </tr>
+        `;
+      });
+
+      container.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>艇番</th>
+              <th>選手</th>
+
+              <th>前日順位</th>
+              <th>更新後順位</th>
+              <th>順位変化</th>
+
+              <th>前日スコア</th>
+              <th>更新後スコア</th>
+              <th>スコア変化</th>
+
+              <th>基本</th>
+              <th>水面</th>
+              <th>展示</th>
+              <th>オッズ</th>
+
+              <th>展示T</th>
+              <th>展示ST</th>
+              <th>単勝オッズ</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderTicketCompare(base, target) {
+      const container = document.getElementById("ticket-compare");
+
+      if (!base || !target) {
+        container.innerHTML = `
+          <div class="error">
+            買い目比較に必要なファイルが足りません。
+          </div>
+        `;
+        return;
+      }
+
+      const beforeTickets = getTickets(base);
+      const afterTickets = getTickets(target);
+
+      const beforeSet = new Set(beforeTickets);
+      const afterSet = new Set(afterTickets);
+
+      const kept = afterTickets.filter((ticket) => beforeSet.has(ticket));
+      const added = afterTickets.filter((ticket) => !beforeSet.has(ticket));
+      const removed = beforeTickets.filter((ticket) => !afterSet.has(ticket));
+
+      function pills(list, className, emptyText) {
+        if (!list.length) {
+          return `<span class="same">${emptyText}</span>`;
+        }
+
+        return list.map((ticket) => {
+          return `<span class="${className}">${escapeHtml(ticket)}</span>`;
+        }).join(" ");
+      }
+
+      container.innerHTML = `
+        <div class="summary-grid">
+          <div class="info-box">
+            <div class="info-label">継続された買い目</div>
+            <div class="info-value">${kept.length}点</div>
+            <div style="margin-top: 8px;">${pills(kept, "kept-ticket", "なし")}</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">新しく追加された買い目</div>
+            <div class="info-value">${added.length}点</div>
+            <div style="margin-top: 8px;">${pills(added, "new-ticket", "なし")}</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">消えた買い目</div>
+            <div class="info-value">${removed.length}点</div>
+            <div style="margin-top: 8px;">${pills(removed, "removed-ticket", "なし")}</div>
+          </div>
+
+          <div class="info-box">
+            <div class="info-label">更新後の買い目数</div>
+            <div class="info-value">${afterTickets.length}点</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTicketLists(dataMap) {
+      const container = document.getElementById("ticket-lists");
+
+      let html = "";
+
+      FILES.forEach((fileInfo) => {
+        const data = dataMap[fileInfo.key];
+
+        if (!data) {
+          html += `
+            <div class="card" style="box-shadow:none;border:1px solid #e5e7eb;">
+              <h3>${escapeHtml(fileInfo.label)}</h3>
+              <p class="notice">ファイルがまだありません。</p>
+            </div>
+          `;
+          return;
+        }
+
+        const tickets = getTickets(data);
+
+        let ticketHtml = "";
+
+        if (tickets.length) {
+          ticketHtml = `
+            <div class="ticket-list">
+              ${tickets.map((ticket) => `<span class="ticket-pill">${escapeHtml(ticket)}</span>`).join("")}
+            </div>
+          `;
+        } else {
+          ticketHtml = `<p class="notice">買い目がありません。</p>`;
+        }
+
+        html += `
+          <div class="card" style="box-shadow:none;border:1px solid #e5e7eb;">
+            <h3>${escapeHtml(fileInfo.label)}</h3>
+            <p class="notice">更新日時：${escapeHtml(data.updated_at || "-")}</p>
+            ${ticketHtml}
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    async function main() {
+      const dataMap = await loadAll();
+
+      renderStageStatus(dataMap);
+
+      const pair = pickComparePair(dataMap);
+
+      renderRaceInfo(pair.base, pair.target, pair.targetKey);
+      renderRankCompare(pair.base, pair.target);
+      renderTicketCompare(pair.base, pair.target);
+      renderTicketLists(dataMap);
+    }
+
+    main();
+  </script>
+</body>
+</html>
+
