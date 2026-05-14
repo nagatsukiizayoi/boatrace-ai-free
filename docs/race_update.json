@@ -1,0 +1,56 @@
+{
+  "stage": "POST_EXHIBITION",
+  "updated_memo": "当日情報のサンプルです。展示・オッズ・水面情報をここに入力します。",
+  "weather": {
+    "weather": "晴れ",
+    "wind_direction": "追い風",
+    "wind_speed": 2,
+    "wave_height": 2,
+    "temperature": 24
+  },
+  "boats": [
+    {
+      "boat": 1,
+      "exhibition_time": 6.78,
+      "exhibition_st": 0.12,
+      "tilt": -0.5,
+      "win_odds": 1.8
+    },
+    {
+      "boat": 2,
+      "exhibition_time": 6.82,
+      "exhibition_st": 0.15,
+      "tilt": -0.5,
+      "win_odds": 4.2
+    },
+    {
+      "boat": 3,
+      "exhibition_time": 6.80,
+      "exhibition_st": 0.11,
+      "tilt": 0,
+      "win_odds": 5.6
+    },
+    {
+      "boat": 4,
+      "exhibition_time": 6.86,
+      "exhibition_st": 0.18,
+      "tilt": 0,
+      "win_odds": 9.8
+    },
+    {
+      "boat": 5,
+      "exhibition_time": 6.90,
+      "exhibition_st": 0.16,
+      "tilt": 0.5,
+      "win_odds": 14.5
+    },
+    {
+      "boat": 6,
+      "exhibition_time": 6.92,
+      "exhibition_st": 0.20,
+      "tilt": 0.5,
+      "win_odds": 28.0
+    }
+  ]
+}
+
