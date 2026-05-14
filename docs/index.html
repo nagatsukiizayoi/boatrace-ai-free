@@ -97,6 +97,10 @@
       background: linear-gradient(135deg, #7c3aed, #a78bfa);
     }
 
+    .menu-compare {
+      background: linear-gradient(135deg, #ea580c, #fb923c);
+    }
+
     .menu-json {
       background: linear-gradient(135deg, #475569, #94a3b8);
     }
@@ -469,6 +473,11 @@
           <div class="menu-button-sub">累計利益・回収率・分類別成績をグラフで確認します。</div>
         </a>
 
+        <a class="menu-button menu-compare" href="./compare.html">
+          <div class="menu-button-title">予想比較</div>
+          <div class="menu-button-sub">前日予想・展示後予想・最終予想の変化を確認します。</div>
+        </a>
+
         <a class="menu-button menu-json" href="./prediction.json">
           <div class="menu-button-title">予想JSON</div>
           <div class="menu-button-sub">プログラムが生成した予想データを確認します。</div>
@@ -477,6 +486,11 @@
         <a class="menu-button menu-json" href="./race_update.json">
           <div class="menu-button-title">当日情報JSON</div>
           <div class="menu-button-sub">水面・展示・オッズの入力データを確認します。</div>
+        </a>
+
+        <a class="menu-button menu-json" href="./prediction_runs.json">
+          <div class="menu-button-title">予想履歴JSON</div>
+          <div class="menu-button-sub">ステージ別予想の実行履歴を確認します。</div>
         </a>
       </div>
     </section>
@@ -962,7 +976,7 @@
         container.innerHTML = `
           <div class="loading">
             全艇評価データがありません。<br>
-            STEP 15 の make_prediction.py で all_boats を出力しているか確認してください。
+            make_prediction.py で all_boats を出力しているか確認してください。
           </div>
         `;
         return;
