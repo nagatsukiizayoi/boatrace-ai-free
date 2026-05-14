@@ -9,12 +9,12 @@
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f2f5f9;
-      color: #1f2937;
+      background: #f3f4f6;
+      color: #111827;
     }
 
     header {
-      background: linear-gradient(135deg, #0066cc, #00a3ff);
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
       color: white;
       padding: 28px 16px;
       text-align: center;
@@ -27,129 +27,177 @@
 
     header p {
       margin: 8px 0 0;
-      font-size: 14px;
       opacity: 0.9;
     }
 
     main {
-      max-width: 1000px;
+      max-width: 1100px;
       margin: 24px auto;
       padding: 0 16px 40px;
     }
 
-    .card {
+    .section {
       background: white;
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 20px;
-      margin-bottom: 18px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+      margin-bottom: 24px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
     }
 
-    .race-title {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .updated {
-      color: #6b7280;
-      font-size: 14px;
-    }
-
-    .section-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 14px;
-      border-left: 5px solid #0077dd;
+    .section h2 {
+      margin: 0 0 16px;
+      font-size: 22px;
+      border-left: 6px solid #2563eb;
       padding-left: 10px;
     }
 
-    .prediction-list {
+    .race-info {
       display: grid;
-      gap: 14px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
     }
 
-    .prediction-item {
-      border: 1px solid #e5e7eb;
+    .info-box {
+      background: #f9fafb;
       border-radius: 12px;
+      padding: 14px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .info-label {
+      color: #6b7280;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .prediction-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .prediction-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
       padding: 16px;
-      background: #fafafa;
+      background: #ffffff;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+    }
+
+    .prediction-card.top {
+      border: 2px solid #ef4444;
+      background: #fff7f7;
     }
 
     .rank {
       display: inline-block;
-      background: #0077dd;
+      background: #2563eb;
       color: white;
-      font-weight: bold;
       padding: 5px 10px;
       border-radius: 999px;
-      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .mark-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin-bottom: 10px;
     }
 
+    .mark-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ef4444;
+      color: white;
+      font-size: 26px;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .mark-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #111827;
+    }
+
     .boat-line {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: bold;
       margin-bottom: 10px;
     }
 
     .boat-number {
-      color: #0077dd;
+      display: inline-block;
+      background: #111827;
+      color: white;
+      padding: 4px 8px;
+      border-radius: 8px;
+      margin-right: 8px;
     }
 
-    .details {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 8px;
+    .detail-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      color: #374151;
       font-size: 14px;
     }
 
-    .detail-box {
-      background: white;
-      border-radius: 8px;
-      padding: 10px;
-      border: 1px solid #e5e7eb;
+    .detail-list li {
+      margin: 4px 0;
     }
 
-    .detail-label {
-      color: #6b7280;
-      font-size: 12px;
+    .confidence-wrap {
+      margin-top: 12px;
+    }
+
+    .confidence-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
       margin-bottom: 4px;
     }
 
-    .detail-value {
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .confidence-bar-wrap {
+    .confidence-bar {
+      height: 10px;
       background: #e5e7eb;
       border-radius: 999px;
-      height: 12px;
       overflow: hidden;
-      margin-top: 8px;
     }
 
-    .confidence-bar {
+    .confidence-fill {
       height: 100%;
-      background: linear-gradient(90deg, #00b894, #00cec9);
-      width: 0%;
+      background: linear-gradient(90deg, #22c55e, #16a34a);
+      border-radius: 999px;
     }
 
-    .tickets {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
+    .ticket-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
     }
 
     .ticket {
-      background: #fff7ed;
-      color: #c2410c;
-      border: 1px solid #fed7aa;
-      padding: 10px 14px;
-      border-radius: 10px;
+      background: #0f172a;
+      color: white;
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      font-size: 22px;
       font-weight: bold;
-      font-size: 18px;
+      letter-spacing: 1px;
     }
 
     .table-wrap {
@@ -159,87 +207,72 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 760px;
+      min-width: 900px;
     }
 
     th,
     td {
       border-bottom: 1px solid #e5e7eb;
-      padding: 12px 10px;
+      padding: 10px;
       text-align: left;
-      font-size: 14px;
       white-space: nowrap;
     }
 
     th {
       background: #f9fafb;
       color: #374151;
-      font-weight: bold;
+      font-size: 13px;
     }
 
-    tr.rank-1 {
-      background: #eff6ff;
-    }
-
-    tr.rank-2 {
-      background: #f0fdf4;
-    }
-
-    tr.rank-3 {
-      background: #fff7ed;
+    td {
+      font-size: 14px;
     }
 
     .rank-badge {
       display: inline-block;
-      min-width: 42px;
-      text-align: center;
+      background: #dbeafe;
+      color: #1d4ed8;
       padding: 4px 8px;
       border-radius: 999px;
-      background: #e5e7eb;
       font-weight: bold;
     }
 
-    .rank-1 .rank-badge {
-      background: #2563eb;
-      color: white;
+    .mark-table {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: bold;
     }
 
-    .rank-2 .rank-badge {
-      background: #16a34a;
-      color: white;
-    }
-
-    .rank-3 .rank-badge {
-      background: #f97316;
-      color: white;
+    .mark-table-icon {
+      color: #ef4444;
+      font-size: 20px;
     }
 
     .score {
       font-weight: bold;
-      color: #111827;
+      color: #dc2626;
     }
 
-    .notice {
-      font-size: 13px;
-      line-height: 1.7;
+    .loading {
       color: #6b7280;
-      background: #fffbeb;
-      border: 1px solid #fde68a;
+      text-align: center;
+      padding: 24px;
     }
 
     .error {
-      color: #b91c1c;
-      background: #fee2e2;
+      background: #fef2f2;
       border: 1px solid #fecaca;
+      color: #991b1b;
       padding: 14px;
-      border-radius: 10px;
+      border-radius: 12px;
     }
 
     footer {
       text-align: center;
-      color: #9ca3af;
-      font-size: 12px;
-      padding: 20px;
+      color: #6b7280;
+      padding: 24px 16px;
+      font-size: 13px;
     }
   </style>
 </head>
@@ -247,29 +280,42 @@
 <body>
   <header>
     <h1>ボートレースAI予想</h1>
-    <p>CSVデータを使った学習用の自動予想ページ</p>
+    <p>出走データからAI風に予想順位・印・買い目を表示します</p>
   </header>
 
   <main>
-    <div class="card">
-      <div class="race-title" id="race-title">読み込み中...</div>
-      <div class="updated" id="updated-at"></div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">予想順位</div>
-      <div id="predictions" class="prediction-list">
-        読み込み中...
+    <section class="section">
+      <h2>レース情報</h2>
+      <div id="raceInfo" class="race-info">
+        <div class="info-box">
+          <div class="info-label">状態</div>
+          <div class="info-value">読み込み中...</div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="card">
-      <div class="section-title">全艇評価</div>
+    <section class="section">
+      <h2>予想順位</h2>
+      <div id="predictions" class="prediction-grid">
+        <div class="loading">予想を読み込み中...</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>買い目候補</h2>
+      <div id="tickets" class="ticket-list">
+        <div class="loading">買い目を読み込み中...</div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>全艇評価</h2>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>順位</th>
+              <th>印</th>
               <th>艇番</th>
               <th>選手名</th>
               <th>コース</th>
@@ -280,81 +326,83 @@
               <th>信頼度</th>
             </tr>
           </thead>
-          <tbody id="all-boats">
+          <tbody id="allBoats">
             <tr>
-              <td colspan="9">読み込み中...</td>
+              <td colspan="10">読み込み中...</td>
             </tr>
           </tbody>
         </table>
       </div>
-    </div>
-
-    <div class="card">
-      <div class="section-title">買い目候補</div>
-      <div id="tickets" class="tickets">
-        読み込み中...
-      </div>
-    </div>
-
-    <div class="card notice" id="notice">
-      注意書きを読み込み中...
-    </div>
+    </section>
   </main>
 
   <footer>
-    GitHub Pages × Python × CSV
+    このページは学習用のAI予想サンプルです。舟券購入は自己責任で行ってください。
   </footer>
 
   <script>
-    async function loadPrediction() {
-      try {
-        const response = await fetch("./prediction.json?cache=" + Date.now());
-
-        if (!response.ok) {
-          throw new Error("prediction.json を読み込めませんでした");
-        }
-
-        const data = await response.json();
-
-        renderRace(data);
-        renderPredictions(data.predictions || []);
-        renderAllBoats(data.all_boats || []);
-        renderTickets(data.tickets || []);
-        renderNotice(data.notice || "");
-
-      } catch (error) {
-        console.error(error);
-
-        document.getElementById("race-title").textContent = "読み込みエラー";
-        document.getElementById("predictions").innerHTML =
-          '<div class="error">prediction.json の読み込みに失敗しました。</div>';
-        document.getElementById("all-boats").innerHTML =
-          '<tr><td colspan="9">全艇評価を読み込めませんでした。</td></tr>';
-        document.getElementById("tickets").textContent = "-";
-        document.getElementById("notice").textContent =
-          "エラーが発生しました。GitHub Actionsで prediction.json が作成されているか確認してください。";
-      }
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
-    function renderRace(data) {
+    function clampNumber(value, min, max) {
+      const number = Number(value);
+
+      if (Number.isNaN(number)) {
+        return min;
+      }
+
+      return Math.min(Math.max(number, min), max);
+    }
+
+    function formatNumber(value, digits) {
+      const number = Number(value);
+
+      if (Number.isNaN(number)) {
+        return "-";
+      }
+
+      return number.toFixed(digits);
+    }
+
+    function renderRaceInfo(data) {
+      const raceInfo = document.getElementById("raceInfo");
       const race = data.race || {};
 
-      const stadium = race.stadium || "未設定";
+      const place = race.place || "未設定";
       const raceNo = race.race_no || "未設定";
-      const date = race.date || "";
-      const updatedAt = data.updated_at || "";
+      const title = race.title || "AI予想";
+      const generatedAt = data.generated_at || "-";
 
-      document.getElementById("race-title").textContent =
-        `${date} ${stadium} ${raceNo}`;
-
-      document.getElementById("updated-at").textContent =
-        `更新日時：${updatedAt}`;
+      raceInfo.innerHTML = `
+        <div class="info-box">
+          <div class="info-label">場名</div>
+          <div class="info-value">${escapeHtml(place)}</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">レース</div>
+          <div class="info-value">${escapeHtml(raceNo)}</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">タイトル</div>
+          <div class="info-value">${escapeHtml(title)}</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">更新日時</div>
+          <div class="info-value">${escapeHtml(generatedAt)}</div>
+        </div>
+      `;
     }
 
     function renderPredictions(predictions) {
       const container = document.getElementById("predictions");
 
-      if (!predictions.length) {
+      if (!Array.isArray(predictions) || predictions.length === 0) {
         container.innerHTML = '<div class="error">予想データがありません。</div>';
         return;
       }
@@ -362,7 +410,16 @@
       container.innerHTML = "";
 
       predictions.forEach((item) => {
+        const div = document.createElement("div");
+        div.className = "prediction-card";
+
+        if (item.rank === 1) {
+          div.classList.add("top");
+        }
+
         const rank = item.rank ?? "-";
+        const mark = item.mark ?? "";
+        const markName = item.mark_name ?? "";
         const boat = item.boat ?? "-";
         const course = item.course ?? "-";
         const driver = item.driver ?? "選手名なし";
@@ -370,39 +427,32 @@
         const confidence = clampNumber(item.confidence ?? 0, 0, 100);
         const score = item.score ?? "-";
 
-        const div = document.createElement("div");
-        div.className = "prediction-item";
-
         div.innerHTML = `
           <div class="rank">${escapeHtml(label)}</div>
+
+          <div class="mark-row">
+            <span class="mark-icon">${escapeHtml(mark)}</span>
+            <span class="mark-name">${escapeHtml(markName)}</span>
+          </div>
 
           <div class="boat-line">
             <span class="boat-number">${escapeHtml(boat)}号艇</span>
             ${escapeHtml(driver)}
           </div>
 
-          <div class="details">
-            <div class="detail-box">
-              <div class="detail-label">順位</div>
-              <div class="detail-value">${escapeHtml(rank)}位</div>
-            </div>
+          <ul class="detail-list">
+            <li>順位：${escapeHtml(rank)}位</li>
+            <li>コース：${escapeHtml(course)}コース</li>
+            <li>スコア：${escapeHtml(formatNumber(score, 2))}</li>
+          </ul>
 
-            <div class="detail-box">
-              <div class="detail-label">コース</div>
-              <div class="detail-value">${escapeHtml(course)}コース</div>
+          <div class="confidence-wrap">
+            <div class="confidence-label">
+              <span>信頼度</span>
+              <span>${escapeHtml(confidence)}%</span>
             </div>
-
-            <div class="detail-box">
-              <div class="detail-label">スコア</div>
-              <div class="detail-value">${escapeHtml(score)}</div>
-            </div>
-
-            <div class="detail-box">
-              <div class="detail-label">信頼度</div>
-              <div class="detail-value">${confidence}%</div>
-              <div class="confidence-bar-wrap">
-                <div class="confidence-bar" style="width: ${confidence}%"></div>
-              </div>
+            <div class="confidence-bar">
+              <div class="confidence-fill" style="width: ${confidence}%"></div>
             </div>
           </div>
         `;
@@ -411,47 +461,10 @@
       });
     }
 
-    function renderAllBoats(boats) {
-      const tbody = document.getElementById("all-boats");
-
-      if (!boats.length) {
-        tbody.innerHTML = '<tr><td colspan="9">全艇評価データがありません。</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = "";
-
-      boats.forEach((boat) => {
-        const tr = document.createElement("tr");
-
-        if (boat.rank === 1) {
-          tr.className = "rank-1";
-        } else if (boat.rank === 2) {
-          tr.className = "rank-2";
-        } else if (boat.rank === 3) {
-          tr.className = "rank-3";
-        }
-
-        tr.innerHTML = `
-          <td><span class="rank-badge">${escapeHtml(boat.rank ?? "-")}位</span></td>
-          <td>${escapeHtml(boat.boat ?? "-")}号艇</td>
-          <td>${escapeHtml(boat.driver ?? "-")}</td>
-          <td>${escapeHtml(boat.course ?? "-")}</td>
-          <td>${escapeHtml(formatNumber(boat.win_rate, 2))}</td>
-          <td>${escapeHtml(formatNumber(boat.motor_rate, 1))}%</td>
-          <td>${escapeHtml(formatNumber(boat.avg_st, 2))}</td>
-          <td class="score">${escapeHtml(formatNumber(boat.score, 2))}</td>
-          <td>${escapeHtml(boat.confidence ?? "-")}%</td>
-        `;
-
-        tbody.appendChild(tr);
-      });
-    }
-
     function renderTickets(tickets) {
       const container = document.getElementById("tickets");
 
-      if (!tickets.length) {
+      if (!Array.isArray(tickets) || tickets.length === 0) {
         container.innerHTML = '<div class="error">買い目データがありません。</div>';
         return;
       }
@@ -466,41 +479,86 @@
       });
     }
 
-    function renderNotice(notice) {
-      document.getElementById("notice").textContent =
-        notice || "このページは学習用のサンプルです。";
-    }
+    function renderAllBoats(boats) {
+      const tbody = document.getElementById("allBoats");
 
-    function formatNumber(value, digits) {
-      const num = Number(value);
-
-      if (Number.isNaN(num)) {
-        return "-";
+      if (!Array.isArray(boats) || boats.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10">全艇評価を読み込めませんでした。</td></tr>';
+        return;
       }
 
-      return num.toFixed(digits);
+      tbody.innerHTML = "";
+
+      boats.forEach((boat) => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+          <td><span class="rank-badge">${escapeHtml(boat.rank ?? "-")}位</span></td>
+          <td>
+            <span class="mark-table">
+              <span class="mark-table-icon">${escapeHtml(boat.mark ?? "")}</span>
+              <span>${escapeHtml(boat.mark_name ?? "")}</span>
+            </span>
+          </td>
+          <td>${escapeHtml(boat.boat ?? "-")}号艇</td>
+          <td>${escapeHtml(boat.driver ?? "-")}</td>
+          <td>${escapeHtml(boat.course ?? "-")}</td>
+          <td>${escapeHtml(formatNumber(boat.win_rate, 2))}</td>
+          <td>${escapeHtml(formatNumber(boat.motor_rate, 1))}%</td>
+          <td>${escapeHtml(formatNumber(boat.avg_st, 2))}</td>
+          <td class="score">${escapeHtml(formatNumber(boat.score, 2))}</td>
+          <td>${escapeHtml(boat.confidence ?? "-")}%</td>
+        `;
+
+        tbody.appendChild(tr);
+      });
     }
 
-    function clampNumber(value, min, max) {
-      const num = Number(value);
+    async function loadPrediction() {
+      try {
+        const response = await fetch(`prediction.json?v=${Date.now()}`);
 
-      if (Number.isNaN(num)) {
-        return min;
+        if (!response.ok) {
+          throw new Error("prediction.json を読み込めませんでした。");
+        }
+
+        const data = await response.json();
+
+        renderRaceInfo(data);
+        renderPredictions(data.predictions || []);
+        renderTickets(data.tickets || []);
+        renderAllBoats(data.all_boats || data.predictions || []);
+      } catch (error) {
+        console.error(error);
+
+        document.getElementById("raceInfo").innerHTML = `
+          <div class="error">
+            prediction.json の読み込みに失敗しました。
+          </div>
+        `;
+
+        document.getElementById("predictions").innerHTML = `
+          <div class="error">
+            予想を表示できませんでした。
+          </div>
+        `;
+
+        document.getElementById("tickets").innerHTML = `
+          <div class="error">
+            買い目を表示できませんでした。
+          </div>
+        `;
+
+        document.getElementById("allBoats").innerHTML = `
+          <tr>
+            <td colspan="10">全艇評価を読み込めませんでした。</td>
+          </tr>
+        `;
       }
-
-      return Math.min(Math.max(num, min), max);
-    }
-
-    function escapeHtml(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
     }
 
     loadPrediction();
   </script>
 </body>
 </html>
+
