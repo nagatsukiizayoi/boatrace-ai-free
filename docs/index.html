@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>ボートレースAI予想</title>
 
   <style>
@@ -14,350 +15,349 @@
     }
 
     header {
-      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      background: linear-gradient(135deg, #0f766e, #134e4a);
       color: white;
-      padding: 28px 16px;
+      padding: 20px 16px;
       text-align: center;
     }
 
     header h1 {
       margin: 0;
-      font-size: 28px;
+      font-size: 24px;
     }
 
     header p {
       margin: 8px 0 0;
+      font-size: 14px;
       opacity: 0.9;
     }
 
     main {
       max-width: 1100px;
-      margin: 24px auto;
-      padding: 0 16px 40px;
+      margin: 0 auto;
+      padding: 16px;
     }
 
-    .section {
+    .card {
       background: white;
       border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 24px;
-      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow-x: auto;
     }
 
-    .section h2 {
-      margin: 0 0 16px;
-      font-size: 22px;
-      border-left: 6px solid #2563eb;
-      padding-left: 10px;
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
     }
 
-    .race-info {
+    .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .menu-button {
+      display: block;
+      text-decoration: none;
+      color: white;
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 72px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+
+    .menu-button-title {
+      font-weight: 800;
+      font-size: 17px;
+      margin-bottom: 6px;
+    }
+
+    .menu-button-sub {
+      font-size: 12px;
+      opacity: 0.92;
+      line-height: 1.5;
+    }
+
+    .menu-prediction {
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+    }
+
+    .menu-evaluation {
+      background: linear-gradient(135deg, #2563eb, #60a5fa);
+    }
+
+    .menu-history {
+      background: linear-gradient(135deg, #16a34a, #4ade80);
+    }
+
+    .menu-charts {
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    }
+
+    .menu-json {
+      background: linear-gradient(135deg, #475569, #94a3b8);
+    }
+
+    .race-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
       gap: 12px;
     }
 
     .info-box {
       background: #f9fafb;
       border-radius: 12px;
-      padding: 14px;
-      border: 1px solid #e5e7eb;
+      padding: 12px;
     }
 
     .info-label {
+      font-size: 12px;
       color: #6b7280;
-      font-size: 13px;
       margin-bottom: 4px;
     }
 
     .info-value {
-      font-weight: bold;
-      font-size: 18px;
+      font-size: 17px;
+      font-weight: 800;
     }
 
-    .prediction-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
+    .prediction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .prediction-card {
+    .prediction-item {
       border: 1px solid #e5e7eb;
       border-radius: 16px;
-      padding: 16px;
+      padding: 14px;
       background: #ffffff;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
     }
 
-    .prediction-card.top {
-      border: 2px solid #ef4444;
-      background: #fff7f7;
-    }
-
-    .rank {
-      display: inline-block;
-      background: #2563eb;
-      color: white;
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-weight: bold;
-      margin-bottom: 10px;
-      font-size: 14px;
-    }
-
-    .mark-row {
+    .prediction-head {
       display: flex;
       align-items: center;
       gap: 10px;
       margin-bottom: 10px;
     }
 
-    .mark-icon {
-      display: inline-flex;
+    .mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: #dc2626;
+      color: white;
+      display: flex;
       align-items: center;
       justify-content: center;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #ef4444;
-      color: white;
-      font-size: 26px;
-      font-weight: bold;
-      line-height: 1;
+      font-size: 22px;
+      font-weight: 900;
+      flex-shrink: 0;
     }
 
     .mark-name {
+      font-weight: 800;
       font-size: 18px;
-      font-weight: bold;
-      color: #111827;
     }
 
     .boat-line {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 8px;
     }
 
     .boat-number {
       display: inline-block;
       background: #111827;
       color: white;
-      padding: 4px 8px;
-      border-radius: 8px;
-      margin-right: 8px;
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-right: 6px;
+      font-weight: 900;
     }
 
-    .detail-list {
-      margin: 0;
-      padding: 0;
-      list-style: none;
-      color: #374151;
-      font-size: 14px;
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
     }
 
-    .detail-list li {
-      margin: 4px 0;
+    .detail-box {
+      background: #f9fafb;
+      border-radius: 10px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .detail-label {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .detail-value {
+      margin-top: 3px;
+      font-weight: 800;
     }
 
     .confidence-wrap {
-      margin-top: 12px;
-    }
-
-    .confidence-label {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      margin-bottom: 4px;
-    }
-
-    .confidence-bar {
-      height: 10px;
+      width: 100%;
+      height: 8px;
       background: #e5e7eb;
       border-radius: 999px;
       overflow: hidden;
+      margin-top: 6px;
     }
 
-    .confidence-fill {
+    .confidence-bar {
       height: 100%;
-      background: linear-gradient(90deg, #22c55e, #16a34a);
+      background: linear-gradient(90deg, #f97316, #dc2626);
       border-radius: 999px;
     }
 
     .ticket-summary {
-      background: #eff6ff;
-      border: 1px solid #bfdbfe;
-      border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 16px;
-      color: #1e3a8a;
-      font-weight: bold;
-    }
-
-    .ticket-groups {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 14px;
+      font-weight: 800;
     }
 
     .ticket-group {
       border: 1px solid #e5e7eb;
       border-radius: 16px;
+      margin-bottom: 14px;
       overflow: hidden;
-      background: #ffffff;
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
     }
 
-    .ticket-group-header {
-      padding: 14px;
+    .ticket-group-head {
+      padding: 12px;
       color: white;
+      font-weight: 800;
     }
 
-    .ticket-group-header.main {
-      background: linear-gradient(135deg, #dc2626, #f97316);
+    .risk-low {
+      background: #dc2626;
     }
 
-    .ticket-group-header.cover {
-      background: linear-gradient(135deg, #2563eb, #06b6d4);
+    .risk-middle {
+      background: #2563eb;
     }
 
-    .ticket-group-header.longshot {
-      background: linear-gradient(135deg, #7c3aed, #db2777);
+    .risk-high {
+      background: #7c3aed;
     }
 
-    .ticket-group-title {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 4px;
+    .risk-default {
+      background: #475569;
     }
 
-    .ticket-group-description {
-      font-size: 13px;
-      opacity: 0.95;
-    }
-
-    .risk-badge {
-      display: inline-block;
-      margin-top: 8px;
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.4);
-      border-radius: 999px;
-      padding: 4px 8px;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .ticket-items {
-      padding: 14px;
-      display: grid;
-      gap: 12px;
+    .ticket-group-body {
+      padding: 12px;
+      background: #ffffff;
     }
 
     .ticket-item {
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 12px;
-      background: #f9fafb;
+      display: grid;
+      grid-template-columns: 110px 90px 1fr;
+      gap: 8px;
+      align-items: center;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 0;
+    }
+
+    .ticket-item:last-child {
+      border-bottom: none;
     }
 
     .ticket-number {
-      display: inline-block;
-      background: #0f172a;
-      color: white;
-      border-radius: 10px;
-      padding: 8px 12px;
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .ticket-reason {
-      color: #374151;
-      font-size: 13px;
-      line-height: 1.5;
-      margin-bottom: 8px;
+      font-size: 18px;
+      font-weight: 900;
     }
 
     .ticket-amount {
+      font-weight: 800;
       color: #dc2626;
-      font-weight: bold;
-      font-size: 14px;
     }
 
-    .table-wrap {
-      overflow-x: auto;
+    .ticket-reason {
+      color: #4b5563;
+      font-size: 13px;
+      line-height: 1.5;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 900px;
+      font-size: 14px;
+      min-width: 850px;
     }
 
-    th,
-    td {
+    th, td {
       border-bottom: 1px solid #e5e7eb;
-      padding: 10px;
-      text-align: left;
+      padding: 10px 6px;
+      text-align: center;
       white-space: nowrap;
     }
 
     th {
       background: #f9fafb;
       color: #374151;
-      font-size: 13px;
     }
 
-    td {
-      font-size: 14px;
-    }
-
-    .rank-badge {
-      display: inline-block;
-      background: #dbeafe;
-      color: #1d4ed8;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-weight: bold;
-    }
-
-    .mark-table {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: bold;
-    }
-
-    .mark-table-icon {
-      color: #ef4444;
-      font-size: 20px;
-    }
-
-    .score {
-      font-weight: bold;
+    .table-mark {
+      font-weight: 900;
       color: #dc2626;
+      font-size: 18px;
+    }
+
+    .notice {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.7;
     }
 
     .loading {
       color: #6b7280;
-      text-align: center;
-      padding: 24px;
+      padding: 12px;
     }
 
     .error {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
+      background: #fee2e2;
+      border: 1px solid #ef4444;
       color: #991b1b;
-      padding: 14px;
       border-radius: 12px;
+      padding: 12px;
+      line-height: 1.7;
     }
 
     footer {
       text-align: center;
       color: #6b7280;
+      font-size: 12px;
       padding: 24px 16px;
-      font-size: 13px;
+    }
+
+    @media (max-width: 700px) {
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .race-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .ticket-item {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -365,37 +365,368 @@
 <body>
   <header>
     <h1>ボートレースAI予想</h1>
-    <p>出走データからAI風に予想順位・印・買い目を表示します</p>
+    <p>CSV・JSON・GitHub Actionsで作る学習用予想システム</p>
   </header>
 
   <main>
-    <section class="section">
+    <section class="card">
+      <h2>メニュー</h2>
+
+      <div class="menu-grid">
+        <a class="menu-button menu-prediction" href="./index.html">
+          <div class="menu-button-title">予想ページ</div>
+          <div class="menu-button-sub">現在の予想・買い目・全艇評価を表示します。</div>
+        </a>
+
+        <a class="menu-button menu-evaluation" href="./evaluation.html">
+          <div class="menu-button-title">直近評価</div>
+          <div class="menu-button-sub">直近レースの的中・回収率・利益を確認します。</div>
+        </a>
+
+        <a class="menu-button menu-history" href="./history.html">
+          <div class="menu-button-title">過去成績</div>
+          <div class="menu-button-sub">これまでの評価結果を一覧で確認します。</div>
+        </a>
+
+        <a class="menu-button menu-charts" href="./charts.html">
+          <div class="menu-button-title">成績グラフ</div>
+          <div class="menu-button-sub">累計利益・回収率・分類別成績をグラフで確認します。</div>
+        </a>
+
+        <a class="menu-button menu-json" href="./prediction.json">
+          <div class="menu-button-title">予想JSON</div>
+          <div class="menu-button-sub">プログラムが生成した予想データを確認します。</div>
+        </a>
+
+        <a class="menu-button menu-json" href="./evaluation_history.json">
+          <div class="menu-button-title">履歴JSON</div>
+          <div class="menu-button-sub">過去成績の元データを確認します。</div>
+        </a>
+      </div>
+    </section>
+
+    <section class="card">
       <h2>レース情報</h2>
-      <div id="raceInfo" class="race-info">
+
+      <div class="race-grid">
         <div class="info-box">
-          <div class="info-label">状態</div>
-          <div class="info-value">読み込み中...</div>
+          <div class="info-label">日付</div>
+          <div class="info-value" id="race-date">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">場</div>
+          <div class="info-value" id="race-place">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">レース</div>
+          <div class="info-value" id="race-no">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">更新日時</div>
+          <div class="info-value" id="updated-at">読み込み中...</div>
         </div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="card">
       <h2>予想順位</h2>
-      <div id="predictions" class="prediction-grid">
-        <div class="loading">予想を読み込み中...</div>
+      <div id="predictions" class="prediction-list">
+        <div class="loading">予想データを読み込み中...</div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="card">
       <h2>買い目候補</h2>
-      <div id="tickets">
-        <div class="loading">買い目を読み込み中...</div>
+
+      <div id="ticket-summary" class="ticket-summary">
+        読み込み中...
+      </div>
+
+      <div id="ticket-groups">
+        <div class="loading">買い目データを読み込み中...</div>
       </div>
     </section>
 
-    <section class="section">
+    <section class="card">
       <h2>全艇評価</h2>
-      <div class="table-wrap">
+      <div id="all-boats">
+        <div class="loading">全艇評価を読み込み中...</div>
+      </div>
+    </section>
+
+    <section class="card notice" id="notice">
+      注意書きを読み込み中...
+    </section>
+  </main>
+
+  <footer>
+    boatrace-ai-free / GitHub Pages × Python × JSON
+  </footer>
+
+  <script>
+    function escapeHtml(value) {
+      if (value === null || value === undefined) {
+        return "";
+      }
+
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function yen(value) {
+      const num = Number(value || 0);
+      return num.toLocaleString("ja-JP") + "円";
+    }
+
+    function getPlace(race) {
+      if (!race) return "未設定";
+      return race.place || race.stadium || race.venue || "未設定";
+    }
+
+    function riskClass(risk) {
+      const text = String(risk || "");
+
+      if (text.includes("低")) {
+        return "risk-low";
+      }
+
+      if (text.includes("中")) {
+        return "risk-middle";
+      }
+
+      if (text.includes("高")) {
+        return "risk-high";
+      }
+
+      return "risk-default";
+    }
+
+    async function loadPrediction() {
+      try {
+        const response = await fetch("./prediction.json?cache=" + Date.now());
+
+        if (!response.ok) {
+          throw new Error("prediction.json を読み込めませんでした。");
+        }
+
+        const data = await response.json();
+
+        renderRace(data);
+        renderPredictions(data.predictions || []);
+        renderTickets(data);
+        renderAllBoats(data.all_boats || []);
+        renderNotice(data.notice || "このページは学習用のサンプルです。");
+
+      } catch (error) {
+        console.error(error);
+
+        document.getElementById("predictions").innerHTML = `
+          <div class="error">
+            prediction.json の読み込みに失敗しました。<br>
+            GitHub Actions の Make Prediction JSON が成功しているか確認してください。
+          </div>
+        `;
+
+        document.getElementById("ticket-summary").textContent = "買い目データを読み込めませんでした。";
+        document.getElementById("ticket-groups").innerHTML = "";
+        document.getElementById("all-boats").innerHTML = "";
+        document.getElementById("notice").textContent = "データ読み込みエラーが発生しました。";
+      }
+    }
+
+    function renderRace(data) {
+      const race = data.race || {};
+
+      document.getElementById("race-date").textContent = race.date || "未設定";
+      document.getElementById("race-place").textContent = getPlace(race);
+      document.getElementById("race-no").textContent = race.race_no || "未設定";
+      document.getElementById("updated-at").textContent = data.updated_at || "未設定";
+    }
+
+    function renderPredictions(predictions) {
+      const container = document.getElementById("predictions");
+      container.innerHTML = "";
+
+      if (!predictions.length) {
+        container.innerHTML = `<div class="loading">予想データがありません。</div>`;
+        return;
+      }
+
+      predictions.forEach((item) => {
+        const confidence = Number(item.confidence || 0);
+        const mark = item.mark || "";
+        const markName = item.mark_name || item.label || "";
+
+        const div = document.createElement("div");
+        div.className = "prediction-item";
+
+        div.innerHTML = `
+          <div class="prediction-head">
+            <div class="mark">${escapeHtml(mark || item.rank)}</div>
+            <div>
+              <div class="mark-name">${escapeHtml(markName)}</div>
+              <div>${escapeHtml(item.label || "")}</div>
+            </div>
+          </div>
+
+          <div class="boat-line">
+            <span class="boat-number">${escapeHtml(item.boat)}号艇</span>
+            ${escapeHtml(item.driver || "")}
+          </div>
+
+          <div class="detail-grid">
+            <div class="detail-box">
+              <div class="detail-label">順位</div>
+              <div class="detail-value">${escapeHtml(item.rank)}位</div>
+            </div>
+
+            <div class="detail-box">
+              <div class="detail-label">コース</div>
+              <div class="detail-value">${escapeHtml(item.course || item.boat)}コース</div>
+            </div>
+
+            <div class="detail-box">
+              <div class="detail-label">スコア</div>
+              <div class="detail-value">${escapeHtml(item.score || "-")}</div>
+            </div>
+
+            <div class="detail-box">
+              <div class="detail-label">信頼度</div>
+              <div class="detail-value">${confidence}%</div>
+              <div class="confidence-wrap">
+                <div class="confidence-bar" style="width:${Math.max(0, Math.min(100, confidence))}%"></div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        container.appendChild(div);
+      });
+    }
+
+    function renderTickets(data) {
+      const summary = document.getElementById("ticket-summary");
+      const container = document.getElementById("ticket-groups");
+
+      container.innerHTML = "";
+
+      const ticketGroups = data.ticket_groups || [];
+      const simpleTickets = data.tickets || [];
+
+      if (ticketGroups.length > 0) {
+        const totalAmount = Number(data.total_amount || 0);
+        summary.textContent = `合計予定金額：${yen(totalAmount)} / 分類数：${ticketGroups.length}`;
+
+        ticketGroups.forEach((group) => {
+          const div = document.createElement("div");
+          div.className = "ticket-group";
+
+          const tickets = group.tickets || [];
+          let ticketHtml = "";
+
+          tickets.forEach((ticket) => {
+            ticketHtml += `
+              <div class="ticket-item">
+                <div class="ticket-number">${escapeHtml(ticket.ticket)}</div>
+                <div class="ticket-amount">${yen(ticket.amount || 100)}</div>
+                <div class="ticket-reason">${escapeHtml(ticket.reason || "")}</div>
+              </div>
+            `;
+          });
+
+          div.innerHTML = `
+            <div class="ticket-group-head ${riskClass(group.risk)}">
+              ${escapeHtml(group.name || "未分類")}
+              / ${escapeHtml(group.risk || "リスク不明")}
+            </div>
+
+            <div class="ticket-group-body">
+              <p>${escapeHtml(group.description || "")}</p>
+              ${ticketHtml}
+            </div>
+          `;
+
+          container.appendChild(div);
+        });
+
+        return;
+      }
+
+      if (simpleTickets.length > 0) {
+        summary.textContent = `買い目数：${simpleTickets.length}点`;
+
+        const div = document.createElement("div");
+        div.className = "ticket-group";
+
+        let ticketHtml = "";
+
+        simpleTickets.forEach((ticket) => {
+          ticketHtml += `
+            <div class="ticket-item">
+              <div class="ticket-number">${escapeHtml(ticket)}</div>
+              <div class="ticket-amount">100円</div>
+              <div class="ticket-reason">通常買い目</div>
+            </div>
+          `;
+        });
+
+        div.innerHTML = `
+          <div class="ticket-group-head risk-default">
+            通常買い目
+          </div>
+          <div class="ticket-group-body">
+            ${ticketHtml}
+          </div>
+        `;
+
+        container.appendChild(div);
+        return;
+      }
+
+      summary.textContent = "買い目データがありません。";
+      container.innerHTML = "";
+    }
+
+    function renderAllBoats(allBoats) {
+      const container = document.getElementById("all-boats");
+
+      if (!allBoats.length) {
+        container.innerHTML = `
+          <div class="loading">
+            全艇評価データがありません。<br>
+            STEP 7以降の make_prediction.py で all_boats を出力しているか確認してください。
+          </div>
+        `;
+        return;
+      }
+
+      let rows = "";
+
+      allBoats.forEach((boat) => {
+        rows += `
+          <tr>
+            <td>${escapeHtml(boat.rank || "")}</td>
+            <td><span class="table-mark">${escapeHtml(boat.mark || "")}</span><br>${escapeHtml(boat.mark_name || "")}</td>
+            <td>${escapeHtml(boat.boat)}号艇</td>
+            <td>${escapeHtml(boat.driver || "")}</td>
+            <td>${escapeHtml(boat.course || boat.boat)}</td>
+            <td>${escapeHtml(boat.win_rate || "")}</td>
+            <td>${escapeHtml(boat.motor_rate || "")}</td>
+            <td>${escapeHtml(boat.avg_st || "")}</td>
+            <td>${escapeHtml(boat.score || "")}</td>
+            <td>${escapeHtml(boat.confidence || "")}%</td>
+          </tr>
+        `;
+      });
+
+      container.innerHTML = `
         <table>
           <thead>
             <tr>
@@ -411,299 +742,15 @@
               <th>信頼度</th>
             </tr>
           </thead>
-          <tbody id="allBoats">
-            <tr>
-              <td colspan="10">読み込み中...</td>
-            </tr>
+          <tbody>
+            ${rows}
           </tbody>
         </table>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    このページは学習用のAI予想サンプルです。舟券購入は自己責任で行ってください。
-  </footer>
-
-  <script>
-    function escapeHtml(value) {
-      return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function clampNumber(value, min, max) {
-      const number = Number(value);
-
-      if (Number.isNaN(number)) {
-        return min;
-      }
-
-      return Math.min(Math.max(number, min), max);
-    }
-
-    function formatNumber(value, digits) {
-      const number = Number(value);
-
-      if (Number.isNaN(number)) {
-        return "-";
-      }
-
-      return number.toFixed(digits);
-    }
-
-    function formatYen(value) {
-      const number = Number(value);
-
-      if (Number.isNaN(number)) {
-        return "0円";
-      }
-
-      return `${number.toLocaleString()}円`;
-    }
-
-    function renderRaceInfo(data) {
-      const raceInfo = document.getElementById("raceInfo");
-      const race = data.race || {};
-
-      const place = race.place || "未設定";
-      const raceNo = race.race_no || "未設定";
-      const title = race.title || "AI予想";
-      const generatedAt = data.generated_at || "-";
-
-      raceInfo.innerHTML = `
-        <div class="info-box">
-          <div class="info-label">場名</div>
-          <div class="info-value">${escapeHtml(place)}</div>
-        </div>
-        <div class="info-box">
-          <div class="info-label">レース</div>
-          <div class="info-value">${escapeHtml(raceNo)}</div>
-        </div>
-        <div class="info-box">
-          <div class="info-label">タイトル</div>
-          <div class="info-value">${escapeHtml(title)}</div>
-        </div>
-        <div class="info-box">
-          <div class="info-label">更新日時</div>
-          <div class="info-value">${escapeHtml(generatedAt)}</div>
-        </div>
       `;
     }
 
-    function renderPredictions(predictions) {
-      const container = document.getElementById("predictions");
-
-      if (!Array.isArray(predictions) || predictions.length === 0) {
-        container.innerHTML = '<div class="error">予想データがありません。</div>';
-        return;
-      }
-
-      container.innerHTML = "";
-
-      predictions.forEach((item) => {
-        const div = document.createElement("div");
-        div.className = "prediction-card";
-
-        if (item.rank === 1) {
-          div.classList.add("top");
-        }
-
-        const rank = item.rank ?? "-";
-        const mark = item.mark ?? "";
-        const markName = item.mark_name ?? "";
-        const boat = item.boat ?? "-";
-        const course = item.course ?? "-";
-        const driver = item.driver ?? "選手名なし";
-        const label = item.label ?? `${rank}着候補`;
-        const confidence = clampNumber(item.confidence ?? 0, 0, 100);
-        const score = item.score ?? "-";
-
-        div.innerHTML = `
-          <div class="rank">${escapeHtml(label)}</div>
-
-          <div class="mark-row">
-            <span class="mark-icon">${escapeHtml(mark)}</span>
-            <span class="mark-name">${escapeHtml(markName)}</span>
-          </div>
-
-          <div class="boat-line">
-            <span class="boat-number">${escapeHtml(boat)}号艇</span>
-            ${escapeHtml(driver)}
-          </div>
-
-          <ul class="detail-list">
-            <li>順位：${escapeHtml(rank)}位</li>
-            <li>コース：${escapeHtml(course)}コース</li>
-            <li>スコア：${escapeHtml(formatNumber(score, 2))}</li>
-          </ul>
-
-          <div class="confidence-wrap">
-            <div class="confidence-label">
-              <span>信頼度</span>
-              <span>${escapeHtml(confidence)}%</span>
-            </div>
-            <div class="confidence-bar">
-              <div class="confidence-fill" style="width: ${confidence}%"></div>
-            </div>
-          </div>
-        `;
-
-        container.appendChild(div);
-      });
-    }
-
-    function headerClassByGroupName(name) {
-      if (name === "本線") {
-        return "main";
-      }
-
-      if (name === "押さえ") {
-        return "cover";
-      }
-
-      return "longshot";
-    }
-
-    function renderTicketGroups(data) {
-      const container = document.getElementById("tickets");
-      const ticketGroups = data.ticket_groups || [];
-      const totalAmount = data.total_amount || 0;
-
-      if (!Array.isArray(ticketGroups) || ticketGroups.length === 0) {
-        container.innerHTML = '<div class="error">買い目データがありません。</div>';
-        return;
-      }
-
-      container.innerHTML = "";
-
-      const summary = document.createElement("div");
-      summary.className = "ticket-summary";
-      summary.textContent = `推奨購入金額の合計：${formatYen(totalAmount)}`;
-      container.appendChild(summary);
-
-      const groupsWrap = document.createElement("div");
-      groupsWrap.className = "ticket-groups";
-
-      ticketGroups.forEach((group) => {
-        const groupDiv = document.createElement("div");
-        groupDiv.className = "ticket-group";
-
-        const name = group.name || "買い目";
-        const description = group.description || "";
-        const risk = group.risk || "-";
-        const headerClass = headerClassByGroupName(name);
-        const tickets = group.tickets || [];
-
-        let ticketsHtml = "";
-
-        tickets.forEach((item) => {
-          ticketsHtml += `
-            <div class="ticket-item">
-              <div class="ticket-number">${escapeHtml(item.ticket || "-")}</div>
-              <div class="ticket-reason">${escapeHtml(item.reason || "")}</div>
-              <div class="ticket-amount">推奨：${escapeHtml(formatYen(item.amount || 0))}</div>
-            </div>
-          `;
-        });
-
-        groupDiv.innerHTML = `
-          <div class="ticket-group-header ${headerClass}">
-            <div class="ticket-group-title">${escapeHtml(name)}</div>
-            <div class="ticket-group-description">${escapeHtml(description)}</div>
-            <div class="risk-badge">リスク：${escapeHtml(risk)}</div>
-          </div>
-
-          <div class="ticket-items">
-            ${ticketsHtml}
-          </div>
-        `;
-
-        groupsWrap.appendChild(groupDiv);
-      });
-
-      container.appendChild(groupsWrap);
-    }
-
-    function renderAllBoats(boats) {
-      const tbody = document.getElementById("allBoats");
-
-      if (!Array.isArray(boats) || boats.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10">全艇評価を読み込めませんでした。</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = "";
-
-      boats.forEach((boat) => {
-        const tr = document.createElement("tr");
-
-        tr.innerHTML = `
-          <td><span class="rank-badge">${escapeHtml(boat.rank ?? "-")}位</span></td>
-          <td>
-            <span class="mark-table">
-              <span class="mark-table-icon">${escapeHtml(boat.mark ?? "")}</span>
-              <span>${escapeHtml(boat.mark_name ?? "")}</span>
-            </span>
-          </td>
-          <td>${escapeHtml(boat.boat ?? "-")}号艇</td>
-          <td>${escapeHtml(boat.driver ?? "-")}</td>
-          <td>${escapeHtml(boat.course ?? "-")}</td>
-          <td>${escapeHtml(formatNumber(boat.win_rate, 2))}</td>
-          <td>${escapeHtml(formatNumber(boat.motor_rate, 1))}%</td>
-          <td>${escapeHtml(formatNumber(boat.avg_st, 2))}</td>
-          <td class="score">${escapeHtml(formatNumber(boat.score, 2))}</td>
-          <td>${escapeHtml(boat.confidence ?? "-")}%</td>
-        `;
-
-        tbody.appendChild(tr);
-      });
-    }
-
-    async function loadPrediction() {
-      try {
-        const response = await fetch(`prediction.json?v=${Date.now()}`);
-
-        if (!response.ok) {
-          throw new Error("prediction.json を読み込めませんでした。");
-        }
-
-        const data = await response.json();
-
-        renderRaceInfo(data);
-        renderPredictions(data.predictions || []);
-        renderTicketGroups(data);
-        renderAllBoats(data.all_boats || data.predictions || []);
-      } catch (error) {
-        console.error(error);
-
-        document.getElementById("raceInfo").innerHTML = `
-          <div class="error">
-            prediction.json の読み込みに失敗しました。
-          </div>
-        `;
-
-        document.getElementById("predictions").innerHTML = `
-          <div class="error">
-            予想を表示できませんでした。
-          </div>
-        `;
-
-        document.getElementById("tickets").innerHTML = `
-          <div class="error">
-            買い目を表示できませんでした。
-          </div>
-        `;
-
-        document.getElementById("allBoats").innerHTML = `
-          <tr>
-            <td colspan="10">全艇評価を読み込めませんでした。</td>
-          </tr>
-        `;
-      }
+    function renderNotice(notice) {
+      document.getElementById("notice").textContent = notice;
     }
 
     loadPrediction();
