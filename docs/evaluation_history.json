@@ -1,31 +1,31 @@
 {
-  "updated_at": "2026-05-14 15:43:10",
+  "updated_at": "2026-05-14 16:58:48",
   "summary": {
     "race_count": 1,
     "hit_race_count": 1,
     "hit_race_rate": 100.0,
-    "total_stake": 1600,
+    "total_stake": 1400,
     "total_return": 3750,
-    "total_profit": 2150,
-    "roi": 234.38
+    "total_profit": 2350,
+    "roi": 267.86
   },
   "group_summary": [
     {
       "group": "本線",
-      "ticket_count": 3,
+      "ticket_count": 2,
       "hit_count": 1,
-      "stake": 900,
+      "stake": 600,
       "return": 3750,
-      "profit": 2850,
-      "roi": 416.67
+      "profit": 3150,
+      "roi": 625.0
     },
     {
       "group": "押さえ",
       "ticket_count": 3,
       "hit_count": 0,
-      "stake": 400,
+      "stake": 500,
       "return": 0,
-      "profit": -400,
+      "profit": -500,
       "roi": 0.0
     },
     {
@@ -44,83 +44,83 @@
       "date": "2026-05-14",
       "place": "サンプル競艇場",
       "race_no": "12R",
-      "evaluated_at": "2026-05-14 15:43:10",
+      "evaluated_at": "2026-05-14 16:58:48",
       "trifecta": "1-2-3",
       "payout_per_100yen": 1250,
-      "ticket_count": 9,
+      "ticket_count": 8,
       "hit_count": 1,
-      "hit_rate": 11.11,
-      "total_stake": 1600,
+      "hit_rate": 12.5,
+      "total_stake": 1400,
       "total_return": 3750,
-      "profit": 2150,
-      "roi": 234.38,
+      "profit": 2350,
+      "roi": 267.86,
       "tickets": [
         {
           "ticket": "1-3-2",
-          "amount": 400,
+          "amount": 300,
           "group": "本線",
-          "risk": "低め",
-          "reason": "◎を1着、○を2着、▲を3着にした基本形",
+          "risk": "低リスク",
+          "reason": "◎→○→▲ の基本形",
           "hit": false,
           "return": 0,
-          "profit": -400
+          "profit": -300
         },
         {
           "ticket": "1-2-3",
           "amount": 300,
           "group": "本線",
-          "risk": "低め",
-          "reason": "◎を1着固定、○と▲の2・3着入れ替え",
+          "risk": "低リスク",
+          "reason": "◎→▲→○ の入れ替わり",
           "hit": true,
           "return": 3750,
           "profit": 3450
         },
         {
-          "ticket": "1-3-4",
-          "amount": 200,
-          "group": "本線",
-          "risk": "低め",
-          "reason": "◎と○を信頼し、3着に△を入れる形",
-          "hit": false,
-          "return": 0,
-          "profit": -200
-        },
-        {
           "ticket": "3-1-2",
           "amount": 200,
           "group": "押さえ",
-          "risk": "中",
-          "reason": "○が◎を逆転するパターン",
+          "risk": "中リスク",
+          "reason": "○が◎を逆転する形",
           "hit": false,
           "return": 0,
           "profit": -200
         },
         {
-          "ticket": "2-1-3",
-          "amount": 100,
+          "ticket": "1-3-4",
+          "amount": 200,
           "group": "押さえ",
-          "risk": "中",
-          "reason": "▲が攻めて1着になるパターン",
+          "risk": "中リスク",
+          "reason": "3着に△が入る形",
           "hit": false,
           "return": 0,
-          "profit": -100
-        },
-        {
-          "ticket": "3-2-1",
-          "amount": 100,
-          "group": "押さえ",
-          "risk": "中",
-          "reason": "◎が3着に残る押さえパターン",
-          "hit": false,
-          "return": 0,
-          "profit": -100
+          "profit": -200
         },
         {
           "ticket": "1-4-3",
           "amount": 100,
+          "group": "押さえ",
+          "risk": "中リスク",
+          "reason": "2着に△が浮上する形",
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "2-1-3",
+          "amount": 100,
           "group": "穴狙い",
-          "risk": "高め",
-          "reason": "◎を1着固定、△が2着に入る穴寄りの形",
+          "risk": "高リスク",
+          "reason": "▲が1着に来る波乱",
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "1-2-4",
+          "amount": 100,
+          "group": "穴狙い",
+          "risk": "高リスク",
+          "reason": "3着に△が絡む形",
           "hit": false,
           "return": 0,
           "profit": -100
@@ -129,18 +129,8 @@
           "ticket": "1-3-5",
           "amount": 100,
           "group": "穴狙い",
-          "risk": "高め",
-          "reason": "◎・○から、3着に☆を入れる形",
-          "hit": false,
-          "return": 0,
-          "profit": -100
-        },
-        {
-          "ticket": "4-1-3",
-          "amount": 100,
-          "group": "穴狙い",
-          "risk": "高め",
-          "reason": "△の一発を狙う高配当パターン",
+          "risk": "高リスク",
+          "reason": "3着に☆が絡む形",
           "hit": false,
           "return": 0,
           "profit": -100

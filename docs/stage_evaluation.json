@@ -1,0 +1,483 @@
+{
+  "evaluated_at": "2026-05-14 16:58:48",
+  "result": {
+    "trifecta": "1-2-3",
+    "payout": 1250
+  },
+  "race": {
+    "date": "2026-05-14",
+    "place": "サンプル競艇場",
+    "race_no": "12R"
+  },
+  "best_stage": {
+    "stage": "PRE_NIGHT",
+    "label": "前日夜予想",
+    "profit": 2350,
+    "roi": 267.86
+  },
+  "stages": [
+    {
+      "stage": "PRE_NIGHT",
+      "label": "前日夜予想",
+      "file": "docs/prediction_pre_night.json",
+      "exists": true,
+      "prediction_run_id": "20260514162134",
+      "updated_at": "2026-05-14 16:21:34",
+      "race": {
+        "date": "2026-05-14",
+        "place": "サンプル競艇場",
+        "stadium": "サンプル競艇場",
+        "race_no": "12R",
+        "title": "優勝戦",
+        "deadline": "16:30"
+      },
+      "actual_result": {
+        "trifecta": "1-2-3",
+        "payout_per_100yen": 1250
+      },
+      "summary": {
+        "ticket_count": 8,
+        "hit_count": 1,
+        "hit_rate": 12.5,
+        "total_stake": 1400,
+        "total_return": 3750,
+        "profit": 2350,
+        "roi": 267.86
+      },
+      "tickets": [
+        {
+          "ticket": "1-3-2",
+          "amount": 300,
+          "group": "本線",
+          "risk": "低リスク",
+          "reason": "◎→○→▲ の基本形",
+          "probability": 0.01538,
+          "hit": false,
+          "return": 0,
+          "profit": -300
+        },
+        {
+          "ticket": "1-2-3",
+          "amount": 300,
+          "group": "本線",
+          "risk": "低リスク",
+          "reason": "◎→▲→○ の入れ替わり",
+          "probability": 0.01516,
+          "hit": true,
+          "return": 3750,
+          "profit": 3450
+        },
+        {
+          "ticket": "3-1-2",
+          "amount": 200,
+          "group": "押さえ",
+          "risk": "中リスク",
+          "reason": "○が◎を逆転する形",
+          "probability": 0.01479,
+          "hit": false,
+          "return": 0,
+          "profit": -200
+        },
+        {
+          "ticket": "1-3-4",
+          "amount": 200,
+          "group": "押さえ",
+          "risk": "中リスク",
+          "reason": "3着に△が入る形",
+          "probability": 0.01359,
+          "hit": false,
+          "return": 0,
+          "profit": -200
+        },
+        {
+          "ticket": "1-4-3",
+          "amount": 100,
+          "group": "押さえ",
+          "risk": "中リスク",
+          "reason": "2着に△が浮上する形",
+          "probability": 0.01296,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "2-1-3",
+          "amount": 100,
+          "group": "穴狙い",
+          "risk": "高リスク",
+          "reason": "▲が1着に来る波乱",
+          "probability": 0.01443,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "1-2-4",
+          "amount": 100,
+          "group": "穴狙い",
+          "risk": "高リスク",
+          "reason": "3着に△が絡む形",
+          "probability": 0.01279,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "1-3-5",
+          "amount": 100,
+          "group": "穴狙い",
+          "risk": "高リスク",
+          "reason": "3着に☆が絡む形",
+          "probability": 0.01195,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        }
+      ],
+      "top_boats": [
+        {
+          "rank": 1,
+          "mark": "◎",
+          "boat": 1,
+          "driver": "山田 太郎",
+          "score": 148.5
+        },
+        {
+          "rank": 2,
+          "mark": "○",
+          "boat": 3,
+          "driver": "鈴木 三郎",
+          "score": 127.45
+        },
+        {
+          "rank": 3,
+          "mark": "▲",
+          "boat": 2,
+          "driver": "佐藤 次郎",
+          "score": 121.6
+        }
+      ]
+    },
+    {
+      "stage": "MORNING",
+      "label": "当日朝予想",
+      "file": "docs/prediction_morning.json",
+      "exists": false,
+      "message": "予想ファイルがありません。",
+      "summary": {
+        "ticket_count": 0,
+        "hit_count": 0,
+        "hit_rate": 0,
+        "total_stake": 0,
+        "total_return": 0,
+        "profit": 0,
+        "roi": 0
+      },
+      "tickets": [],
+      "top_boats": []
+    },
+    {
+      "stage": "PRE_EXHIBITION",
+      "label": "展示前予想",
+      "file": "docs/prediction_pre_exhibition.json",
+      "exists": false,
+      "message": "予想ファイルがありません。",
+      "summary": {
+        "ticket_count": 0,
+        "hit_count": 0,
+        "hit_rate": 0,
+        "total_stake": 0,
+        "total_return": 0,
+        "profit": 0,
+        "roi": 0
+      },
+      "tickets": [],
+      "top_boats": []
+    },
+    {
+      "stage": "POST_EXHIBITION",
+      "label": "展示後予想",
+      "file": "docs/prediction_post_exhibition.json",
+      "exists": true,
+      "prediction_run_id": "20260514163722",
+      "updated_at": "2026-05-14 16:37:22",
+      "race": {
+        "date": "2026-05-14",
+        "place": "サンプル競艇場",
+        "stadium": "サンプル競艇場",
+        "race_no": "12R",
+        "title": "優勝戦",
+        "deadline": "16:30"
+      },
+      "actual_result": {
+        "trifecta": "1-2-3",
+        "payout_per_100yen": 1250
+      },
+      "summary": {
+        "ticket_count": 8,
+        "hit_count": 1,
+        "hit_rate": 12.5,
+        "total_stake": 1400,
+        "total_return": 3750,
+        "profit": 2350,
+        "roi": 267.86
+      },
+      "tickets": [
+        {
+          "ticket": "1-3-2",
+          "amount": 300,
+          "group": "本線",
+          "risk": "低リスク",
+          "reason": "◎→○→▲ の基本形",
+          "probability": 0.0189,
+          "hit": false,
+          "return": 0,
+          "profit": -300
+        },
+        {
+          "ticket": "1-2-3",
+          "amount": 300,
+          "group": "本線",
+          "risk": "低リスク",
+          "reason": "◎→▲→○ の入れ替わり",
+          "probability": 0.01832,
+          "hit": true,
+          "return": 3750,
+          "profit": 3450
+        },
+        {
+          "ticket": "3-1-2",
+          "amount": 200,
+          "group": "押さえ",
+          "risk": "中リスク",
+          "reason": "○が◎を逆転する形",
+          "probability": 0.01808,
+          "hit": false,
+          "return": 0,
+          "profit": -200
+        },
+        {
+          "ticket": "1-3-4",
+          "amount": 200,
+          "group": "押さえ",
+          "risk": "中リスク",
+          "reason": "3着に△が入る形",
+          "probability": 0.01569,
+          "hit": false,
+          "return": 0,
+          "profit": -200
+        },
+        {
+          "ticket": "1-4-3",
+          "amount": 100,
+          "group": "押さえ",
+          "risk": "中リスク",
+          "reason": "2着に△が浮上する形",
+          "probability": 0.01446,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "2-1-3",
+          "amount": 100,
+          "group": "穴狙い",
+          "risk": "高リスク",
+          "reason": "▲が1着に来る波乱",
+          "probability": 0.01714,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "1-2-4",
+          "amount": 100,
+          "group": "穴狙い",
+          "risk": "高リスク",
+          "reason": "3着に△が絡む形",
+          "probability": 0.01382,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "1-3-5",
+          "amount": 100,
+          "group": "穴狙い",
+          "risk": "高リスク",
+          "reason": "3着に☆が絡む形",
+          "probability": 0.01377,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        }
+      ],
+      "top_boats": [
+        {
+          "rank": 1,
+          "mark": "◎",
+          "boat": 1,
+          "driver": "山田 太郎",
+          "score": 172.0
+        },
+        {
+          "rank": 2,
+          "mark": "○",
+          "boat": 3,
+          "driver": "鈴木 三郎",
+          "score": 146.45
+        },
+        {
+          "rank": 3,
+          "mark": "▲",
+          "boat": 2,
+          "driver": "佐藤 次郎",
+          "score": 133.1
+        }
+      ]
+    },
+    {
+      "stage": "FINAL",
+      "label": "最終予想",
+      "file": "docs/prediction_final.json",
+      "exists": true,
+      "prediction_run_id": "20260514163932",
+      "updated_at": "2026-05-14 16:39:32",
+      "race": {
+        "date": "2026-05-14",
+        "place": "サンプル競艇場",
+        "stadium": "サンプル競艇場",
+        "race_no": "12R",
+        "title": "優勝戦",
+        "deadline": "16:30"
+      },
+      "actual_result": {
+        "trifecta": "1-2-3",
+        "payout_per_100yen": 1250
+      },
+      "summary": {
+        "ticket_count": 8,
+        "hit_count": 1,
+        "hit_rate": 12.5,
+        "total_stake": 1400,
+        "total_return": 3750,
+        "profit": 2350,
+        "roi": 267.86
+      },
+      "tickets": [
+        {
+          "ticket": "1-3-2",
+          "amount": 300,
+          "group": "本線",
+          "risk": "低リスク",
+          "reason": "◎→○→▲ の基本形",
+          "probability": 0.0189,
+          "hit": false,
+          "return": 0,
+          "profit": -300
+        },
+        {
+          "ticket": "1-2-3",
+          "amount": 300,
+          "group": "本線",
+          "risk": "低リスク",
+          "reason": "◎→▲→○ の入れ替わり",
+          "probability": 0.01832,
+          "hit": true,
+          "return": 3750,
+          "profit": 3450
+        },
+        {
+          "ticket": "3-1-2",
+          "amount": 200,
+          "group": "押さえ",
+          "risk": "中リスク",
+          "reason": "○が◎を逆転する形",
+          "probability": 0.01808,
+          "hit": false,
+          "return": 0,
+          "profit": -200
+        },
+        {
+          "ticket": "1-3-4",
+          "amount": 200,
+          "group": "押さえ",
+          "risk": "中リスク",
+          "reason": "3着に△が入る形",
+          "probability": 0.01569,
+          "hit": false,
+          "return": 0,
+          "profit": -200
+        },
+        {
+          "ticket": "1-4-3",
+          "amount": 100,
+          "group": "押さえ",
+          "risk": "中リスク",
+          "reason": "2着に△が浮上する形",
+          "probability": 0.01446,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "2-1-3",
+          "amount": 100,
+          "group": "穴狙い",
+          "risk": "高リスク",
+          "reason": "▲が1着に来る波乱",
+          "probability": 0.01714,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "1-2-4",
+          "amount": 100,
+          "group": "穴狙い",
+          "risk": "高リスク",
+          "reason": "3着に△が絡む形",
+          "probability": 0.01382,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        },
+        {
+          "ticket": "1-3-5",
+          "amount": 100,
+          "group": "穴狙い",
+          "risk": "高リスク",
+          "reason": "3着に☆が絡む形",
+          "probability": 0.01377,
+          "hit": false,
+          "return": 0,
+          "profit": -100
+        }
+      ],
+      "top_boats": [
+        {
+          "rank": 1,
+          "mark": "◎",
+          "boat": 1,
+          "driver": "山田 太郎",
+          "score": 172.0
+        },
+        {
+          "rank": 2,
+          "mark": "○",
+          "boat": 3,
+          "driver": "鈴木 三郎",
+          "score": 146.45
+        },
+        {
+          "rank": 3,
+          "mark": "▲",
+          "boat": 2,
+          "driver": "佐藤 次郎",
+          "score": 133.1
+        }
+      ]
+    }
+  ],
+  "notice": "これは学習用のステージ別評価です。実際の購入や利益を保証するものではありません。"
+}

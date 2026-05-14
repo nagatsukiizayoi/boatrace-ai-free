@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ステージ別評価</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    header {
+      background: linear-gradient(135deg, #be123c, #881337);
+      color: white;
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .info-box {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .small {
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .best-box {
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      color: #9a3412;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 850px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #374151;
+    }
+
+    .ticket {
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .hit {
+      color: #dc2626;
+      font-weight: 900;
+    }
+
+    .miss {
+      color: #6b7280;
+      font-weight: 800;
+    }
+
+    .plus {
+      color: #dc2626;
+      font-weight: 900;
+    }
+
+    .minus {
+      color: #2563eb;
+      font-weight: 900;
+    }
+
+    .zero {
+      color: #111827;
+      font-weight: 900;
+    }
+
+    .missing {
+      color: #991b1b;
+      background: #fee2e2;
+      font-weight: 800;
+    }
+
+    .links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .link-button {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #be123c;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .notice {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 700px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>ステージ別評価</h1>
+    <p>前日夜予想・展示後予想・最終予想を同じ結果で比較します</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>レース結果</h2>
+
+      <div class="summary-grid">
+        <div class="info-box">
+          <div class="info-label">3連単結果</div>
+          <div class="info-value">1-2-3</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">払戻金 / 100円</div>
+          <div class="info-value">1,250円</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">評価日時</div>
+          <div class="info-value">2026-05-14 16:58:48</div>
+        </div>
+      </div>
+
+      
+        <div class="best-box">
+          今回もっとも成績が良かったステージ：
+          <strong>前日夜予想</strong>
+          / 利益 <strong>+2,350円</strong>
+          / 回収率 <strong>267.86%</strong>
+        </div>
+        
+    </section>
+
+    <section class="card">
+      <h2>ステージ別 成績一覧</h2>
+      <p class="notice">スマホの場合は表を左右にスクロールできます。</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ステージ</th>
+            <th>予想更新日時</th>
+            <th>的中</th>
+            <th>買い目数</th>
+            <th>的中数</th>
+            <th>投資額</th>
+            <th>払戻額</th>
+            <th>利益</th>
+            <th>回収率</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr>
+          <td>前日夜予想</td>
+          <td>2026-05-14 16:21:34</td>
+          <td class="hit">的中</td>
+          <td>8点</td>
+          <td>1点</td>
+          <td>1,400円</td>
+          <td>3,750円</td>
+          <td class="plus">+2,350円</td>
+          <td>267.86%</td>
+        </tr>
+        
+            <tr>
+              <td>当日朝予想</td>
+              <td colspan="8" class="missing">予想ファイルなし</td>
+            </tr>
+            
+            <tr>
+              <td>展示前予想</td>
+              <td colspan="8" class="missing">予想ファイルなし</td>
+            </tr>
+            
+        <tr>
+          <td>展示後予想</td>
+          <td>2026-05-14 16:37:22</td>
+          <td class="hit">的中</td>
+          <td>8点</td>
+          <td>1点</td>
+          <td>1,400円</td>
+          <td>3,750円</td>
+          <td class="plus">+2,350円</td>
+          <td>267.86%</td>
+        </tr>
+        
+        <tr>
+          <td>最終予想</td>
+          <td>2026-05-14 16:39:32</td>
+          <td class="hit">的中</td>
+          <td>8点</td>
+          <td>1点</td>
+          <td>1,400円</td>
+          <td>3,750円</td>
+          <td class="plus">+2,350円</td>
+          <td>267.86%</td>
+        </tr>
+        
+        </tbody>
+      </table>
+    </section>
+
+    
+        <section class="card">
+          <h2>前日夜予想</h2>
+
+          <div class="summary-grid">
+            <div class="info-box">
+              <div class="info-label">的中数</div>
+              <div class="info-value">1点</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">投資額</div>
+              <div class="info-value">1,400円</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">払戻額</div>
+              <div class="info-value">3,750円</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">利益</div>
+              <div class="info-value plus">+2,350円</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">回収率</div>
+              <div class="info-value">267.86%</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">上位艇</div>
+              <div class="info-value small">◎1号艇 山田 太郎 (148.5)<br>○3号艇 鈴木 三郎 (127.45)<br>▲2号艇 佐藤 次郎 (121.6)</div>
+            </div>
+          </div>
+
+          <h3>買い目ごとの結果</h3>
+          
+    <table>
+      <thead>
+        <tr>
+          <th>分類</th>
+          <th>買い目</th>
+          <th>金額</th>
+          <th>結果</th>
+          <th>払戻</th>
+          <th>損益</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>本線</td>
+          <td class="ticket">1-3-2</td>
+          <td>300円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-300円</td>
+        </tr>
+        
+        <tr>
+          <td>本線</td>
+          <td class="ticket">1-2-3</td>
+          <td>300円</td>
+          <td class="hit">的中</td>
+          <td>3,750円</td>
+          <td class="plus">+3,450円</td>
+        </tr>
+        
+        <tr>
+          <td>押さえ</td>
+          <td class="ticket">3-1-2</td>
+          <td>200円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-200円</td>
+        </tr>
+        
+        <tr>
+          <td>押さえ</td>
+          <td class="ticket">1-3-4</td>
+          <td>200円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-200円</td>
+        </tr>
+        
+        <tr>
+          <td>押さえ</td>
+          <td class="ticket">1-4-3</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+        <tr>
+          <td>穴狙い</td>
+          <td class="ticket">2-1-3</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+        <tr>
+          <td>穴狙い</td>
+          <td class="ticket">1-2-4</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+        <tr>
+          <td>穴狙い</td>
+          <td class="ticket">1-3-5</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+      </tbody>
+    </table>
+    
+        </section>
+        
+        <section class="card">
+          <h2>展示後予想</h2>
+
+          <div class="summary-grid">
+            <div class="info-box">
+              <div class="info-label">的中数</div>
+              <div class="info-value">1点</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">投資額</div>
+              <div class="info-value">1,400円</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">払戻額</div>
+              <div class="info-value">3,750円</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">利益</div>
+              <div class="info-value plus">+2,350円</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">回収率</div>
+              <div class="info-value">267.86%</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">上位艇</div>
+              <div class="info-value small">◎1号艇 山田 太郎 (172.0)<br>○3号艇 鈴木 三郎 (146.45)<br>▲2号艇 佐藤 次郎 (133.1)</div>
+            </div>
+          </div>
+
+          <h3>買い目ごとの結果</h3>
+          
+    <table>
+      <thead>
+        <tr>
+          <th>分類</th>
+          <th>買い目</th>
+          <th>金額</th>
+          <th>結果</th>
+          <th>払戻</th>
+          <th>損益</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>本線</td>
+          <td class="ticket">1-3-2</td>
+          <td>300円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-300円</td>
+        </tr>
+        
+        <tr>
+          <td>本線</td>
+          <td class="ticket">1-2-3</td>
+          <td>300円</td>
+          <td class="hit">的中</td>
+          <td>3,750円</td>
+          <td class="plus">+3,450円</td>
+        </tr>
+        
+        <tr>
+          <td>押さえ</td>
+          <td class="ticket">3-1-2</td>
+          <td>200円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-200円</td>
+        </tr>
+        
+        <tr>
+          <td>押さえ</td>
+          <td class="ticket">1-3-4</td>
+          <td>200円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-200円</td>
+        </tr>
+        
+        <tr>
+          <td>押さえ</td>
+          <td class="ticket">1-4-3</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+        <tr>
+          <td>穴狙い</td>
+          <td class="ticket">2-1-3</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+        <tr>
+          <td>穴狙い</td>
+          <td class="ticket">1-2-4</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+        <tr>
+          <td>穴狙い</td>
+          <td class="ticket">1-3-5</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+      </tbody>
+    </table>
+    
+        </section>
+        
+        <section class="card">
+          <h2>最終予想</h2>
+
+          <div class="summary-grid">
+            <div class="info-box">
+              <div class="info-label">的中数</div>
+              <div class="info-value">1点</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">投資額</div>
+              <div class="info-value">1,400円</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">払戻額</div>
+              <div class="info-value">3,750円</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">利益</div>
+              <div class="info-value plus">+2,350円</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">回収率</div>
+              <div class="info-value">267.86%</div>
+            </div>
+
+            <div class="info-box">
+              <div class="info-label">上位艇</div>
+              <div class="info-value small">◎1号艇 山田 太郎 (172.0)<br>○3号艇 鈴木 三郎 (146.45)<br>▲2号艇 佐藤 次郎 (133.1)</div>
+            </div>
+          </div>
+
+          <h3>買い目ごとの結果</h3>
+          
+    <table>
+      <thead>
+        <tr>
+          <th>分類</th>
+          <th>買い目</th>
+          <th>金額</th>
+          <th>結果</th>
+          <th>払戻</th>
+          <th>損益</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>本線</td>
+          <td class="ticket">1-3-2</td>
+          <td>300円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-300円</td>
+        </tr>
+        
+        <tr>
+          <td>本線</td>
+          <td class="ticket">1-2-3</td>
+          <td>300円</td>
+          <td class="hit">的中</td>
+          <td>3,750円</td>
+          <td class="plus">+3,450円</td>
+        </tr>
+        
+        <tr>
+          <td>押さえ</td>
+          <td class="ticket">3-1-2</td>
+          <td>200円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-200円</td>
+        </tr>
+        
+        <tr>
+          <td>押さえ</td>
+          <td class="ticket">1-3-4</td>
+          <td>200円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-200円</td>
+        </tr>
+        
+        <tr>
+          <td>押さえ</td>
+          <td class="ticket">1-4-3</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+        <tr>
+          <td>穴狙い</td>
+          <td class="ticket">2-1-3</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+        <tr>
+          <td>穴狙い</td>
+          <td class="ticket">1-2-4</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+        <tr>
+          <td>穴狙い</td>
+          <td class="ticket">1-3-5</td>
+          <td>100円</td>
+          <td class="miss">不的中</td>
+          <td>0円</td>
+          <td class="minus">-100円</td>
+        </tr>
+        
+      </tbody>
+    </table>
+    
+        </section>
+        
+
+    <section class="card">
+      <h2>ページ移動</h2>
+
+      <div class="links">
+        <a class="link-button" href="./index.html">予想ページへ</a>
+        <a class="link-button" href="./compare.html">予想比較へ</a>
+        <a class="link-button" href="./evaluation.html">直近評価へ</a>
+        <a class="link-button" href="./history.html">過去成績へ</a>
+        <a class="link-button" href="./charts.html">成績グラフへ</a>
+        <a class="link-button" href="./stage_evaluation.json">ステージ評価JSON</a>
+      </div>
+    </section>
+
+    <section class="card notice">
+      これは学習用のステージ別評価です。実際の購入や利益を保証するものではありません。
+    </section>
+  </main>
+</body>
+</html>
