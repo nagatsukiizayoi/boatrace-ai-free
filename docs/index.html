@@ -33,7 +33,7 @@
     }
 
     main {
-      max-width: 1100px;
+      max-width: 1150px;
       margin: 0 auto;
       padding: 16px;
     }
@@ -101,7 +101,9 @@
       background: linear-gradient(135deg, #475569, #94a3b8);
     }
 
-    .race-grid {
+    .race-grid,
+    .weather-grid,
+    .stage-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
@@ -122,6 +124,23 @@
     .info-value {
       font-size: 17px;
       font-weight: 800;
+    }
+
+    .stage-badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #0f766e;
+      color: white;
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .stage-description {
+      margin-top: 10px;
+      color: #4b5563;
+      font-size: 14px;
+      line-height: 1.7;
     }
 
     .prediction-list {
@@ -183,6 +202,7 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 8px;
+      margin-bottom: 10px;
     }
 
     .detail-box {
@@ -200,6 +220,32 @@
     .detail-value {
       margin-top: 3px;
       font-weight: 800;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .score-box {
+      background: #ecfdf5;
+      border: 1px solid #bbf7d0;
+      border-radius: 10px;
+      padding: 8px;
+      text-align: center;
+    }
+
+    .score-label {
+      font-size: 11px;
+      color: #047857;
+    }
+
+    .score-value {
+      margin-top: 3px;
+      font-weight: 900;
+      color: #064e3b;
     }
 
     .confidence-wrap {
@@ -263,7 +309,7 @@
 
     .ticket-item {
       display: grid;
-      grid-template-columns: 110px 90px 1fr;
+      grid-template-columns: 110px 90px 90px 1fr;
       gap: 8px;
       align-items: center;
       border-bottom: 1px solid #e5e7eb;
@@ -284,6 +330,12 @@
       color: #dc2626;
     }
 
+    .ticket-prob {
+      font-weight: 800;
+      color: #0f766e;
+      font-size: 13px;
+    }
+
     .ticket-reason {
       color: #4b5563;
       font-size: 13px;
@@ -293,8 +345,8 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 14px;
-      min-width: 850px;
+      font-size: 13px;
+      min-width: 1100px;
     }
 
     th, td {
@@ -307,12 +359,30 @@
     th {
       background: #f9fafb;
       color: #374151;
+      position: sticky;
+      top: 0;
+      z-index: 1;
     }
 
     .table-mark {
       font-weight: 900;
       color: #dc2626;
       font-size: 18px;
+    }
+
+    .score-plus {
+      color: #dc2626;
+      font-weight: 800;
+    }
+
+    .score-minus {
+      color: #2563eb;
+      font-weight: 800;
+    }
+
+    .score-zero {
+      color: #6b7280;
+      font-weight: 800;
     }
 
     .notice {
@@ -347,11 +417,17 @@
         grid-template-columns: 1fr;
       }
 
-      .race-grid {
+      .race-grid,
+      .weather-grid,
+      .stage-grid {
         grid-template-columns: 1fr;
       }
 
       .detail-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .score-grid {
         grid-template-columns: repeat(2, 1fr);
       }
 
@@ -365,7 +441,7 @@
 <body>
   <header>
     <h1>ボートレースAI予想</h1>
-    <p>CSV・JSON・GitHub Actionsで作る学習用予想システム</p>
+    <p>前日予想・当日情報・展示後更新に対応した学習用ページ</p>
   </header>
 
   <main>
@@ -398,10 +474,32 @@
           <div class="menu-button-sub">プログラムが生成した予想データを確認します。</div>
         </a>
 
-        <a class="menu-button menu-json" href="./evaluation_history.json">
-          <div class="menu-button-title">履歴JSON</div>
-          <div class="menu-button-sub">過去成績の元データを確認します。</div>
+        <a class="menu-button menu-json" href="./race_update.json">
+          <div class="menu-button-title">当日情報JSON</div>
+          <div class="menu-button-sub">水面・展示・オッズの入力データを確認します。</div>
         </a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>予想ステージ</h2>
+
+      <div class="stage-grid">
+        <div class="info-box">
+          <div class="info-label">現在のステージ</div>
+          <div class="info-value">
+            <span id="stage-badge" class="stage-badge">読み込み中...</span>
+          </div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">ステージの意味</div>
+          <div class="info-value" id="stage-label">読み込み中...</div>
+        </div>
+      </div>
+
+      <div class="stage-description" id="stage-description">
+        ステージ説明を読み込み中...
       </div>
     </section>
 
@@ -425,8 +523,49 @@
         </div>
 
         <div class="info-box">
+          <div class="info-label">締切予定</div>
+          <div class="info-value" id="deadline">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">タイトル</div>
+          <div class="info-value" id="race-title">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
           <div class="info-label">更新日時</div>
           <div class="info-value" id="updated-at">読み込み中...</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>水面・天候情報</h2>
+
+      <div class="weather-grid">
+        <div class="info-box">
+          <div class="info-label">天気</div>
+          <div class="info-value" id="weather">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">風向き</div>
+          <div class="info-value" id="wind-direction">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">風速</div>
+          <div class="info-value" id="wind-speed">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">波高</div>
+          <div class="info-value" id="wave-height">読み込み中...</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">気温</div>
+          <div class="info-value" id="temperature">読み込み中...</div>
         </div>
       </div>
     </section>
@@ -451,7 +590,11 @@
     </section>
 
     <section class="card">
-      <h2>全艇評価</h2>
+      <h2>全艇評価・当日情報・スコア内訳</h2>
+      <p class="notice">
+        横に長い表です。スマホの場合は左右にスクロールできます。
+      </p>
+
       <div id="all-boats">
         <div class="loading">全艇評価を読み込み中...</div>
       </div>
@@ -485,6 +628,19 @@
       return num.toLocaleString("ja-JP") + "円";
     }
 
+    function percentFromProb(value) {
+      const num = Number(value || 0);
+      return (num * 100).toFixed(2) + "%";
+    }
+
+    function displayValue(value, suffix = "", emptyText = "-") {
+      if (value === null || value === undefined || value === "") {
+        return emptyText;
+      }
+
+      return escapeHtml(value) + suffix;
+    }
+
     function getPlace(race) {
       if (!race) return "未設定";
       return race.place || race.stadium || race.venue || "未設定";
@@ -508,6 +664,46 @@
       return "risk-default";
     }
 
+    function scoreClass(value) {
+      const num = Number(value || 0);
+
+      if (num > 0) return "score-plus";
+      if (num < 0) return "score-minus";
+      return "score-zero";
+    }
+
+    function stageInfo(stage) {
+      const s = String(stage || "PRE_NIGHT");
+
+      const map = {
+        "PRE_NIGHT": {
+          label: "前日夜予想",
+          description: "出走表・選手勝率・モーター率・平均STなど、前日までに分かる情報だけで作る予想です。"
+        },
+        "MORNING": {
+          label: "当日朝予想",
+          description: "当日の天気や初期情報を少し加えて更新した予想です。"
+        },
+        "PRE_EXHIBITION": {
+          label: "展示前予想",
+          description: "展示走行前の段階で、当日の水面情報などを反映した予想です。"
+        },
+        "POST_EXHIBITION": {
+          label: "展示後予想",
+          description: "展示タイム・展示ST・チルトなどを反映した、より当日に近い予想です。"
+        },
+        "FINAL": {
+          label: "締切前最終予想",
+          description: "展示情報・水面情報・オッズを反映した最終確認用の予想です。"
+        }
+      };
+
+      return map[s] || {
+        label: s,
+        description: "未定義のステージです。race_update.json の stage を確認してください。"
+      };
+    }
+
     async function loadPrediction() {
       try {
         const response = await fetch("./prediction.json?cache=" + Date.now());
@@ -518,7 +714,9 @@
 
         const data = await response.json();
 
+        renderStage(data);
         renderRace(data);
+        renderWeather(data.weather || {});
         renderPredictions(data.predictions || []);
         renderTickets(data);
         renderAllBoats(data.all_boats || []);
@@ -541,13 +739,47 @@
       }
     }
 
+    function renderStage(data) {
+      const stage = data.stage || "PRE_NIGHT";
+      const info = stageInfo(stage);
+
+      document.getElementById("stage-badge").textContent = stage;
+      document.getElementById("stage-label").textContent = info.label;
+      document.getElementById("stage-description").textContent = info.description;
+    }
+
     function renderRace(data) {
       const race = data.race || {};
 
       document.getElementById("race-date").textContent = race.date || "未設定";
       document.getElementById("race-place").textContent = getPlace(race);
       document.getElementById("race-no").textContent = race.race_no || "未設定";
+      document.getElementById("deadline").textContent = race.deadline || "未設定";
+      document.getElementById("race-title").textContent = race.title || "未設定";
       document.getElementById("updated-at").textContent = data.updated_at || "未設定";
+    }
+
+    function renderWeather(weather) {
+      document.getElementById("weather").textContent = weather.weather || "未設定";
+      document.getElementById("wind-direction").textContent = weather.wind_direction || "未設定";
+
+      if (weather.wind_speed === undefined || weather.wind_speed === null || weather.wind_speed === "") {
+        document.getElementById("wind-speed").textContent = "未設定";
+      } else {
+        document.getElementById("wind-speed").textContent = weather.wind_speed + "m";
+      }
+
+      if (weather.wave_height === undefined || weather.wave_height === null || weather.wave_height === "") {
+        document.getElementById("wave-height").textContent = "未設定";
+      } else {
+        document.getElementById("wave-height").textContent = weather.wave_height + "cm";
+      }
+
+      if (weather.temperature === undefined || weather.temperature === null || weather.temperature === "") {
+        document.getElementById("temperature").textContent = "未設定";
+      } else {
+        document.getElementById("temperature").textContent = weather.temperature + "℃";
+      }
     }
 
     function renderPredictions(predictions) {
@@ -593,7 +825,7 @@
             </div>
 
             <div class="detail-box">
-              <div class="detail-label">スコア</div>
+              <div class="detail-label">総合スコア</div>
               <div class="detail-value">${escapeHtml(item.score || "-")}</div>
             </div>
 
@@ -603,6 +835,33 @@
               <div class="confidence-wrap">
                 <div class="confidence-bar" style="width:${Math.max(0, Math.min(100, confidence))}%"></div>
               </div>
+            </div>
+          </div>
+
+          <div class="score-grid">
+            <div class="score-box">
+              <div class="score-label">基本</div>
+              <div class="score-value">${displayValue(item.base_score)}</div>
+            </div>
+
+            <div class="score-box">
+              <div class="score-label">水面</div>
+              <div class="score-value ${scoreClass(item.weather_score)}">${displayValue(item.weather_score)}</div>
+            </div>
+
+            <div class="score-box">
+              <div class="score-label">展示</div>
+              <div class="score-value ${scoreClass(item.exhibition_score)}">${displayValue(item.exhibition_score)}</div>
+            </div>
+
+            <div class="score-box">
+              <div class="score-label">オッズ</div>
+              <div class="score-value ${scoreClass(item.odds_score)}">${displayValue(item.odds_score)}</div>
+            </div>
+
+            <div class="score-box">
+              <div class="score-label">総合</div>
+              <div class="score-value">${displayValue(item.score)}</div>
             </div>
           </div>
         `;
@@ -636,6 +895,7 @@
               <div class="ticket-item">
                 <div class="ticket-number">${escapeHtml(ticket.ticket)}</div>
                 <div class="ticket-amount">${yen(ticket.amount || 100)}</div>
+                <div class="ticket-prob">確率 ${percentFromProb(ticket.probability)}</div>
                 <div class="ticket-reason">${escapeHtml(ticket.reason || "")}</div>
               </div>
             `;
@@ -672,6 +932,7 @@
             <div class="ticket-item">
               <div class="ticket-number">${escapeHtml(ticket)}</div>
               <div class="ticket-amount">100円</div>
+              <div class="ticket-prob">確率 -</div>
               <div class="ticket-reason">通常買い目</div>
             </div>
           `;
@@ -701,7 +962,7 @@
         container.innerHTML = `
           <div class="loading">
             全艇評価データがありません。<br>
-            STEP 7以降の make_prediction.py で all_boats を出力しているか確認してください。
+            STEP 15 の make_prediction.py で all_boats を出力しているか確認してください。
           </div>
         `;
         return;
@@ -713,15 +974,33 @@
         rows += `
           <tr>
             <td>${escapeHtml(boat.rank || "")}</td>
-            <td><span class="table-mark">${escapeHtml(boat.mark || "")}</span><br>${escapeHtml(boat.mark_name || "")}</td>
+            <td>
+              <span class="table-mark">${escapeHtml(boat.mark || "")}</span><br>
+              ${escapeHtml(boat.mark_name || "")}
+            </td>
             <td>${escapeHtml(boat.boat)}号艇</td>
             <td>${escapeHtml(boat.driver || "")}</td>
             <td>${escapeHtml(boat.course || boat.boat)}</td>
-            <td>${escapeHtml(boat.win_rate || "")}</td>
-            <td>${escapeHtml(boat.motor_rate || "")}</td>
-            <td>${escapeHtml(boat.avg_st || "")}</td>
-            <td>${escapeHtml(boat.score || "")}</td>
-            <td>${escapeHtml(boat.confidence || "")}%</td>
+
+            <td>${displayValue(boat.win_rate)}</td>
+            <td>${displayValue(boat.motor_rate, "%")}</td>
+            <td>${displayValue(boat.avg_st)}</td>
+
+            <td>${displayValue(boat.exhibition_time)}</td>
+            <td>${displayValue(boat.exhibition_time_rank, "位")}</td>
+
+            <td>${displayValue(boat.exhibition_st)}</td>
+            <td>${displayValue(boat.exhibition_st_rank, "位")}</td>
+
+            <td>${displayValue(boat.tilt)}</td>
+            <td>${displayValue(boat.win_odds)}</td>
+
+            <td>${displayValue(boat.base_score)}</td>
+            <td class="${scoreClass(boat.weather_score)}">${displayValue(boat.weather_score)}</td>
+            <td class="${scoreClass(boat.exhibition_score)}">${displayValue(boat.exhibition_score)}</td>
+            <td class="${scoreClass(boat.odds_score)}">${displayValue(boat.odds_score)}</td>
+            <td>${displayValue(boat.score)}</td>
+            <td>${displayValue(boat.confidence, "%")}</td>
           </tr>
         `;
       });
@@ -735,10 +1014,25 @@
               <th>艇番</th>
               <th>選手名</th>
               <th>コース</th>
+
               <th>勝率</th>
               <th>モーター率</th>
               <th>平均ST</th>
-              <th>スコア</th>
+
+              <th>展示T</th>
+              <th>展示T順位</th>
+
+              <th>展示ST</th>
+              <th>展示ST順位</th>
+
+              <th>チルト</th>
+              <th>単勝オッズ</th>
+
+              <th>基本</th>
+              <th>水面</th>
+              <th>展示</th>
+              <th>オッズ</th>
+              <th>総合</th>
               <th>信頼度</th>
             </tr>
           </thead>
