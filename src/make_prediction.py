@@ -244,31 +244,135 @@ def make_predictions(boats):
     return predictions
 
 
-def make_tickets(boats):
+def ticket_text(a, b, c):
     """
-    買い目候補を作ります。
-    STEP 8ではシンプルな買い目にしています。
-    STEP 9で本線・押さえ・穴狙いに分けて強化します。
+    3連単の買い目文字列を作ります。
+    """
+    return f"{a}-{b}-{c}"
+
+
+def make_ticket_groups(boats):
+    """
+    買い目を 本線・押さえ・穴狙い に分けて作ります。
+
+    STEP 9の考え方：
+    - 本線：◎を1着に固定して、○・▲を中心にする
+    - 押さえ：○や▲の逆転も少し見る
+    - 穴狙い：△や☆が3着以内に来るパターンを見る
     """
 
     if len(boats) < 3:
         return []
 
-    first = boats[0]["boat"]
-    second = boats[1]["boat"]
-    third = boats[2]["boat"]
+    first = boats[0]
+    second = boats[1]
+    third = boats[2]
+    fourth = boats[3] if len(boats) >= 4 else boats[2]
+    fifth = boats[4] if len(boats) >= 5 else boats[2]
 
-    fourth = boats[3]["boat"] if len(boats) >= 4 else third
+    first_no = first["boat"]
+    second_no = second["boat"]
+    third_no = third["boat"]
+    fourth_no = fourth["boat"]
+    fifth_no = fifth["boat"]
 
-    tickets = [
-        f"{first}-{second}-{third}",
-        f"{first}-{third}-{second}",
-        f"{second}-{first}-{third}",
-        f"{first}-{second}-{fourth}",
-        f"{third}-{first}-{second}",
+    ticket_groups = [
+        {
+            "name": "本線",
+            "description": "AI評価上位の◎・○・▲を中心にした買い目です。",
+            "risk": "低め",
+            "tickets": [
+                {
+                    "ticket": ticket_text(first_no, second_no, third_no),
+                    "reason": "◎を1着、○を2着、▲を3着にした基本形",
+                    "amount": 400,
+                },
+                {
+                    "ticket": ticket_text(first_no, third_no, second_no),
+                    "reason": "◎を1着固定、○と▲の2・3着入れ替え",
+                    "amount": 300,
+                },
+                {
+                    "ticket": ticket_text(first_no, second_no, fourth_no),
+                    "reason": "◎と○を信頼し、3着に△を入れる形",
+                    "amount": 200,
+                },
+            ],
+        },
+        {
+            "name": "押さえ",
+            "description": "○や▲が1着に来る展開も少し押さえます。",
+            "risk": "中",
+            "tickets": [
+                {
+                    "ticket": ticket_text(second_no, first_no, third_no),
+                    "reason": "○が◎を逆転するパターン",
+                    "amount": 200,
+                },
+                {
+                    "ticket": ticket_text(third_no, first_no, second_no),
+                    "reason": "▲が攻めて1着になるパターン",
+                    "amount": 100,
+                },
+                {
+                    "ticket": ticket_text(second_no, third_no, first_no),
+                    "reason": "◎が3着に残る押さえパターン",
+                    "amount": 100,
+                },
+            ],
+        },
+        {
+            "name": "穴狙い",
+            "description": "△や☆が絡んで配当が上がる可能性を狙います。",
+            "risk": "高め",
+            "tickets": [
+                {
+                    "ticket": ticket_text(first_no, fourth_no, second_no),
+                    "reason": "◎を1着固定、△が2着に入る穴寄りの形",
+                    "amount": 100,
+                },
+                {
+                    "ticket": ticket_text(first_no, second_no, fifth_no),
+                    "reason": "◎・○から、3着に☆を入れる形",
+                    "amount": 100,
+                },
+                {
+                    "ticket": ticket_text(fourth_no, first_no, second_no),
+                    "reason": "△の一発を狙う高配当パターン",
+                    "amount": 100,
+                },
+            ],
+        },
     ]
 
+    return ticket_groups
+
+
+def flatten_tickets(ticket_groups):
+    """
+    ticket_groups から買い目だけのリストも作ります。
+    古い表示形式との互換用です。
+    """
+    tickets = []
+
+    for group in ticket_groups:
+        for item in group.get("tickets", []):
+            tickets.append(item.get("ticket"))
+
     return tickets
+
+
+def calculate_total_amount(ticket_groups):
+    """
+    推奨購入金額の合計を計算します。
+    """
+    total = 0
+
+    for group in ticket_groups:
+        for item in group.get("tickets", []):
+            total += int(item.get("amount", 0))
+
+    return total
 
 
 def build_prediction_json():
@@ -297,7 +401,11 @@ def build_prediction_json():
     boats = make_confidence_scores(boats)
 
     predictions = make_predictions(boats)
-    tickets = make_tickets(boats)
+
+    # STEP 9：買い目をグループ化
+    ticket_groups = make_ticket_groups(boats)
+    tickets = flatten_tickets(ticket_groups)
+    total_amount = calculate_total_amount(ticket_groups)
 
     result = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -308,7 +416,9 @@ def build_prediction_json():
         },
         "predictions": predictions,
         "all_boats": boats,
+        "ticket_groups": ticket_groups,
         "tickets": tickets,
+        "total_amount": total_amount,
     }
 
     return result
@@ -336,3 +446,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
