@@ -1,37 +1,94 @@
 {
-  "updated_at": "2026-05-14 10:40:34",
+  "generated_at": "2026-05-14T05:56:20.520130+00:00",
   "race": {
-    "date": "",
-    "stadium": "桐生",
-    "race_no": "12R"
+    "place": "サンプル競艇場",
+    "race_no": "12R",
+    "title": "AI予想"
   },
   "predictions": [
     {
       "rank": 1,
+      "mark": "◎",
+      "mark_name": "本命",
       "boat": 1,
       "course": 1,
       "driver": "選手A",
       "label": "1着候補",
-      "confidence": 95,
-      "score": 134.64
+      "win_rate": 7.2,
+      "motor_rate": 45.0,
+      "avg_st": 0.13,
+      "score": 156.0,
+      "confidence": 95
     },
     {
       "rank": 2,
-      "boat": 2,
-      "course": 2,
-      "driver": "選手B",
-      "label": "2着候補",
-      "confidence": 81,
-      "score": 117.46
-    },
-    {
-      "rank": 3,
+      "mark": "○",
+      "mark_name": "対抗",
       "boat": 3,
       "course": 3,
       "driver": "選手C",
+      "label": "2着候補",
+      "win_rate": 6.6,
+      "motor_rate": 41.5,
+      "avg_st": 0.14,
+      "score": 133.8,
+      "confidence": 88
+    },
+    {
+      "rank": 3,
+      "mark": "▲",
+      "mark_name": "単穴",
+      "boat": 2,
+      "course": 2,
+      "driver": "選手B",
       "label": "3着候補",
-      "confidence": 75,
-      "score": 110.85
+      "win_rate": 6.1,
+      "motor_rate": 38.0,
+      "avg_st": 0.15,
+      "score": 126.6,
+      "confidence": 80
+    },
+    {
+      "rank": 4,
+      "mark": "△",
+      "mark_name": "連下",
+      "boat": 4,
+      "course": 4,
+      "driver": "選手D",
+      "label": "4着候補",
+      "win_rate": 5.8,
+      "motor_rate": 35.0,
+      "avg_st": 0.16,
+      "score": 113.0,
+      "confidence": 70
+    },
+    {
+      "rank": 5,
+      "mark": "☆",
+      "mark_name": "穴",
+      "boat": 5,
+      "course": 5,
+      "driver": "選手E",
+      "label": "5着候補",
+      "win_rate": 5.2,
+      "motor_rate": 33.0,
+      "avg_st": 0.17,
+      "score": 100.6,
+      "confidence": 60
+    },
+    {
+      "rank": 6,
+      "mark": "×",
+      "mark_name": "押さえ",
+      "boat": 6,
+      "course": 6,
+      "driver": "選手F",
+      "label": "6着候補",
+      "win_rate": 4.9,
+      "motor_rate": 29.0,
+      "avg_st": 0.18,
+      "score": 90.8,
+      "confidence": 50
     }
   ],
   "all_boats": [
@@ -39,75 +96,86 @@
       "boat": 1,
       "course": 1,
       "driver": "選手A",
-      "win_rate": 7.1,
-      "motor_rate": 43.2,
-      "avg_st": 0.14,
-      "score": 134.64,
+      "win_rate": 7.2,
+      "motor_rate": 45.0,
+      "avg_st": 0.13,
+      "score": 156.0,
       "rank": 1,
+      "mark": "◎",
+      "mark_name": "本命",
       "confidence": 95
-    },
-    {
-      "boat": 2,
-      "course": 2,
-      "driver": "選手B",
-      "win_rate": 6.4,
-      "motor_rate": 39.8,
-      "avg_st": 0.16,
-      "score": 117.46,
-      "rank": 2,
-      "confidence": 81
     },
     {
       "boat": 3,
       "course": 3,
       "driver": "選手C",
-      "win_rate": 5.9,
+      "win_rate": 6.6,
       "motor_rate": 41.5,
+      "avg_st": 0.14,
+      "score": 133.8,
+      "rank": 2,
+      "mark": "○",
+      "mark_name": "対抗",
+      "confidence": 88
+    },
+    {
+      "boat": 2,
+      "course": 2,
+      "driver": "選手B",
+      "win_rate": 6.1,
+      "motor_rate": 38.0,
       "avg_st": 0.15,
-      "score": 110.85,
+      "score": 126.6,
       "rank": 3,
-      "confidence": 75
+      "mark": "▲",
+      "mark_name": "単穴",
+      "confidence": 80
     },
     {
       "boat": 4,
       "course": 4,
       "driver": "選手D",
-      "win_rate": 5.2,
-      "motor_rate": 36.7,
-      "avg_st": 0.18,
-      "score": 93.49,
+      "win_rate": 5.8,
+      "motor_rate": 35.0,
+      "avg_st": 0.16,
+      "score": 113.0,
       "rank": 4,
-      "confidence": 61
+      "mark": "△",
+      "mark_name": "連下",
+      "confidence": 70
     },
     {
       "boat": 5,
       "course": 5,
       "driver": "選手E",
-      "win_rate": 4.8,
-      "motor_rate": 33.1,
+      "win_rate": 5.2,
+      "motor_rate": 33.0,
       "avg_st": 0.17,
-      "score": 85.37,
+      "score": 100.6,
       "rank": 5,
-      "confidence": 54
+      "mark": "☆",
+      "mark_name": "穴",
+      "confidence": 60
     },
     {
       "boat": 6,
       "course": 6,
       "driver": "選手F",
-      "win_rate": 4.5,
-      "motor_rate": 35.4,
-      "avg_st": 0.19,
-      "score": 79.98,
+      "win_rate": 4.9,
+      "motor_rate": 29.0,
+      "avg_st": 0.18,
+      "score": 90.8,
       "rank": 6,
+      "mark": "×",
+      "mark_name": "押さえ",
       "confidence": 50
     }
   ],
   "tickets": [
-    "1-2-3",
     "1-3-2",
-    "2-1-3",
-    "1-2-4",
-    "1-4-2"
-  ],
-  "notice": "この予想はCSVデータを使った学習用の簡易予想です。実際の的中や利益を保証するものではありません。"
+    "1-2-3",
+    "3-1-2",
+    "1-3-4",
+    "2-1-3"
+  ]
 }
