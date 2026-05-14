@@ -183,21 +183,106 @@
       border-radius: 999px;
     }
 
-    .ticket-list {
+    .ticket-summary {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 16px;
+      color: #1e3a8a;
+      font-weight: bold;
+    }
+
+    .ticket-groups {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .ticket-group {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #ffffff;
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+    }
+
+    .ticket-group-header {
+      padding: 14px;
+      color: white;
+    }
+
+    .ticket-group-header.main {
+      background: linear-gradient(135deg, #dc2626, #f97316);
+    }
+
+    .ticket-group-header.cover {
+      background: linear-gradient(135deg, #2563eb, #06b6d4);
+    }
+
+    .ticket-group-header.longshot {
+      background: linear-gradient(135deg, #7c3aed, #db2777);
+    }
+
+    .ticket-group-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .ticket-group-description {
+      font-size: 13px;
+      opacity: 0.95;
+    }
+
+    .risk-badge {
+      display: inline-block;
+      margin-top: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .ticket-items {
+      padding: 14px;
+      display: grid;
       gap: 12px;
     }
 
-    .ticket {
+    .ticket-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      background: #f9fafb;
+    }
+
+    .ticket-number {
+      display: inline-block;
       background: #0f172a;
       color: white;
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 10px;
+      padding: 8px 12px;
       text-align: center;
       font-size: 22px;
       font-weight: bold;
       letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .ticket-reason {
+      color: #374151;
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .ticket-amount {
+      color: #dc2626;
+      font-weight: bold;
+      font-size: 14px;
     }
 
     .table-wrap {
@@ -303,7 +388,7 @@
 
     <section class="section">
       <h2>買い目候補</h2>
-      <div id="tickets" class="ticket-list">
+      <div id="tickets">
         <div class="loading">買い目を読み込み中...</div>
       </div>
     </section>
@@ -368,6 +453,16 @@
       }
 
       return number.toFixed(digits);
+    }
+
+    function formatYen(value) {
+      const number = Number(value);
+
+      if (Number.isNaN(number)) {
+        return "0円";
+      }
+
+      return `${number.toLocaleString()}円`;
     }
 
     function renderRaceInfo(data) {
@@ -461,22 +556,76 @@
       });
     }
 
-    function renderTickets(tickets) {
-      const container = document.getElementById("tickets");
+    function headerClassByGroupName(name) {
+      if (name === "本線") {
+        return "main";
+      }
 
-      if (!Array.isArray(tickets) || tickets.length === 0) {
+      if (name === "押さえ") {
+        return "cover";
+      }
+
+      return "longshot";
+    }
+
+    function renderTicketGroups(data) {
+      const container = document.getElementById("tickets");
+      const ticketGroups = data.ticket_groups || [];
+      const totalAmount = data.total_amount || 0;
+
+      if (!Array.isArray(ticketGroups) || ticketGroups.length === 0) {
         container.innerHTML = '<div class="error">買い目データがありません。</div>';
         return;
       }
 
       container.innerHTML = "";
 
-      tickets.forEach((ticket) => {
-        const div = document.createElement("div");
-        div.className = "ticket";
-        div.textContent = ticket;
-        container.appendChild(div);
+      const summary = document.createElement("div");
+      summary.className = "ticket-summary";
+      summary.textContent = `推奨購入金額の合計：${formatYen(totalAmount)}`;
+      container.appendChild(summary);
+
+      const groupsWrap = document.createElement("div");
+      groupsWrap.className = "ticket-groups";
+
+      ticketGroups.forEach((group) => {
+        const groupDiv = document.createElement("div");
+        groupDiv.className = "ticket-group";
+
+        const name = group.name || "買い目";
+        const description = group.description || "";
+        const risk = group.risk || "-";
+        const headerClass = headerClassByGroupName(name);
+        const tickets = group.tickets || [];
+
+        let ticketsHtml = "";
+
+        tickets.forEach((item) => {
+          ticketsHtml += `
+            <div class="ticket-item">
+              <div class="ticket-number">${escapeHtml(item.ticket || "-")}</div>
+              <div class="ticket-reason">${escapeHtml(item.reason || "")}</div>
+              <div class="ticket-amount">推奨：${escapeHtml(formatYen(item.amount || 0))}</div>
+            </div>
+          `;
+        });
+
+        groupDiv.innerHTML = `
+          <div class="ticket-group-header ${headerClass}">
+            <div class="ticket-group-title">${escapeHtml(name)}</div>
+            <div class="ticket-group-description">${escapeHtml(description)}</div>
+            <div class="risk-badge">リスク：${escapeHtml(risk)}</div>
+          </div>
+
+          <div class="ticket-items">
+            ${ticketsHtml}
+          </div>
+        `;
+
+        groupsWrap.appendChild(groupDiv);
       });
+
+      container.appendChild(groupsWrap);
     }
 
     function renderAllBoats(boats) {
@@ -526,7 +675,7 @@
 
         renderRaceInfo(data);
         renderPredictions(data.predictions || []);
-        renderTickets(data.tickets || []);
+        renderTicketGroups(data);
         renderAllBoats(data.all_boats || data.predictions || []);
       } catch (error) {
         console.error(error);
