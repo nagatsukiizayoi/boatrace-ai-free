@@ -22,11 +22,13 @@ jobs:
       - name: Evaluate prediction result
         run: python src/evaluate_result.py
 
+      - name: Update evaluation history
+        run: python src/update_history.py
+
       - name: Commit evaluation files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/evaluation.json docs/evaluation.html
-          git commit -m "Update evaluation result" || echo "No changes to commit"
+          git add docs/evaluation.json docs/evaluation.html docs/evaluation_history.json docs/history.html
+          git commit -m "Update evaluation result and history" || echo "No changes to commit"
           git push
-
