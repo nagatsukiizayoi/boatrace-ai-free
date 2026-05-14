@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-14 10:22",
+  "updated_at": "2026-05-14 10:29",
   "race": {
     "date": "2026-05-14",
     "stadium": "桐生",
@@ -8,27 +8,40 @@
   "predictions": [
     {
       "rank": 1,
-      "boat": 2,
+      "boat": 1,
+      "course": 1,
+      "driver": "選手A",
       "label": "1着候補",
-      "confidence": 67
+      "confidence": 95,
+      "score": 110.7
     },
     {
       "rank": 2,
-      "boat": 4,
+      "boat": 2,
+      "course": 2,
+      "driver": "選手B",
       "label": "2着候補",
-      "confidence": 67
+      "confidence": 95,
+      "score": 100.97
     },
     {
       "rank": 3,
       "boat": 3,
+      "course": 3,
+      "driver": "選手C",
       "label": "3着候補",
-      "confidence": 64
+      "confidence": 95,
+      "score": 95.2
     }
   ],
   "tickets": [
-    "2-4-3",
-    "2-3-4",
-    "4-2-3"
+    "1-2-3",
+    "1-3-2",
+    "2-1-3"
   ],
+  "source": {
+    "type": "csv",
+    "path": "data/race.csv"
+  },
   "notice": "このページは学習用のサンプルです。表示されている予想は仮のデータです。実際の的中や利益を保証するものではありません。"
 }
