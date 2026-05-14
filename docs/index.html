@@ -1,267 +1,354 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>競艇AI予想</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ボートレースAI予想</title>
 
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f2f5f8;
-      color: #222;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f2f5f9;
+      color: #1f2937;
     }
 
     header {
-      background: #005bac;
+      background: linear-gradient(135deg, #0066cc, #00a3ff);
       color: white;
-      padding: 18px;
+      padding: 28px 16px;
       text-align: center;
     }
 
     header h1 {
       margin: 0;
-      font-size: 24px;
+      font-size: 28px;
     }
 
     header p {
-      margin: 6px 0 0;
-      font-size: 13px;
+      margin: 8px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
     }
 
     main {
-      padding: 16px;
-      max-width: 600px;
-      margin: 0 auto;
+      max-width: 900px;
+      margin: 24px auto;
+      padding: 0 16px 40px;
     }
 
     .card {
       background: white;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    }
+
+    .race-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .updated {
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 14px;
+      border-left: 5px solid #0077dd;
+      padding-left: 10px;
+    }
+
+    .prediction-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .prediction-item {
+      border: 1px solid #e5e7eb;
       border-radius: 12px;
       padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .card h2 {
-      margin-top: 0;
-      font-size: 18px;
-      border-left: 5px solid #005bac;
-      padding-left: 8px;
-    }
-
-    .info-row {
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #eee;
-      padding: 8px 0;
-      font-size: 15px;
-    }
-
-    .info-row:last-child {
-      border-bottom: none;
+      background: #fafafa;
     }
 
     .rank {
-      display: flex;
-      align-items: center;
-      margin: 10px 0;
-      padding: 12px;
-      border-radius: 10px;
-      background: #f7f9fc;
+      display: inline-block;
+      background: #0077dd;
+      color: white;
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      margin-bottom: 10px;
     }
 
-    .rank-number {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #005bac;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .boat-line {
+      font-size: 22px;
       font-weight: bold;
-      margin-right: 12px;
+      margin-bottom: 10px;
     }
 
     .boat-number {
-      font-size: 22px;
-      font-weight: bold;
-      margin-right: 8px;
+      color: #0077dd;
     }
 
-    .confidence {
-      margin-left: auto;
-      font-size: 13px;
-      color: #666;
+    .details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .detail-box {
+      background: white;
+      border-radius: 8px;
+      padding: 10px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .detail-label {
+      color: #6b7280;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .detail-value {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .confidence-bar-wrap {
+      background: #e5e7eb;
+      border-radius: 999px;
+      height: 12px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .confidence-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #00b894, #00cec9);
+      width: 0%;
     }
 
     .tickets {
-      display: grid;
-      grid-template-columns: 1fr;
+      display: flex;
+      flex-wrap: wrap;
       gap: 10px;
     }
 
     .ticket {
-      background: #eaf3ff;
-      padding: 14px;
+      background: #fff7ed;
+      color: #c2410c;
+      border: 1px solid #fed7aa;
+      padding: 10px 14px;
       border-radius: 10px;
-      font-size: 20px;
       font-weight: bold;
-      text-align: center;
-      color: #003f7d;
+      font-size: 18px;
     }
 
     .notice {
-      font-size: 12px;
-      color: #666;
-      line-height: 1.6;
-    }
-
-    .loading {
-      text-align: center;
-      color: #666;
-      padding: 20px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: #6b7280;
+      background: #fffbeb;
+      border: 1px solid #fde68a;
     }
 
     .error {
-      background: #fff0f0;
-      color: #b00020;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 14px;
+      color: #b91c1c;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      padding: 14px;
+      border-radius: 10px;
     }
 
     footer {
       text-align: center;
+      color: #9ca3af;
       font-size: 12px;
-      color: #777;
       padding: 20px;
     }
   </style>
 </head>
 
 <body>
-
   <header>
-    <h1>競艇AI予想</h1>
-    <p>JSONデータ読み込み版</p>
+    <h1>ボートレースAI予想</h1>
+    <p>CSVデータを使った学習用の自動予想ページ</p>
   </header>
 
   <main>
+    <div class="card">
+      <div class="race-title" id="race-title">読み込み中...</div>
+      <div class="updated" id="updated-at"></div>
+    </div>
 
-    <section class="card">
-      <h2>レース情報</h2>
-
-      <div class="info-row">
-        <span>開催日</span>
-        <strong id="race-date">読み込み中...</strong>
-      </div>
-
-      <div class="info-row">
-        <span>場名</span>
-        <strong id="race-stadium">読み込み中...</strong>
-      </div>
-
-      <div class="info-row">
-        <span>レース</span>
-        <strong id="race-no">読み込み中...</strong>
-      </div>
-
-      <div class="info-row">
-        <span>更新時刻</span>
-        <strong id="updated-at">読み込み中...</strong>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>AI予想順位</h2>
-      <div id="prediction-list" class="loading">
-        予想データを読み込み中...
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>買い目候補</h2>
-      <div id="ticket-list" class="tickets">
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>注意</h2>
-      <p id="notice" class="notice">
+    <div class="card">
+      <div class="section-title">予想順位</div>
+      <div id="predictions" class="prediction-list">
         読み込み中...
-      </p>
-    </section>
+      </div>
+    </div>
 
+    <div class="card">
+      <div class="section-title">買い目候補</div>
+      <div id="tickets" class="tickets">
+        読み込み中...
+      </div>
+    </div>
+
+    <div class="card notice" id="notice">
+      注意書きを読み込み中...
+    </div>
   </main>
 
   <footer>
-    boatrace-ai-free
+    GitHub Pages × Python × CSV
   </footer>
 
   <script>
     async function loadPrediction() {
       try {
-        const response = await fetch("prediction.json?time=" + new Date().getTime());
+        const response = await fetch("./prediction.json?cache=" + Date.now());
 
         if (!response.ok) {
-          throw new Error("prediction.jsonを読み込めませんでした");
+          throw new Error("prediction.json を読み込めませんでした");
         }
 
         const data = await response.json();
 
-        document.getElementById("race-date").textContent = data.race.date;
-        document.getElementById("race-stadium").textContent = data.race.stadium;
-        document.getElementById("race-no").textContent = data.race.race_no;
-        document.getElementById("updated-at").textContent = data.updated_at;
-
-        const predictionList = document.getElementById("prediction-list");
-        predictionList.innerHTML = "";
-
-        data.predictions.forEach(function(item) {
-          const rankDiv = document.createElement("div");
-          rankDiv.className = "rank";
-
-          rankDiv.innerHTML = `
-            <div class="rank-number">${item.rank}</div>
-            <div>
-              <div><span class="boat-number">${item.boat}号艇</span></div>
-              <div>${item.label}</div>
-            </div>
-            <div class="confidence">信頼度 ${item.confidence}%</div>
-          `;
-
-          predictionList.appendChild(rankDiv);
-        });
-
-        const ticketList = document.getElementById("ticket-list");
-        ticketList.innerHTML = "";
-
-        data.tickets.forEach(function(ticket) {
-          const ticketDiv = document.createElement("div");
-          ticketDiv.className = "ticket";
-          ticketDiv.textContent = ticket.split("-").join(" - ");
-          ticketList.appendChild(ticketDiv);
-        });
-
-        document.getElementById("notice").textContent = data.notice;
+        renderRace(data);
+        renderPredictions(data.predictions || []);
+        renderTickets(data.tickets || []);
+        renderNotice(data.notice || "");
 
       } catch (error) {
-        document.getElementById("prediction-list").innerHTML = `
-          <div class="error">
-            データの読み込みに失敗しました。<br>
-            docs/prediction.json が存在するか確認してください。
+        console.error(error);
+
+        document.getElementById("race-title").textContent = "読み込みエラー";
+        document.getElementById("predictions").innerHTML =
+          '<div class="error">prediction.json の読み込みに失敗しました。GitHub Actionsで prediction.json が作成されているか確認してください。</div>';
+        document.getElementById("tickets").textContent = "-";
+        document.getElementById("notice").textContent =
+          "エラーが発生しました。";
+      }
+    }
+
+    function renderRace(data) {
+      const race = data.race || {};
+
+      const stadium = race.stadium || "未設定";
+      const raceNo = race.race_no || "未設定";
+      const date = race.date || "";
+      const updatedAt = data.updated_at || "";
+
+      document.getElementById("race-title").textContent =
+        `${date} ${stadium} ${raceNo}`;
+
+      document.getElementById("updated-at").textContent =
+        `更新日時：${updatedAt}`;
+    }
+
+    function renderPredictions(predictions) {
+      const container = document.getElementById("predictions");
+
+      if (!predictions.length) {
+        container.innerHTML = '<div class="error">予想データがありません。</div>';
+        return;
+      }
+
+      container.innerHTML = "";
+
+      predictions.forEach((item) => {
+        const rank = item.rank ?? "-";
+        const boat = item.boat ?? "-";
+        const course = item.course ?? "-";
+        const driver = item.driver ?? "選手名なし";
+        const label = item.label ?? `${rank}着候補`;
+        const confidence = item.confidence ?? 0;
+        const score = item.score ?? "-";
+
+        const div = document.createElement("div");
+        div.className = "prediction-item";
+
+        div.innerHTML = `
+          <div class="rank">${label}</div>
+
+          <div class="boat-line">
+            <span class="boat-number">${boat}号艇</span>
+            ${escapeHtml(driver)}
+          </div>
+
+          <div class="details">
+            <div class="detail-box">
+              <div class="detail-label">順位</div>
+              <div class="detail-value">${rank}位</div>
+            </div>
+
+            <div class="detail-box">
+              <div class="detail-label">コース</div>
+              <div class="detail-value">${course}コース</div>
+            </div>
+
+            <div class="detail-box">
+              <div class="detail-label">スコア</div>
+              <div class="detail-value">${score}</div>
+            </div>
+
+            <div class="detail-box">
+              <div class="detail-label">信頼度</div>
+              <div class="detail-value">${confidence}%</div>
+              <div class="confidence-bar-wrap">
+                <div class="confidence-bar" style="width: ${confidence}%"></div>
+              </div>
+            </div>
           </div>
         `;
 
-        console.error(error);
+        container.appendChild(div);
+      });
+    }
+
+    function renderTickets(tickets) {
+      const container = document.getElementById("tickets");
+
+      if (!tickets.length) {
+        container.innerHTML = '<div class="error">買い目データがありません。</div>';
+        return;
       }
+
+      container.innerHTML = "";
+
+      tickets.forEach((ticket) => {
+        const div = document.createElement("div");
+        div.className = "ticket";
+        div.textContent = ticket;
+        container.appendChild(div);
+      });
+    }
+
+    function renderNotice(notice) {
+      document.getElementById("notice").textContent =
+        notice || "このページは学習用のサンプルです。";
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
     }
 
     loadPrediction();
   </script>
-
 </body>
 </html>
+
