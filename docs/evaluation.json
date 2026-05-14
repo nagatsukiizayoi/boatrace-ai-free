@@ -1,0 +1,127 @@
+{
+  "evaluated_at": "2026-05-14 15:18:14",
+  "race": {
+    "prediction_race": {
+      "place": "サンプル競艇場",
+      "race_no": "12R",
+      "title": "優勝戦",
+      "date": "2026-05-14",
+      "deadline": "16:30",
+      "weather": "晴れ",
+      "wind": "追い風 2m",
+      "wave": "2cm",
+      "distance": "1800m"
+    },
+    "result_race": {
+      "date": "2026-05-14",
+      "place": "サンプル競艇場",
+      "race_no": "12R"
+    }
+  },
+  "result": {
+    "trifecta": "1-2-3",
+    "payout_per_100yen": 1250
+  },
+  "summary": {
+    "ticket_count": 9,
+    "hit_count": 1,
+    "hit_rate": 11.11,
+    "total_stake": 1600,
+    "total_return": 3750,
+    "profit": 2150,
+    "roi": 234.38
+  },
+  "tickets": [
+    {
+      "ticket": "1-3-2",
+      "amount": 400,
+      "group": "本線",
+      "risk": "低め",
+      "reason": "◎を1着、○を2着、▲を3着にした基本形",
+      "hit": false,
+      "return": 0,
+      "profit": -400
+    },
+    {
+      "ticket": "1-2-3",
+      "amount": 300,
+      "group": "本線",
+      "risk": "低め",
+      "reason": "◎を1着固定、○と▲の2・3着入れ替え",
+      "hit": true,
+      "return": 3750,
+      "profit": 3450
+    },
+    {
+      "ticket": "1-3-4",
+      "amount": 200,
+      "group": "本線",
+      "risk": "低め",
+      "reason": "◎と○を信頼し、3着に△を入れる形",
+      "hit": false,
+      "return": 0,
+      "profit": -200
+    },
+    {
+      "ticket": "3-1-2",
+      "amount": 200,
+      "group": "押さえ",
+      "risk": "中",
+      "reason": "○が◎を逆転するパターン",
+      "hit": false,
+      "return": 0,
+      "profit": -200
+    },
+    {
+      "ticket": "2-1-3",
+      "amount": 100,
+      "group": "押さえ",
+      "risk": "中",
+      "reason": "▲が攻めて1着になるパターン",
+      "hit": false,
+      "return": 0,
+      "profit": -100
+    },
+    {
+      "ticket": "3-2-1",
+      "amount": 100,
+      "group": "押さえ",
+      "risk": "中",
+      "reason": "◎が3着に残る押さえパターン",
+      "hit": false,
+      "return": 0,
+      "profit": -100
+    },
+    {
+      "ticket": "1-4-3",
+      "amount": 100,
+      "group": "穴狙い",
+      "risk": "高め",
+      "reason": "◎を1着固定、△が2着に入る穴寄りの形",
+      "hit": false,
+      "return": 0,
+      "profit": -100
+    },
+    {
+      "ticket": "1-3-5",
+      "amount": 100,
+      "group": "穴狙い",
+      "risk": "高め",
+      "reason": "◎・○から、3着に☆を入れる形",
+      "hit": false,
+      "return": 0,
+      "profit": -100
+    },
+    {
+      "ticket": "4-1-3",
+      "amount": 100,
+      "group": "穴狙い",
+      "risk": "高め",
+      "reason": "△の一発を狙う高配当パターン",
+      "hit": false,
+      "return": 0,
+      "profit": -100
+    }
+  ],
+  "notice": "これは学習用の仮想評価です。実際の購入や利益を保証するものではありません。"
+}
