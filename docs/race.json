@@ -1,0 +1,63 @@
+{
+  "race": {
+    "place": "サンプル競艇場",
+    "race_no": "12R",
+    "title": "優勝戦",
+    "date": "2026-05-14",
+    "deadline": "16:30",
+    "weather": "晴れ",
+    "wind": "追い風 2m",
+    "wave": "2cm",
+    "distance": "1800m"
+  },
+  "boats": [
+    {
+      "boat": 1,
+      "course": 1,
+      "driver": "山田 太郎",
+      "win_rate": 7.20,
+      "motor_rate": 45.0,
+      "avg_st": 0.13
+    },
+    {
+      "boat": 2,
+      "course": 2,
+      "driver": "佐藤 次郎",
+      "win_rate": 6.10,
+      "motor_rate": 38.0,
+      "avg_st": 0.15
+    },
+    {
+      "boat": 3,
+      "course": 3,
+      "driver": "鈴木 三郎",
+      "win_rate": 6.60,
+      "motor_rate": 41.5,
+      "avg_st": 0.14
+    },
+    {
+      "boat": 4,
+      "course": 4,
+      "driver": "田中 四郎",
+      "win_rate": 5.80,
+      "motor_rate": 35.0,
+      "avg_st": 0.16
+    },
+    {
+      "boat": 5,
+      "course": 5,
+      "driver": "高橋 五郎",
+      "win_rate": 5.20,
+      "motor_rate": 33.0,
+      "avg_st": 0.17
+    },
+    {
+      "boat": 6,
+      "course": 6,
+      "driver": "伊藤 六郎",
+      "win_rate": 4.90,
+      "motor_rate": 29.0,
+      "avg_st": 0.18
+    }
+  ]
+}
