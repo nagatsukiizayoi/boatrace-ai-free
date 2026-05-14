@@ -3,6 +3,46 @@ import os
 from datetime import datetime, timezone
 
 
+def default_race_info():
+    """
+    レース情報の初期値です。
+    docs/race.json がない場合や、項目が足りない場合に使います。
+    """
+    return {
+        "place": "サンプル競艇場",
+        "race_no": "12R",
+        "title": "AI予想",
+        "date": "",
+        "deadline": "",
+        "weather": "",
+        "wind": "",
+        "wave": "",
+        "distance": "1800m",
+    }
+
+
+def normalize_race_info(data):
+    """
+    race.json から読み込んだレース情報を整えます。
+    """
+    race = default_race_info()
+
+    if not isinstance(data, dict):
+        return race
+
+    # race という入れ子がある場合はそれを使う
+    if isinstance(data.get("race"), dict):
+        source = data["race"]
+    else:
+        source = data
+
+    for key in race.keys():
+        if key in source:
+            race[key] = source[key]
+
+    return race
+
+
 def mark_for_rank(rank):
     """
     順位に応じて予想印を返します。
@@ -31,12 +71,16 @@ def to_float(value, default=0.0):
         return default
 
 
-def load_boats():
+def load_race_source():
     """
-    出走データを読み込みます。
+    出走データとレース情報を読み込みます。
 
-    data/race.json や docs/race.json がある場合はそれを使います。
-    ない場合はサンプルデータで prediction.json を作ります。
+    優先順位：
+    1. data/race.json
+    2. data/boats.json
+    3. docs/race.json
+
+    基本的には docs/race.json を編集すればOKです。
     """
 
     possible_files = [
@@ -52,18 +96,45 @@ def load_boats():
         with open(path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
+        # JSONが辞書形式の場合
         if isinstance(data, dict):
+            race = normalize_race_info(data)
+
             if "boats" in data:
-                return normalize_boats(data["boats"])
+                return {
+                    "race": race,
+                    "boats": normalize_boats(data["boats"]),
+                    "source_file": path,
+                }
+
             if "racers" in data:
-                return normalize_boats(data["racers"])
+                return {
+                    "race": race,
+                    "boats": normalize_boats(data["racers"]),
+                    "source_file": path,
+                }
+
             if "entries" in data:
-                return normalize_boats(data["entries"])
+                return {
+                    "race": race,
+                    "boats": normalize_boats(data["entries"]),
+                    "source_file": path,
+                }
 
+        # JSONが配列形式の場合
         if isinstance(data, list):
-            return normalize_boats(data)
+            return {
+                "race": default_race_info(),
+                "boats": normalize_boats(data),
+                "source_file": path,
+            }
 
-    return sample_boats()
+    # ファイルがない場合はサンプルを使う
+    return {
+        "race": default_race_info(),
+        "boats": sample_boats(),
+        "source_file": "sample",
+    }
 
 
 def normalize_boats(items):
@@ -254,11 +325,6 @@ def ticket_text(a, b, c):
 def make_ticket_groups(boats):
     """
     買い目を 本線・押さえ・穴狙い に分けて作ります。
-
-    STEP 9の考え方：
-    - 本線：◎を1着に固定して、○・▲を中心にする
-    - 押さえ：○や▲の逆転も少し見る
-    - 穴狙い：△や☆が3着以内に来るパターンを見る
     """
 
     if len(boats) < 3:
@@ -380,7 +446,11 @@ def build_prediction_json():
     prediction.json に出力する全体データを作ります。
     """
 
-    boats = load_boats()
+    source = load_race_source()
+
+    race = source["race"]
+    boats = source["boats"]
+    source_file = source["source_file"]
 
     # スコア計算
     for boat in boats:
@@ -402,18 +472,15 @@ def build_prediction_json():
 
     predictions = make_predictions(boats)
 
-    # STEP 9：買い目をグループ化
+    # 買い目をグループ化
     ticket_groups = make_ticket_groups(boats)
     tickets = flatten_tickets(ticket_groups)
     total_amount = calculate_total_amount(ticket_groups)
 
     result = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "race": {
-            "place": "サンプル競艇場",
-            "race_no": "12R",
-            "title": "AI予想",
-        },
+        "source_file": source_file,
+        "race": race,
         "predictions": predictions,
         "all_boats": boats,
         "ticket_groups": ticket_groups,
@@ -437,6 +504,7 @@ def save_prediction_json(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
     print(f"{output_path} を作成しました。")
+    print(f"読み込み元: {data.get('source_file')}")
 
 
 def main():
