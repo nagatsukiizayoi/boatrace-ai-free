@@ -1,7 +1,7 @@
 {
-  "updated_at": "2026-05-14 10:29",
+  "updated_at": "2026-05-14 10:40:34",
   "race": {
-    "date": "2026-05-14",
+    "date": "",
     "stadium": "桐生",
     "race_no": "12R"
   },
@@ -13,7 +13,7 @@
       "driver": "選手A",
       "label": "1着候補",
       "confidence": 95,
-      "score": 110.7
+      "score": 134.64
     },
     {
       "rank": 2,
@@ -21,8 +21,8 @@
       "course": 2,
       "driver": "選手B",
       "label": "2着候補",
-      "confidence": 95,
-      "score": 100.97
+      "confidence": 81,
+      "score": 117.46
     },
     {
       "rank": 3,
@@ -30,18 +30,84 @@
       "course": 3,
       "driver": "選手C",
       "label": "3着候補",
-      "confidence": 95,
-      "score": 95.2
+      "confidence": 75,
+      "score": 110.85
+    }
+  ],
+  "all_boats": [
+    {
+      "boat": 1,
+      "course": 1,
+      "driver": "選手A",
+      "win_rate": 7.1,
+      "motor_rate": 43.2,
+      "avg_st": 0.14,
+      "score": 134.64,
+      "rank": 1,
+      "confidence": 95
+    },
+    {
+      "boat": 2,
+      "course": 2,
+      "driver": "選手B",
+      "win_rate": 6.4,
+      "motor_rate": 39.8,
+      "avg_st": 0.16,
+      "score": 117.46,
+      "rank": 2,
+      "confidence": 81
+    },
+    {
+      "boat": 3,
+      "course": 3,
+      "driver": "選手C",
+      "win_rate": 5.9,
+      "motor_rate": 41.5,
+      "avg_st": 0.15,
+      "score": 110.85,
+      "rank": 3,
+      "confidence": 75
+    },
+    {
+      "boat": 4,
+      "course": 4,
+      "driver": "選手D",
+      "win_rate": 5.2,
+      "motor_rate": 36.7,
+      "avg_st": 0.18,
+      "score": 93.49,
+      "rank": 4,
+      "confidence": 61
+    },
+    {
+      "boat": 5,
+      "course": 5,
+      "driver": "選手E",
+      "win_rate": 4.8,
+      "motor_rate": 33.1,
+      "avg_st": 0.17,
+      "score": 85.37,
+      "rank": 5,
+      "confidence": 54
+    },
+    {
+      "boat": 6,
+      "course": 6,
+      "driver": "選手F",
+      "win_rate": 4.5,
+      "motor_rate": 35.4,
+      "avg_st": 0.19,
+      "score": 79.98,
+      "rank": 6,
+      "confidence": 50
     }
   ],
   "tickets": [
     "1-2-3",
     "1-3-2",
-    "2-1-3"
+    "2-1-3",
+    "1-2-4",
+    "1-4-2"
   ],
-  "source": {
-    "type": "csv",
-    "path": "data/race.csv"
-  },
-  "notice": "このページは学習用のサンプルです。表示されている予想は仮のデータです。実際の的中や利益を保証するものではありません。"
+  "notice": "この予想はCSVデータを使った学習用の簡易予想です。実際の的中や利益を保証するものではありません。"
 }
