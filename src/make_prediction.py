@@ -1,193 +1,257 @@
 import csv
 import json
-import random
 from pathlib import Path
 from datetime import datetime
-from zoneinfo import ZoneInfo
+
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:
+    ZoneInfo = None
 
 
-DATA_PATH = Path("data/race.csv")
-OUTPUT_PATH = Path("docs/prediction.json")
+INPUT_CSV = Path("data/race.csv")
+OUTPUT_JSON = Path("docs/prediction.json")
+
+
+def now_jst_string():
+    if ZoneInfo:
+        return datetime.now(ZoneInfo("Asia/Tokyo")).strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+
+def get_value(row, *names, default=""):
+    """
+    CSVの列名が多少違っても読めるようにする関数です。
+    例:
+    boat / 艇番
+    driver / 選手名
+    """
+    for name in names:
+        if name in row and row[name] not in (None, ""):
+            return row[name]
+    return default
 
 
 def to_float(value, default=0.0):
     """
-    CSVの文字列をfloatに変換するための関数。
-    空欄や変換できない値が来てもエラーで止まらないようにする。
+    文字列を小数に変換します。
+    例:
+    "45.0%" -> 45.0
+    "0.15"  -> 0.15
     """
     try:
-        return float(value)
-    except (TypeError, ValueError):
+        text = str(value).replace("%", "").strip()
+        if text == "":
+            return default
+        return float(text)
+    except ValueError:
         return default
 
 
 def to_int(value, default=0):
-    """
-    CSVの文字列をintに変換するための関数。
-    """
     try:
-        return int(value)
-    except (TypeError, ValueError):
+        return int(float(str(value).strip()))
+    except ValueError:
         return default
 
 
-def load_race_rows():
+def course_bonus(course):
     """
-    data/race.csv を読み込む。
+    コース補正です。
+    ボートレースは一般的に内側コースが有利なので、
+    1コースに高めの点数を付けています。
     """
-    if not DATA_PATH.exists():
-        raise FileNotFoundError(f"{DATA_PATH} が見つかりません")
-
-    with DATA_PATH.open("r", encoding="utf-8-sig", newline="") as f:
-        reader = csv.DictReader(f)
-        rows = list(reader)
-
-    if not rows:
-        raise ValueError("race.csv にデータがありません")
-
-    return rows
+    bonuses = {
+        1: 12.0,
+        2: 8.0,
+        3: 5.0,
+        4: 3.0,
+        5: 1.0,
+        6: 0.0,
+    }
+    return bonuses.get(course, 0.0)
 
 
-def calculate_score(row):
+def calculate_score(win_rate, motor_rate, avg_st, course):
     """
-    1艇ごとのスコアを計算する。
+    簡易スコア計算です。
 
-    今回は学習用として、以下を使います。
-    - 勝率
-    - モーター率
-    - 平均スタート
-    - コース補正
-    - 少しだけランダム補正
+    win_rate   : 選手勝率。高いほど良い
+    motor_rate : モーター率。高いほど良い
+    avg_st     : 平均ST。小さいほど良い
+    course     : コース。内側ほど少し有利
+
+    注意:
+    これは学習用の簡易式です。
+    実際の舟券的中を保証するものではありません。
     """
 
-    boat = to_int(row.get("boat"))
-    course = to_int(row.get("course"), boat)
+    # 選手勝率の影響
+    win_score = win_rate * 12.0
 
-    win_rate = to_float(row.get("win_rate"))
-    motor_rate = to_float(row.get("motor_rate"))
-    avg_st = to_float(row.get("avg_st"), 0.18)
+    # モーター率の影響
+    motor_score = motor_rate * 0.7
 
-    # 勝率が高いほど加点
-    win_score = win_rate * 8
+    # 平均STの影響
+    # 0.20より早いほど加点、遅いほど減点
+    st_score = (0.20 - avg_st) * 120.0
 
-    # モーター率が高いほど加点
-    motor_score = motor_rate * 0.6
+    # コース補正
+    c_bonus = course_bonus(course)
 
-    # 平均STは小さいほど良い、という仮ルール
-    # 0.10なら高評価、0.20なら低め評価
-    start_score = max(0, (0.25 - avg_st) * 100)
-
-    # 内側コースを少し有利にする仮ルール
-    course_bonus = max(0, (7 - course) * 3)
-
-    # 完全に同じ結果になりすぎないように小さな補正
-    random_bonus = random.uniform(-2.0, 2.0)
-
-    score = win_score + motor_score + start_score + course_bonus + random_bonus
+    score = win_score + motor_score + st_score + c_bonus
 
     return round(score, 2)
 
 
-def make_prediction():
-    now = datetime.now(ZoneInfo("Asia/Tokyo"))
-    today_text = now.strftime("%Y-%m-%d")
+def make_confidence_scores(boats):
+    """
+    スコアをもとに信頼度を作ります。
+    最高スコアを95%、最低付近を50%くらいにします。
+    """
+    if not boats:
+        return boats
 
-    rows = load_race_rows()
+    scores = [boat["score"] for boat in boats]
+    max_score = max(scores)
+    min_score = min(scores)
 
-    first_row = rows[0]
+    for boat in boats:
+        if max_score == min_score:
+            confidence = 70
+        else:
+            ratio = (boat["score"] - min_score) / (max_score - min_score)
+            confidence = 50 + ratio * 45
 
-    race_date = first_row.get("date") or today_text
-    stadium = first_row.get("stadium") or "未設定"
-    race_no = first_row.get("race_no") or "未設定"
+        boat["confidence"] = round(confidence)
 
-    race = {
-        "date": race_date,
-        "stadium": stadium,
-        "race_no": race_no
-    }
+    return boats
 
-    # 同じ日・同じレースなら大きく結果が変わりすぎないようにする
-    seed_text = f"{race_date}-{stadium}-{race_no}"
-    random.seed(seed_text)
+
+def make_tickets(sorted_boats):
+    """
+    上位艇から3連単の買い目候補を作ります。
+    """
+    if len(sorted_boats) < 3:
+        return []
+
+    b1 = sorted_boats[0]["boat"]
+    b2 = sorted_boats[1]["boat"]
+    b3 = sorted_boats[2]["boat"]
+
+    tickets = [
+        f"{b1}-{b2}-{b3}",
+        f"{b1}-{b3}-{b2}",
+        f"{b2}-{b1}-{b3}",
+    ]
+
+    if len(sorted_boats) >= 4:
+        b4 = sorted_boats[3]["boat"]
+        tickets.append(f"{b1}-{b2}-{b4}")
+        tickets.append(f"{b1}-{b4}-{b2}")
+
+    return tickets
+
+
+def main():
+    if not INPUT_CSV.exists():
+        raise FileNotFoundError(f"{INPUT_CSV} が見つかりません")
+
+    rows = []
+
+    with INPUT_CSV.open("r", encoding="utf-8-sig", newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            rows.append(row)
+
+    if not rows:
+        raise ValueError("race.csv にデータがありません")
 
     boats = []
 
     for row in rows:
-        boat_no = to_int(row.get("boat"))
-        course = to_int(row.get("course"), boat_no)
-        driver = row.get("driver") or f"{boat_no}号艇"
+        date = get_value(row, "date", "日付")
+        stadium = get_value(row, "stadium", "場", "レース場")
+        race_no = get_value(row, "race_no", "race", "レース番号", "R")
 
-        score = calculate_score(row)
+        boat = to_int(get_value(row, "boat", "艇番"))
+        course = to_int(get_value(row, "course", "コース"), default=boat)
+        driver = get_value(row, "driver", "選手名", "name", default=f"{boat}号艇")
+
+        win_rate = to_float(get_value(row, "win_rate", "勝率", "選手勝率"))
+        motor_rate = to_float(get_value(row, "motor_rate", "モーター率", "motor"))
+        avg_st = to_float(get_value(row, "avg_st", "平均ST", "st"), default=0.20)
+
+        score = calculate_score(
+            win_rate=win_rate,
+            motor_rate=motor_rate,
+            avg_st=avg_st,
+            course=course,
+        )
 
         boats.append({
-            "boat": boat_no,
+            "boat": boat,
             "course": course,
             "driver": driver,
+            "win_rate": win_rate,
+            "motor_rate": motor_rate,
+            "avg_st": avg_st,
             "score": score,
-            "win_rate": to_float(row.get("win_rate")),
-            "motor_rate": to_float(row.get("motor_rate")),
-            "avg_st": to_float(row.get("avg_st"))
         })
 
-    # スコアが高い順に並べる
-    boats.sort(key=lambda x: x["score"], reverse=True)
+    # スコアが高い順に並べます
+    boats = sorted(boats, key=lambda x: x["score"], reverse=True)
 
-    # 上位3艇を予想として使う
-    top3 = boats[:3]
+    # 順位を付けます
+    for index, boat in enumerate(boats, start=1):
+        boat["rank"] = index
 
+    # 信頼度を付けます
+    boats = make_confidence_scores(boats)
+
+    # 上位3艇を予想として使います
     predictions = []
 
-    for index, item in enumerate(top3):
-        rank = index + 1
-
-        # confidenceは見やすいように50〜95くらいに丸める
-        confidence = int(min(95, max(50, item["score"])))
-
-        predictions.append({
-            "rank": rank,
-            "boat": item["boat"],
-            "course": item["course"],
-            "driver": item["driver"],
-            "label": f"{rank}着候補",
-            "confidence": confidence,
-            "score": item["score"]
-        })
-
-    first = top3[0]["boat"]
-    second = top3[1]["boat"]
-    third = top3[2]["boat"]
-
-    tickets = [
-        f"{first}-{second}-{third}",
-        f"{first}-{third}-{second}",
-        f"{second}-{first}-{third}"
-    ]
-
-    data = {
-        "updated_at": now.strftime("%Y-%m-%d %H:%M"),
-        "race": race,
-        "predictions": predictions,
-        "tickets": tickets,
-        "source": {
-            "type": "csv",
-            "path": str(DATA_PATH)
-        },
-        "notice": "このページは学習用のサンプルです。表示されている予想は仮のデータです。実際の的中や利益を保証するものではありません。"
+    labels = {
+        1: "1着候補",
+        2: "2着候補",
+        3: "3着候補",
     }
 
-    return data
+    for boat in boats[:3]:
+        predictions.append({
+            "rank": boat["rank"],
+            "boat": boat["boat"],
+            "course": boat["course"],
+            "driver": boat["driver"],
+            "label": labels.get(boat["rank"], f"{boat['rank']}着候補"),
+            "confidence": boat["confidence"],
+            "score": boat["score"],
+        })
 
+    first_row = rows[0]
 
-def main():
-    data = make_prediction()
+    race = {
+        "date": get_value(first_row, "date", "日付"),
+        "stadium": get_value(first_row, "stadium", "場", "レース場"),
+        "race_no": get_value(first_row, "race_no", "race", "レース番号", "R"),
+    }
 
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    result = {
+        "updated_at": now_jst_string(),
+        "race": race,
+        "predictions": predictions,
+        "all_boats": boats,
+        "tickets": make_tickets(boats),
+        "notice": "この予想はCSVデータを使った学習用の簡易予想です。実際の的中や利益を保証するものではありません。",
+    }
 
-    with OUTPUT_PATH.open("w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    OUTPUT_JSON.parent.mkdir(parents=True, exist_ok=True)
 
-    print("prediction.json を作成しました")
-    print(OUTPUT_PATH)
+    with OUTPUT_JSON.open("w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
+
+    print(f"{OUTPUT_JSON} を作成しました")
 
 
 if __name__ == "__main__":
