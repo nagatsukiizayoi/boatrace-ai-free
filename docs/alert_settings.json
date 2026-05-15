@@ -1,0 +1,15 @@
+{
+  "ticket_count_warning": 15,
+  "ticket_count_danger": 25,
+  "total_amount_warning": 3000,
+  "total_amount_danger": 5000,
+  "updated_hours_warning": 12,
+  "updated_hours_danger": 24,
+  "check_exhibition_time": true,
+  "check_exhibition_st": true,
+  "check_final_odds": true,
+  "check_updated_at": true,
+  "check_ticket_count": true,
+  "check_total_amount": true
+}
+
