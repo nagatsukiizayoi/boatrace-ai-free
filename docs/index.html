@@ -52,6 +52,40 @@
       font-size: 20px;
     }
 
+    .menu-section {
+      margin-bottom: 22px;
+    }
+
+    .menu-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .menu-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 10px;
+      font-size: 16px;
+      font-weight: 900;
+      color: #111827;
+    }
+
+    .menu-section-title span {
+      display: inline-block;
+      background: #111827;
+      color: white;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+
+    .menu-section-description {
+      margin: -4px 0 12px;
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -476,81 +510,127 @@
     <section class="card">
       <h2>メニュー</h2>
 
-      <div class="menu-grid">
-        <a class="menu-button menu-prediction" href="./index.html">
-          <div class="menu-button-title">予想ページ</div>
-          <div class="menu-button-sub">現在の予想・買い目・全艇評価を表示します。</div>
-        </a>
+      <div class="menu-section">
+        <h3 class="menu-section-title">
+          <span>予想</span>
+          予想・比較・分析
+        </h3>
+        <p class="menu-section-description">
+          現在の予想、ステージごとの予想変化、自動分析を確認します。
+        </p>
 
-        <a class="menu-button menu-evaluation" href="./evaluation.html">
-          <div class="menu-button-title">直近評価</div>
-          <div class="menu-button-sub">直近レースの的中・回収率・利益を確認します。</div>
-        </a>
+        <div class="menu-grid">
+          <a class="menu-button menu-prediction" href="./index.html">
+            <div class="menu-button-title">予想ページ</div>
+            <div class="menu-button-sub">現在の予想・買い目・全艇評価を表示します。</div>
+          </a>
 
-        <a class="menu-button menu-history" href="./history.html">
-          <div class="menu-button-title">過去成績</div>
-          <div class="menu-button-sub">これまでの評価結果を一覧で確認します。</div>
-        </a>
+          <a class="menu-button menu-compare" href="./compare.html">
+            <div class="menu-button-title">予想比較</div>
+            <div class="menu-button-sub">前日予想・展示後予想・最終予想の変化を確認します。</div>
+          </a>
 
-        <a class="menu-button menu-charts" href="./charts.html">
-          <div class="menu-button-title">成績グラフ</div>
-          <div class="menu-button-sub">累計利益・回収率・分類別成績をグラフで確認します。</div>
-        </a>
+          <a class="menu-button menu-stage-insights" href="./stage_insights.html">
+            <div class="menu-button-title">ステージ別自動分析</div>
+            <div class="menu-button-sub">どの予想段階が一番良いかを自動コメントで確認します。</div>
+          </a>
+        </div>
+      </div>
 
-        <a class="menu-button menu-compare" href="./compare.html">
-          <div class="menu-button-title">予想比較</div>
-          <div class="menu-button-sub">前日予想・展示後予想・最終予想の変化を確認します。</div>
-        </a>
+      <div class="menu-section">
+        <h3 class="menu-section-title">
+          <span>評価</span>
+          的中・利益・回収率
+        </h3>
+        <p class="menu-section-description">
+          直近レースの評価、過去成績、通常評価のグラフを確認します。
+        </p>
 
-        <a class="menu-button menu-stage-evaluation" href="./stage_evaluation.html">
-          <div class="menu-button-title">ステージ別評価</div>
-          <div class="menu-button-sub">前日夜・展示後・最終予想を同じ結果で比較評価します。</div>
-        </a>
+        <div class="menu-grid">
+          <a class="menu-button menu-evaluation" href="./evaluation.html">
+            <div class="menu-button-title">直近評価</div>
+            <div class="menu-button-sub">直近レースの的中・回収率・利益を確認します。</div>
+          </a>
 
-        <a class="menu-button menu-stage-history" href="./stage_history.html">
-          <div class="menu-button-title">ステージ別過去成績</div>
-          <div class="menu-button-sub">前日夜・展示後・最終予想の通算成績を確認します。</div>
-        </a>
+          <a class="menu-button menu-history" href="./history.html">
+            <div class="menu-button-title">過去成績</div>
+            <div class="menu-button-sub">これまでの評価結果を一覧で確認します。</div>
+          </a>
 
-        <a class="menu-button menu-stage-charts" href="./stage_charts.html">
-          <div class="menu-button-title">ステージ別グラフ</div>
-          <div class="menu-button-sub">前日夜・展示後・最終予想の利益・回収率推移を確認します。</div>
-        </a>
+          <a class="menu-button menu-charts" href="./charts.html">
+            <div class="menu-button-title">成績グラフ</div>
+            <div class="menu-button-sub">累計利益・回収率・分類別成績をグラフで確認します。</div>
+          </a>
+        </div>
+      </div>
 
-        <a class="menu-button menu-stage-insights" href="./stage_insights.html">
-          <div class="menu-button-title">ステージ別自動分析</div>
-          <div class="menu-button-sub">どの予想段階が一番良いかを自動コメントで確認します。</div>
-        </a>
+      <div class="menu-section">
+        <h3 class="menu-section-title">
+          <span>ステージ</span>
+          前日夜・展示後・最終の比較
+        </h3>
+        <p class="menu-section-description">
+          ステージ別の評価結果、通算成績、グラフを確認します。
+        </p>
 
-        <a class="menu-button menu-json" href="./prediction.json">
-          <div class="menu-button-title">予想JSON</div>
-          <div class="menu-button-sub">プログラムが生成した予想データを確認します。</div>
-        </a>
+        <div class="menu-grid">
+          <a class="menu-button menu-stage-evaluation" href="./stage_evaluation.html">
+            <div class="menu-button-title">ステージ別評価</div>
+            <div class="menu-button-sub">前日夜・展示後・最終予想を同じ結果で比較評価します。</div>
+          </a>
 
-        <a class="menu-button menu-json" href="./race_update.json">
-          <div class="menu-button-title">当日情報JSON</div>
-          <div class="menu-button-sub">水面・展示・オッズの入力データを確認します。</div>
-        </a>
+          <a class="menu-button menu-stage-history" href="./stage_history.html">
+            <div class="menu-button-title">ステージ別過去成績</div>
+            <div class="menu-button-sub">前日夜・展示後・最終予想の通算成績を確認します。</div>
+          </a>
 
-        <a class="menu-button menu-json" href="./prediction_runs.json">
-          <div class="menu-button-title">予想履歴JSON</div>
-          <div class="menu-button-sub">ステージ別予想の実行履歴を確認します。</div>
-        </a>
+          <a class="menu-button menu-stage-charts" href="./stage_charts.html">
+            <div class="menu-button-title">ステージ別グラフ</div>
+            <div class="menu-button-sub">前日夜・展示後・最終予想の利益・回収率推移を確認します。</div>
+          </a>
+        </div>
+      </div>
 
-        <a class="menu-button menu-json" href="./evaluation_history.json">
-          <div class="menu-button-title">評価履歴JSON</div>
-          <div class="menu-button-sub">過去評価の元データを確認します。</div>
-        </a>
+      <div class="menu-section">
+        <h3 class="menu-section-title">
+          <span>JSON</span>
+          データ確認
+        </h3>
+        <p class="menu-section-description">
+          GitHub ActionsやPythonで生成された元データを確認します。
+        </p>
 
-        <a class="menu-button menu-json" href="./stage_evaluation_history.json">
-          <div class="menu-button-title">ステージ評価履歴JSON</div>
-          <div class="menu-button-sub">ステージ別評価の元データを確認します。</div>
-        </a>
+        <div class="menu-grid">
+          <a class="menu-button menu-json" href="./prediction.json">
+            <div class="menu-button-title">予想JSON</div>
+            <div class="menu-button-sub">プログラムが生成した予想データを確認します。</div>
+          </a>
 
-        <a class="menu-button menu-json" href="./stage_insights.json">
-          <div class="menu-button-title">ステージ分析JSON</div>
-          <div class="menu-button-sub">ステージ別自動分析の元データを確認します。</div>
-        </a>
+          <a class="menu-button menu-json" href="./race_update.json">
+            <div class="menu-button-title">当日情報JSON</div>
+            <div class="menu-button-sub">水面・展示・オッズの入力データを確認します。</div>
+          </a>
+
+          <a class="menu-button menu-json" href="./prediction_runs.json">
+            <div class="menu-button-title">予想履歴JSON</div>
+            <div class="menu-button-sub">ステージ別予想の実行履歴を確認します。</div>
+          </a>
+
+          <a class="menu-button menu-json" href="./evaluation_history.json">
+            <div class="menu-button-title">評価履歴JSON</div>
+            <div class="menu-button-sub">過去評価の元データを確認します。</div>
+          </a>
+
+          <a class="menu-button menu-json" href="./stage_evaluation_history.json">
+            <div class="menu-button-title">ステージ評価履歴JSON</div>
+            <div class="menu-button-sub">ステージ別評価の元データを確認します。</div>
+          </a>
+
+          <a class="menu-button menu-json" href="./stage_insights.json">
+            <div class="menu-button-title">ステージ分析JSON</div>
+            <div class="menu-button-sub">ステージ別自動分析の元データを確認します。</div>
+          </a>
+        </div>
       </div>
     </section>
 
