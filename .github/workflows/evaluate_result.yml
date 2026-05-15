@@ -11,39 +11,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Evaluate latest prediction result
-        run: python src/evaluate_result.py
+      - run: python src/evaluate_result.py
 
-      - name: Evaluate stage predictions
-        run: python src/evaluate_stages.py
+      - run: python src/evaluate_stages.py
 
-      - name: Update stage evaluation history
-        run: python src/update_stage_history.py
+      - run: python src/update_stage_history.py
 
-      - name: Generate stage charts page
-        run: python src/generate_stage_charts.py
+      - run: python src/generate_stage_charts.py
 
-      - name: Update evaluation history
-        run: python src/update_history.py
+      - run: python src/generate_stage_insights.py
 
-      - name: Generate charts page
-        run: python src/generate_charts.py
+      - run: python src/update_history.py
 
-      - name: Commit evaluation files
-        run: |
+      - run: python src/generate_charts.py
+
+      - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
           git add docs/evaluation.json docs/evaluation.html || true
           git add docs/stage_evaluation.json docs/stage_evaluation.html || true
           git add docs/stage_evaluation_history.json docs/stage_history.html docs/stage_charts.html || true
+          git add docs/stage_insights.json docs/stage_insights.html || true
           git add docs/evaluation_history.json docs/history.html docs/charts.html || true
-          git commit -m "Update evaluation histories and charts" || echo "No changes to commit"
+
+          git commit -m "Update stage insights" || echo "No changes to commit"
           git push
