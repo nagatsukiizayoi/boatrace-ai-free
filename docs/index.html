@@ -113,6 +113,10 @@
       background: linear-gradient(135deg, #0891b2, #22d3ee);
     }
 
+    .menu-stage-insights {
+      background: linear-gradient(135deg, #ca8a04, #facc15);
+    }
+
     .menu-json {
       background: linear-gradient(135deg, #475569, #94a3b8);
     }
@@ -513,6 +517,11 @@
           <div class="menu-button-sub">前日夜・展示後・最終予想の利益・回収率推移を確認します。</div>
         </a>
 
+        <a class="menu-button menu-stage-insights" href="./stage_insights.html">
+          <div class="menu-button-title">ステージ別自動分析</div>
+          <div class="menu-button-sub">どの予想段階が一番良いかを自動コメントで確認します。</div>
+        </a>
+
         <a class="menu-button menu-json" href="./prediction.json">
           <div class="menu-button-title">予想JSON</div>
           <div class="menu-button-sub">プログラムが生成した予想データを確認します。</div>
@@ -531,6 +540,16 @@
         <a class="menu-button menu-json" href="./evaluation_history.json">
           <div class="menu-button-title">評価履歴JSON</div>
           <div class="menu-button-sub">過去評価の元データを確認します。</div>
+        </a>
+
+        <a class="menu-button menu-json" href="./stage_evaluation_history.json">
+          <div class="menu-button-title">ステージ評価履歴JSON</div>
+          <div class="menu-button-sub">ステージ別評価の元データを確認します。</div>
+        </a>
+
+        <a class="menu-button menu-json" href="./stage_insights.json">
+          <div class="menu-button-title">ステージ分析JSON</div>
+          <div class="menu-button-sub">ステージ別自動分析の元データを確認します。</div>
         </a>
       </div>
     </section>
@@ -999,13 +1018,15 @@
 
         simpleTickets.forEach(ticket => {
           const ticketText = typeof ticket === "string" ? ticket : ticket.ticket;
+          const amount = typeof ticket === "object" && ticket !== null ? ticket.amount || 100 : 100;
+          const reason = typeof ticket === "object" && ticket !== null ? ticket.reason || "通常買い目" : "通常買い目";
 
           ticketHtml += `
             <div class="ticket-item">
               <div class="ticket-number">${escapeHtml(ticketText)}</div>
-              <div class="ticket-amount">${yen(ticket.amount || 100)}</div>
+              <div class="ticket-amount">${yen(amount)}</div>
               <div class="ticket-prob">確率 -</div>
-              <div class="ticket-reason">${escapeHtml(ticket.reason || "通常買い目")}</div>
+              <div class="ticket-reason">${escapeHtml(reason)}</div>
             </div>
           `;
         });
