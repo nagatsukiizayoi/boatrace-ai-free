@@ -43,7 +43,7 @@
       border-radius: 16px;
       padding: 16px;
       margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       overflow-x: auto;
     }
 
@@ -66,7 +66,7 @@
       padding: 16px;
       min-height: 72px;
       box-sizing: border-box;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
     }
 
     .menu-button-title {
@@ -107,6 +107,10 @@
 
     .menu-stage-history {
       background: linear-gradient(135deg, #9333ea, #d946ef);
+    }
+
+    .menu-stage-charts {
+      background: linear-gradient(135deg, #0891b2, #22d3ee);
     }
 
     .menu-json {
@@ -319,6 +323,13 @@
       background: #ffffff;
     }
 
+    .ticket-group-body p {
+      margin-top: 0;
+      color: #4b5563;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
     .ticket-item {
       display: grid;
       grid-template-columns: 110px 90px 90px 1fr;
@@ -361,7 +372,8 @@
       min-width: 1100px;
     }
 
-    th, td {
+    th,
+    td {
       border-bottom: 1px solid #e5e7eb;
       padding: 10px 6px;
       text-align: center;
@@ -496,6 +508,11 @@
           <div class="menu-button-sub">前日夜・展示後・最終予想の通算成績を確認します。</div>
         </a>
 
+        <a class="menu-button menu-stage-charts" href="./stage_charts.html">
+          <div class="menu-button-title">ステージ別グラフ</div>
+          <div class="menu-button-sub">前日夜・展示後・最終予想の利益・回収率推移を確認します。</div>
+        </a>
+
         <a class="menu-button menu-json" href="./prediction.json">
           <div class="menu-button-title">予想JSON</div>
           <div class="menu-button-sub">プログラムが生成した予想データを確認します。</div>
@@ -511,9 +528,9 @@
           <div class="menu-button-sub">ステージ別予想の実行履歴を確認します。</div>
         </a>
 
-        <a class="menu-button menu-json" href="./stage_evaluation_history.json">
-          <div class="menu-button-title">ステージ履歴JSON</div>
-          <div class="menu-button-sub">ステージ別過去成績の元データを確認します。</div>
+        <a class="menu-button menu-json" href="./evaluation_history.json">
+          <div class="menu-button-title">評価履歴JSON</div>
+          <div class="menu-button-sub">過去評価の元データを確認します。</div>
         </a>
       </div>
     </section>
@@ -616,11 +633,7 @@
 
     <section class="card">
       <h2>買い目候補</h2>
-
-      <div id="ticket-summary" class="ticket-summary">
-        読み込み中...
-      </div>
-
+      <div id="ticket-summary" class="ticket-summary">読み込み中...</div>
       <div id="ticket-groups">
         <div class="loading">買い目データを読み込み中...</div>
       </div>
@@ -631,7 +644,6 @@
       <p class="notice">
         横に長い表です。スマホの場合は左右にスクロールできます。
       </p>
-
       <div id="all-boats">
         <div class="loading">全艇評価を読み込み中...</div>
       </div>
@@ -679,7 +691,10 @@
     }
 
     function getPlace(race) {
-      if (!race) return "未設定";
+      if (!race) {
+        return "未設定";
+      }
+
       return race.place || race.stadium || race.venue || "未設定";
     }
 
@@ -704,8 +719,14 @@
     function scoreClass(value) {
       const num = Number(value || 0);
 
-      if (num > 0) return "score-plus";
-      if (num < 0) return "score-minus";
+      if (num > 0) {
+        return "score-plus";
+      }
+
+      if (num < 0) {
+        return "score-minus";
+      }
+
       return "score-zero";
     }
 
@@ -756,23 +777,24 @@
         renderWeather(data.weather || {});
         renderPredictions(data.predictions || []);
         renderTickets(data);
-        renderAllBoats(data.all_boats || []);
-        renderNotice(data.notice || "このページは学習用のサンプルです。");
-
+        renderAllBoats(data.all_boats || data.boats || []);
+        renderNotice(data.notice || "このページは学習用のサンプルです。実際の投票は自己責任で行ってください。");
       } catch (error) {
         console.error(error);
 
-        document.getElementById("predictions").innerHTML = `
-          <div class="error">
+        document.getElementById("predictions").innerHTML =
+          `<div class="error">
             prediction.json の読み込みに失敗しました。<br>
             GitHub Actions の Make Prediction JSON が成功しているか確認してください。
-          </div>
-        `;
+          </div>`;
 
-        document.getElementById("ticket-summary").textContent = "買い目データを読み込めませんでした。";
+        document.getElementById("ticket-summary").textContent =
+          "買い目データを読み込めませんでした。";
+
         document.getElementById("ticket-groups").innerHTML = "";
         document.getElementById("all-boats").innerHTML = "";
-        document.getElementById("notice").textContent = "データ読み込みエラーが発生しました。";
+        document.getElementById("notice").textContent =
+          "データ読み込みエラーが発生しました。";
       }
     }
 
@@ -788,17 +810,31 @@
     function renderRace(data) {
       const race = data.race || {};
 
-      document.getElementById("race-date").textContent = race.date || "未設定";
-      document.getElementById("race-place").textContent = getPlace(race);
-      document.getElementById("race-no").textContent = race.race_no || "未設定";
-      document.getElementById("deadline").textContent = race.deadline || "未設定";
-      document.getElementById("race-title").textContent = race.title || "未設定";
-      document.getElementById("updated-at").textContent = data.updated_at || "未設定";
+      document.getElementById("race-date").textContent =
+        race.date || "未設定";
+
+      document.getElementById("race-place").textContent =
+        getPlace(race);
+
+      document.getElementById("race-no").textContent =
+        race.race_no || race.race || "未設定";
+
+      document.getElementById("deadline").textContent =
+        race.deadline || race.close_time || "未設定";
+
+      document.getElementById("race-title").textContent =
+        race.title || race.name || "未設定";
+
+      document.getElementById("updated-at").textContent =
+        data.updated_at || data.generated_at || "未設定";
     }
 
     function renderWeather(weather) {
-      document.getElementById("weather").textContent = weather.weather || "未設定";
-      document.getElementById("wind-direction").textContent = weather.wind_direction || "未設定";
+      document.getElementById("weather").textContent =
+        weather.weather || "未設定";
+
+      document.getElementById("wind-direction").textContent =
+        weather.wind_direction || "未設定";
 
       if (weather.wind_speed === undefined || weather.wind_speed === null || weather.wind_speed === "") {
         document.getElementById("wind-speed").textContent = "未設定";
@@ -828,37 +864,34 @@
         return;
       }
 
-      predictions.forEach((item) => {
+      predictions.forEach(item => {
         const confidence = Number(item.confidence || 0);
-        const mark = item.mark || "";
-        const markName = item.mark_name || item.label || "";
-
         const div = document.createElement("div");
         div.className = "prediction-item";
 
         div.innerHTML = `
           <div class="prediction-head">
-            <div class="mark">${escapeHtml(mark || item.rank)}</div>
+            <div class="mark">${escapeHtml(item.mark || item.rank || "")}</div>
             <div>
-              <div class="mark-name">${escapeHtml(markName)}</div>
+              <div class="mark-name">${escapeHtml(item.mark_name || item.label || "")}</div>
               <div>${escapeHtml(item.label || "")}</div>
             </div>
           </div>
 
           <div class="boat-line">
             <span class="boat-number">${escapeHtml(item.boat)}号艇</span>
-            ${escapeHtml(item.driver || "")}
+            ${escapeHtml(item.driver || item.name || "")}
           </div>
 
           <div class="detail-grid">
             <div class="detail-box">
               <div class="detail-label">順位</div>
-              <div class="detail-value">${escapeHtml(item.rank)}位</div>
+              <div class="detail-value">${escapeHtml(item.rank || "-")}位</div>
             </div>
 
             <div class="detail-box">
               <div class="detail-label">コース</div>
-              <div class="detail-value">${escapeHtml(item.course || item.boat)}コース</div>
+              <div class="detail-value">${escapeHtml(item.course || item.boat || "-")}コース</div>
             </div>
 
             <div class="detail-box">
@@ -917,22 +950,23 @@
       const simpleTickets = data.tickets || [];
 
       if (ticketGroups.length > 0) {
-        const totalAmount = Number(data.total_amount || 0);
-        summary.textContent = `合計予定金額：${yen(totalAmount)} / 分類数：${ticketGroups.length}`;
+        const totalAmount = Number(data.total_amount || data.total_stake || 0);
 
-        ticketGroups.forEach((group) => {
+        summary.textContent =
+          `合計予定金額：${yen(totalAmount)} / 分類数：${ticketGroups.length}`;
+
+        ticketGroups.forEach(group => {
           const div = document.createElement("div");
           div.className = "ticket-group";
 
-          const tickets = group.tickets || [];
           let ticketHtml = "";
 
-          tickets.forEach((ticket) => {
+          (group.tickets || []).forEach(ticket => {
             ticketHtml += `
               <div class="ticket-item">
-                <div class="ticket-number">${escapeHtml(ticket.ticket)}</div>
+                <div class="ticket-number">${escapeHtml(ticket.ticket || ticket)}</div>
                 <div class="ticket-amount">${yen(ticket.amount || 100)}</div>
-                <div class="ticket-prob">確率 ${percentFromProb(ticket.probability)}</div>
+                <div class="ticket-prob">確率 ${ticket.probability !== undefined ? percentFromProb(ticket.probability) : "-"}</div>
                 <div class="ticket-reason">${escapeHtml(ticket.reason || "")}</div>
               </div>
             `;
@@ -940,8 +974,7 @@
 
           div.innerHTML = `
             <div class="ticket-group-head ${riskClass(group.risk)}">
-              ${escapeHtml(group.name || "未分類")}
-              / ${escapeHtml(group.risk || "リスク不明")}
+              ${escapeHtml(group.name || "未分類")} / ${escapeHtml(group.risk || "リスク不明")}
             </div>
 
             <div class="ticket-group-body">
@@ -964,24 +997,22 @@
 
         let ticketHtml = "";
 
-        simpleTickets.forEach((ticket) => {
+        simpleTickets.forEach(ticket => {
+          const ticketText = typeof ticket === "string" ? ticket : ticket.ticket;
+
           ticketHtml += `
             <div class="ticket-item">
-              <div class="ticket-number">${escapeHtml(ticket)}</div>
-              <div class="ticket-amount">100円</div>
+              <div class="ticket-number">${escapeHtml(ticketText)}</div>
+              <div class="ticket-amount">${yen(ticket.amount || 100)}</div>
               <div class="ticket-prob">確率 -</div>
-              <div class="ticket-reason">通常買い目</div>
+              <div class="ticket-reason">${escapeHtml(ticket.reason || "通常買い目")}</div>
             </div>
           `;
         });
 
         div.innerHTML = `
-          <div class="ticket-group-head risk-default">
-            通常買い目
-          </div>
-          <div class="ticket-group-body">
-            ${ticketHtml}
-          </div>
+          <div class="ticket-group-head risk-default">通常買い目</div>
+          <div class="ticket-group-body">${ticketHtml}</div>
         `;
 
         container.appendChild(div);
@@ -1007,7 +1038,7 @@
 
       let rows = "";
 
-      allBoats.forEach((boat) => {
+      allBoats.forEach(boat => {
         rows += `
           <tr>
             <td>${escapeHtml(boat.rank || "")}</td>
@@ -1016,22 +1047,17 @@
               ${escapeHtml(boat.mark_name || "")}
             </td>
             <td>${escapeHtml(boat.boat)}号艇</td>
-            <td>${escapeHtml(boat.driver || "")}</td>
-            <td>${escapeHtml(boat.course || boat.boat)}</td>
-
+            <td>${escapeHtml(boat.driver || boat.name || "")}</td>
+            <td>${escapeHtml(boat.course || boat.boat || "")}</td>
             <td>${displayValue(boat.win_rate)}</td>
             <td>${displayValue(boat.motor_rate, "%")}</td>
             <td>${displayValue(boat.avg_st)}</td>
-
             <td>${displayValue(boat.exhibition_time)}</td>
             <td>${displayValue(boat.exhibition_time_rank, "位")}</td>
-
             <td>${displayValue(boat.exhibition_st)}</td>
             <td>${displayValue(boat.exhibition_st_rank, "位")}</td>
-
             <td>${displayValue(boat.tilt)}</td>
             <td>${displayValue(boat.win_odds)}</td>
-
             <td>${displayValue(boat.base_score)}</td>
             <td class="${scoreClass(boat.weather_score)}">${displayValue(boat.weather_score)}</td>
             <td class="${scoreClass(boat.exhibition_score)}">${displayValue(boat.exhibition_score)}</td>
@@ -1051,20 +1077,15 @@
               <th>艇番</th>
               <th>選手名</th>
               <th>コース</th>
-
               <th>勝率</th>
               <th>モーター率</th>
               <th>平均ST</th>
-
               <th>展示T</th>
               <th>展示T順位</th>
-
               <th>展示ST</th>
               <th>展示ST順位</th>
-
               <th>チルト</th>
               <th>単勝オッズ</th>
-
               <th>基本</th>
               <th>水面</th>
               <th>展示</th>
