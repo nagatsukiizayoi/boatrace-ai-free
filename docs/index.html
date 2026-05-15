@@ -60,6 +60,10 @@
       margin: 0 0 12px;
     }
 
+    #alert-section {
+      scroll-margin-top: 16px;
+    }
+
     .quick-summary-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -72,6 +76,24 @@
       color: white;
       min-height: 96px;
       box-sizing: border-box;
+    }
+
+    .summary-link-card {
+      text-decoration: none;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+
+    .summary-link-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
+      opacity: 0.96;
+    }
+
+    .summary-link-card:active {
+      transform: translateY(0);
+      box-shadow: none;
     }
 
     .quick-summary-label {
@@ -472,18 +494,6 @@
       font-weight: 900;
     }
 
-    .risk-low {
-      background: #dc2626;
-    }
-
-    .risk-middle {
-      background: #2563eb;
-    }
-
-    .risk-high {
-      background: #7c3aed;
-    }
-
     .risk-default {
       background: #475569;
     }
@@ -491,13 +501,6 @@
     .ticket-group-body {
       padding: 12px;
       background: #ffffff;
-    }
-
-    .ticket-group-body p {
-      margin-top: 0;
-      color: #4b5563;
-      font-size: 13px;
-      line-height: 1.6;
     }
 
     .ticket-item {
@@ -641,6 +644,7 @@
   <main>
     <section class="card">
       <h2>現在の状況サマリー</h2>
+
       <div class="quick-summary-grid">
         <div class="quick-summary-box summary-stage">
           <div class="quick-summary-label">現在のステージ</div>
@@ -678,15 +682,15 @@
           <div id="summary-updated-sub" class="quick-summary-sub">最終更新を表示します。</div>
         </div>
 
-        <div class="quick-summary-box summary-alert">
+        <a class="quick-summary-box summary-alert summary-link-card" href="#alert-section">
           <div class="quick-summary-label">アラート状況</div>
           <div id="summary-alert-status" class="quick-summary-value">読込中</div>
           <div id="summary-alert-sub" class="quick-summary-sub">注意アラートを確認中です。</div>
-        </div>
+        </a>
       </div>
     </section>
 
-    <section class="card">
+    <section class="card" id="alert-section">
       <h2>注意アラート</h2>
       <p class="notice">
         現在の予想データと設定に基づいて、入力漏れや更新忘れを確認します。
@@ -716,6 +720,7 @@
       <div class="menu-section">
         <h3 class="menu-section-title"><span>予想系</span> 予想・比較・分析</h3>
         <p class="menu-section-description">現在の予想、予想の変化、ステージ別の自動分析を確認します。</p>
+
         <div class="menu-grid">
           <a class="menu-button menu-prediction" href="./index.html">
             <div class="menu-button-title">予想ページ</div>
@@ -737,6 +742,7 @@
       <div class="menu-section">
         <h3 class="menu-section-title"><span>評価系</span> 的中・回収率・利益</h3>
         <p class="menu-section-description">直近結果、過去成績、成績グラフを確認します。</p>
+
         <div class="menu-grid">
           <a class="menu-button menu-evaluation" href="./evaluation.html">
             <div class="menu-button-title">直近評価</div>
@@ -758,6 +764,7 @@
       <div class="menu-section">
         <h3 class="menu-section-title"><span>ステージ評価系</span> 前日・展示後・最終</h3>
         <p class="menu-section-description">各予想段階ごとの成績を比較します。</p>
+
         <div class="menu-grid">
           <a class="menu-button menu-stage-evaluation" href="./stage_evaluation.html">
             <div class="menu-button-title">ステージ別評価</div>
@@ -779,6 +786,7 @@
       <div class="menu-section">
         <h3 class="menu-section-title"><span>JSON確認系</span> 元データ・設定確認</h3>
         <p class="menu-section-description">プログラムが生成したJSONや、アラート設定を確認します。</p>
+
         <div class="menu-grid">
           <a class="menu-button menu-alert-settings" href="./alert_settings.html">
             <div class="menu-button-title">アラート設定ページ</div>
@@ -1437,6 +1445,7 @@
       document.getElementById("summary-amount-sub").textContent = "予定投資額の合計です。";
 
       document.getElementById("summary-updated-at").textContent = updatedAt || "不明";
+
       const hours = getHoursFromNow(updatedAt);
       document.getElementById("summary-updated-sub").textContent =
         hours !== null ? `現在から約 ${hours.toFixed(1)} 時間前` : "更新日時を取得できませんでした。";
@@ -1523,10 +1532,10 @@
       const el = document.getElementById("weather-area");
       const weather = data.weather || data.race_update || data.condition || data;
 
+      const weatherText = firstValue(weather.weather, weather.weather_text);
       const wind = firstValue(weather.wind, weather.wind_speed, weather.wind_text);
       const windDir = firstValue(weather.wind_direction, weather.wind_dir);
       const wave = firstValue(weather.wave, weather.wave_height);
-      const weatherText = firstValue(weather.weather, weather.weather_text);
       const temperature = firstValue(weather.temperature, weather.temp);
       const water = firstValue(weather.water_temperature, weather.water_temp);
 
