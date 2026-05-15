@@ -144,6 +144,13 @@
       color: #991b1b;
     }
 
+    .alert-note {
+      margin-top: 8px;
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
     .menu-section {
       margin-bottom: 22px;
     }
@@ -650,6 +657,9 @@
       <div id="alert-list" class="alert-list">
         <div class="loading">注意点を確認中...</div>
       </div>
+      <div class="alert-note">
+        アラート条件は <code>alert_settings.json</code> で変更できます。
+      </div>
     </section>
 
     <section class="card">
@@ -754,6 +764,11 @@
           <a class="menu-button menu-json" href="./race_update.json">
             <div class="menu-button-title">当日情報JSON</div>
             <div class="menu-button-sub">水面・展示・オッズの入力データを確認します。</div>
+          </a>
+
+          <a class="menu-button menu-json" href="./alert_settings.json">
+            <div class="menu-button-title">アラート設定JSON</div>
+            <div class="menu-button-sub">注意アラートの判定条件を確認します。</div>
           </a>
 
           <a class="menu-button menu-json" href="./prediction_runs.json">
@@ -903,6 +918,21 @@
   </footer>
 
   <script>
+    const DEFAULT_ALERT_SETTINGS = {
+      ticket_count_warning: 15,
+      ticket_count_danger: 25,
+      total_amount_warning: 3000,
+      total_amount_danger: 5000,
+      updated_hours_warning: 12,
+      updated_hours_danger: 24,
+      check_exhibition_time: true,
+      check_exhibition_st: true,
+      check_final_odds: true,
+      check_updated_at: true,
+      check_ticket_count: true,
+      check_total_amount: true
+    };
+
     function escapeHtml(value) {
       if (value === null || value === undefined) {
         return "";
@@ -1111,7 +1141,33 @@
       return predictions;
     }
 
-    function buildAlerts(data) {
+    async function loadAlertSettings() {
+      try {
+        const response = await fetch("./alert_settings.json?cache=" + Date.now());
+
+        if (!response.ok) {
+          console.warn("alert_settings.json が見つからないため、初期設定を使います。");
+          return { ...DEFAULT_ALERT_SETTINGS };
+        }
+
+        const settings = await response.json();
+
+        return {
+          ...DEFAULT_ALERT_SETTINGS,
+          ...settings
+        };
+      } catch (error) {
+        console.warn("alert_settings.json の読み込みに失敗したため、初期設定を使います。", error);
+        return { ...DEFAULT_ALERT_SETTINGS };
+      }
+    }
+
+    function buildAlerts(data, settings) {
+      const s = {
+        ...DEFAULT_ALERT_SETTINGS,
+        ...(settings || {})
+      };
+
       const alerts = [];
       const stage = String(data.stage || "PRE_NIGHT");
       const boats = getBoatList(data);
@@ -1122,9 +1178,8 @@
       const needsExhibition = stage === "POST_EXHIBITION" || stage === "FINAL";
       const needsOdds = stage === "FINAL";
 
-      if (needsExhibition) {
+      if (needsExhibition && s.check_exhibition_time) {
         const missingExhibitionTime = boats.filter(boat => isBlank(boat.exhibition_time));
-        const missingExhibitionSt = boats.filter(boat => isBlank(boat.exhibition_st));
 
         if (missingExhibitionTime.length > 0) {
           alerts.push({
@@ -1132,6 +1187,10 @@
             message: `展示後または最終予想ですが、展示タイムが未入力の艇が ${missingExhibitionTime.length} 件あります。`
           });
         }
+      }
+
+      if (needsExhibition && s.check_exhibition_st) {
+        const missingExhibitionSt = boats.filter(boat => isBlank(boat.exhibition_st));
 
         if (missingExhibitionSt.length > 0) {
           alerts.push({
@@ -1141,7 +1200,7 @@
         }
       }
 
-      if (needsOdds) {
+      if (needsOdds && s.check_final_odds) {
         const missingOdds = boats.filter(boat => isBlank(boat.win_odds));
 
         if (missingOdds.length > 0) {
@@ -1152,57 +1211,63 @@
         }
       }
 
-      if (ticketCount >= 25) {
-        alerts.push({
-          level: "danger",
-          message: `買い目点数が ${ticketCount}点 あります。多すぎる可能性があるため、買い目を絞ることも検討してください。`
-        });
-      } else if (ticketCount >= 15) {
-        alerts.push({
-          level: "warning",
-          message: `買い目点数が ${ticketCount}点 あります。やや多めです。`
-        });
-      }
-
-      if (totalAmount >= 5000) {
-        alerts.push({
-          level: "danger",
-          message: `予定投資額が ${yen(totalAmount)} です。5,000円以上のため、資金管理に注意してください。`
-        });
-      } else if (totalAmount >= 3000) {
-        alerts.push({
-          level: "warning",
-          message: `予定投資額が ${yen(totalAmount)} です。3,000円以上のため、投資額を確認してください。`
-        });
-      }
-
-      if (!updatedAt) {
-        alerts.push({
-          level: "warning",
-          message: "prediction.json に updated_at または generated_at がありません。更新日時を確認できません。"
-        });
-      } else {
-        const updatedDate = new Date(updatedAt);
-
-        if (Number.isNaN(updatedDate.getTime())) {
+      if (s.check_ticket_count) {
+        if (ticketCount >= Number(s.ticket_count_danger)) {
+          alerts.push({
+            level: "danger",
+            message: `買い目点数が ${ticketCount}点 あります。多すぎる可能性があるため、買い目を絞ることも検討してください。`
+          });
+        } else if (ticketCount >= Number(s.ticket_count_warning)) {
           alerts.push({
             level: "warning",
-            message: "prediction.json の更新日時を日時として読み取れません。updated_at の形式を確認してください。"
+            message: `買い目点数が ${ticketCount}点 あります。やや多めです。`
+          });
+        }
+      }
+
+      if (s.check_total_amount) {
+        if (totalAmount >= Number(s.total_amount_danger)) {
+          alerts.push({
+            level: "danger",
+            message: `予定投資額が ${yen(totalAmount)} です。設定上限 ${yen(s.total_amount_danger)} 以上のため、資金管理に注意してください。`
+          });
+        } else if (totalAmount >= Number(s.total_amount_warning)) {
+          alerts.push({
+            level: "warning",
+            message: `予定投資額が ${yen(totalAmount)} です。設定目安 ${yen(s.total_amount_warning)} 以上のため、投資額を確認してください。`
+          });
+        }
+      }
+
+      if (s.check_updated_at) {
+        if (!updatedAt) {
+          alerts.push({
+            level: "warning",
+            message: "prediction.json に updated_at または generated_at がありません。更新日時を確認できません。"
           });
         } else {
-          const now = new Date();
-          const diffHours = (now.getTime() - updatedDate.getTime()) / (1000 * 60 * 60);
+          const updatedDate = new Date(updatedAt);
 
-          if (diffHours >= 24) {
-            alerts.push({
-              level: "danger",
-              message: `prediction.json の更新から約 ${diffHours.toFixed(1)} 時間経過しています。予想が古い可能性があります。`
-            });
-          } else if (diffHours >= 12) {
+          if (Number.isNaN(updatedDate.getTime())) {
             alerts.push({
               level: "warning",
-              message: `prediction.json の更新から約 ${diffHours.toFixed(1)} 時間経過しています。最新化されているか確認してください。`
+              message: "prediction.json の更新日時を日時として読み取れません。updated_at の形式を確認してください。"
             });
+          } else {
+            const now = new Date();
+            const diffHours = (now.getTime() - updatedDate.getTime()) / (1000 * 60 * 60);
+
+            if (diffHours >= Number(s.updated_hours_danger)) {
+              alerts.push({
+                level: "danger",
+                message: `prediction.json の更新から約 ${diffHours.toFixed(1)} 時間経過しています。予想が古い可能性があります。`
+              });
+            } else if (diffHours >= Number(s.updated_hours_warning)) {
+              alerts.push({
+                level: "warning",
+                message: `prediction.json の更新から約 ${diffHours.toFixed(1)} 時間経過しています。最新化されているか確認してください。`
+              });
+            }
           }
         }
       }
@@ -1217,9 +1282,9 @@
       return alerts;
     }
 
-    function renderAlerts(data) {
+    function renderAlerts(data, settings) {
       const container = document.getElementById("alert-list");
-      const alerts = buildAlerts(data);
+      const alerts = buildAlerts(data, settings);
 
       if (alerts.length === 0) {
         container.innerHTML = `
@@ -1293,6 +1358,8 @@
 
     async function loadPrediction() {
       try {
+        const settings = await loadAlertSettings();
+
         const response = await fetch("./prediction.json?cache=" + Date.now());
 
         if (!response.ok) {
@@ -1302,7 +1369,7 @@
         const data = await response.json();
 
         renderQuickSummary(data);
-        renderAlerts(data);
+        renderAlerts(data, settings);
         renderStage(data);
         renderRace(data);
         renderWeather(data.weather || {});
