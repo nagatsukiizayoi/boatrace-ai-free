@@ -370,6 +370,54 @@
       color: #991b1b;
     }
 
+    .alert-type-summary {
+      border-radius: 12px;
+      padding: 12px;
+      margin: 0 0 12px;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+
+    .alert-type-summary-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .alert-type-summary-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .alert-type-summary-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 900;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #374151;
+    }
+
+    .alert-type-summary-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      padding: 0 6px;
+      background: rgba(17, 24, 39, 0.08);
+      color: #111827;
+      font-size: 11px;
+      font-weight: 900;
+    }
+
     .alert-filter-empty {
       border: 1px dashed #d1d5db;
       background: #f9fafb;
@@ -722,6 +770,10 @@
         表示条件を確認中です...
       </div>
 
+      <div id="alert-type-summary" class="alert-type-summary loading">
+        分類別件数を確認中です...
+      </div>
+
       <div id="alert-area" class="loading">注意アラートを読み込み中です...</div>
     </section>
 
@@ -890,6 +942,7 @@
 
       renderAlertFilters(latestAlerts);
       renderAlertVisibleSummary(latestAlerts);
+      renderAlertTypeSummary(latestAlerts);
       renderAlertList(latestAlerts);
     }
 
@@ -1304,6 +1357,18 @@
       return classes[type] || "alert-type-other";
     }
 
+    function getAlertTypeOrder() {
+      return [
+        "ticket_count",
+        "total_amount",
+        "update_delay",
+        "update_unknown",
+        "missing_exhibition_time",
+        "missing_exhibition_st",
+        "missing_final_odds"
+      ];
+    }
+
     function renderQuickSummary(data) {
       const main = getMainPrediction(data);
       const stage = getStage(data) || "未判定";
@@ -1422,6 +1487,7 @@
 
           renderAlertFilters(latestAlerts);
           renderAlertVisibleSummary(latestAlerts);
+          renderAlertTypeSummary(latestAlerts);
           renderAlertList(latestAlerts);
         });
       });
@@ -1455,6 +1521,53 @@
           現在の表示：<strong>${escapeHtml(label)}</strong> ${visibleCount}件 / 全体 ${totalCount}件
         `;
       }
+    }
+
+    function renderAlertTypeSummary(alerts) {
+      const area = document.getElementById("alert-type-summary");
+      if (!area) return;
+
+      const safeAlerts = Array.isArray(alerts) ? alerts : [];
+      const typeOrder = getAlertTypeOrder();
+
+      const counts = safeAlerts.reduce((acc, alert) => {
+        const type = alert?.type || "other";
+        acc[type] = (acc[type] || 0) + 1;
+        return acc;
+      }, {});
+
+      const knownTypesHtml = typeOrder.map(type => {
+        const label = getAlertTypeLabel(type);
+        const typeClass = getAlertTypeClass(type);
+        const count = counts[type] || 0;
+
+        return `
+          <span class="alert-type-summary-chip alert-type-badge ${typeClass}">
+            ${escapeHtml(label)}
+            <span class="alert-type-summary-count">${count}件</span>
+          </span>
+        `;
+      }).join("");
+
+      const otherCount = Object.keys(counts)
+        .filter(type => !typeOrder.includes(type))
+        .reduce((sum, type) => sum + counts[type], 0);
+
+      const otherHtml = otherCount > 0 ? `
+        <span class="alert-type-summary-chip alert-type-badge alert-type-other">
+          その他
+          <span class="alert-type-summary-count">${otherCount}件</span>
+        </span>
+      ` : "";
+
+      area.className = "alert-type-summary";
+      area.innerHTML = `
+        <div class="alert-type-summary-title">分類別件数</div>
+        <div class="alert-type-summary-grid">
+          ${knownTypesHtml}
+          ${otherHtml}
+        </div>
+      `;
     }
 
     function renderAlertList(alerts) {
@@ -1512,6 +1625,7 @@
       renderAlertCountSummary(alerts);
       renderAlertFilters(alerts);
       renderAlertVisibleSummary(alerts);
+      renderAlertTypeSummary(alerts);
       renderAlertList(alerts);
     }
 
@@ -1803,6 +1917,7 @@
         "summary-alert-status",
         "alert-count-summary",
         "alert-visible-summary",
+        "alert-type-summary",
         "alert-area",
         "stage-area",
         "race-area",
