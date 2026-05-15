@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>アラート設定確認</title>
+  <title>アラート設定ページ | ボートレースAI予想</title>
 
   <style>
     body {
@@ -15,9 +15,9 @@
     }
 
     header {
-      background: linear-gradient(135deg, #475569, #0f172a);
+      background: linear-gradient(135deg, #0f172a, #475569);
       color: white;
-      padding: 20px 16px;
+      padding: 22px 16px;
       text-align: center;
     }
 
@@ -49,8 +49,14 @@
     }
 
     .card h2 {
-      margin-top: 0;
+      margin: 0 0 12px;
       font-size: 20px;
+    }
+
+    .card p {
+      color: #4b5563;
+      line-height: 1.7;
+      font-size: 14px;
     }
 
     .summary-grid {
@@ -60,133 +66,129 @@
     }
 
     .summary-box {
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 14px;
       color: white;
-      min-height: 100px;
+      min-height: 92px;
       box-sizing: border-box;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .summary-box.ticket {
+      background: linear-gradient(135deg, #2563eb, #60a5fa);
+    }
+
+    .summary-box.amount {
+      background: linear-gradient(135deg, #dc2626, #f87171);
+    }
+
+    .summary-box.updated {
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
     }
 
     .summary-label {
-      font-size: 12px;
-      opacity: 0.92;
-      margin-bottom: 6px;
+      font-size: 13px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+      font-weight: 700;
     }
 
     .summary-value {
       font-size: 22px;
       font-weight: 900;
-      line-height: 1.3;
+      line-height: 1.4;
     }
 
     .summary-sub {
       font-size: 12px;
       opacity: 0.9;
-      margin-top: 5px;
+      margin-top: 4px;
       line-height: 1.5;
     }
 
-    .box-ticket-warning {
-      background: linear-gradient(135deg, #f59e0b, #fbbf24);
-    }
-
-    .box-ticket-danger {
-      background: linear-gradient(135deg, #dc2626, #fb7185);
-    }
-
-    .box-amount-warning {
-      background: linear-gradient(135deg, #ea580c, #fb923c);
-    }
-
-    .box-amount-danger {
-      background: linear-gradient(135deg, #be123c, #fb7185);
-    }
-
-    .box-time-warning {
-      background: linear-gradient(135deg, #2563eb, #60a5fa);
-    }
-
-    .box-time-danger {
-      background: linear-gradient(135deg, #7c3aed, #a78bfa);
-    }
-
-    .status-grid {
+    .switch-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .status-item {
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 14px;
-      background: #ffffff;
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-    }
-
-    .status-text {
-      line-height: 1.5;
-    }
-
-    .status-title {
-      font-weight: 900;
-      font-size: 15px;
-    }
-
-    .status-desc {
-      color: #6b7280;
-      font-size: 12px;
-      margin-top: 3px;
-    }
-
-    .badge {
-      display: inline-block;
-      min-width: 54px;
-      text-align: center;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 12px;
-      font-weight: 900;
-      color: white;
-      flex-shrink: 0;
-    }
-
-    .badge-on {
-      background: #16a34a;
-    }
-
-    .badge-off {
-      background: #6b7280;
-    }
-
-    .explain-list {
-      display: flex;
-      flex-direction: column;
       gap: 10px;
     }
 
-    .explain-item {
+    .switch-item {
       background: #f9fafb;
       border: 1px solid #e5e7eb;
       border-radius: 12px;
       padding: 12px;
-      line-height: 1.7;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .switch-name {
+      font-weight: 800;
       font-size: 14px;
     }
 
-    .key {
-      display: inline-block;
-      background: #111827;
-      color: white;
-      border-radius: 999px;
-      padding: 3px 9px;
+    .switch-desc {
+      color: #6b7280;
       font-size: 12px;
-      font-weight: 800;
-      margin-right: 4px;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    .status-on,
+    .status-off {
+      display: inline-block;
+      min-width: 58px;
+      text-align: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: white;
+      font-weight: 900;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+
+    .status-on {
+      background: #16a34a;
+    }
+
+    .status-off {
+      background: #6b7280;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      min-width: 780px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #374151;
+      font-weight: 900;
+    }
+
+    td.description {
+      white-space: normal;
+      line-height: 1.6;
+      color: #4b5563;
+    }
+
+    code {
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 12px;
     }
 
     .template-grid {
@@ -198,9 +200,8 @@
     .template-card {
       border: 1px solid #e5e7eb;
       border-radius: 16px;
-      background: #ffffff;
       padding: 14px;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+      background: #ffffff;
     }
 
     .template-card h3 {
@@ -208,153 +209,109 @@
       font-size: 18px;
     }
 
-    .template-description {
+    .template-card p {
+      margin: 0 0 10px;
+      font-size: 13px;
       color: #4b5563;
-      font-size: 13px;
-      line-height: 1.7;
-      margin-bottom: 10px;
+      line-height: 1.6;
     }
 
-    .template-point {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 10px;
+    .template-point-list {
+      margin: 0 0 12px;
+      padding-left: 18px;
+      color: #374151;
       font-size: 13px;
       line-height: 1.7;
-      margin-bottom: 10px;
     }
 
-    .template-pre {
+    .template-json {
       background: #0f172a;
       color: #e5e7eb;
       border-radius: 12px;
       padding: 12px;
-      overflow-x: auto;
       font-size: 12px;
-      line-height: 1.6;
-      max-height: 260px;
+      line-height: 1.5;
+      overflow-x: auto;
       white-space: pre;
+      margin-bottom: 12px;
+    }
+
+    .template-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .copy-button,
+    .download-button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 13px;
     }
 
     .copy-button {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 10px;
-      background: linear-gradient(135deg, #0f766e, #14b8a6);
+      background: #2563eb;
       color: white;
-      font-weight: 900;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
     }
 
     .copy-button:hover {
-      opacity: 0.92;
+      background: #1d4ed8;
+    }
+
+    .download-button {
+      background: #16a34a;
+      color: white;
+    }
+
+    .download-button:hover {
+      background: #15803d;
     }
 
     .copy-message {
-      margin-top: 8px;
-      font-size: 12px;
+      margin-top: 12px;
+      background: #ecfdf5;
+      border: 1px solid #86efac;
       color: #166534;
-      font-weight: 800;
-      min-height: 18px;
-    }
-
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .menu-button {
-      display: block;
-      text-decoration: none;
-      color: white;
-      border-radius: 16px;
-      padding: 16px;
-      box-sizing: border-box;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-    }
-
-    .menu-button-title {
-      font-weight: 900;
-      font-size: 17px;
-      margin-bottom: 6px;
-    }
-
-    .menu-button-sub {
-      font-size: 12px;
-      line-height: 1.5;
-      opacity: 0.92;
-    }
-
-    .menu-home {
-      background: linear-gradient(135deg, #0f766e, #14b8a6);
-    }
-
-    .menu-json {
-      background: linear-gradient(135deg, #475569, #94a3b8);
-    }
-
-    .menu-prediction {
-      background: linear-gradient(135deg, #2563eb, #60a5fa);
-    }
-
-    .menu-update {
-      background: linear-gradient(135deg, #ea580c, #fb923c);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 760px;
-      font-size: 13px;
-    }
-
-    th,
-    td {
-      border-bottom: 1px solid #e5e7eb;
-      padding: 10px 8px;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      background: #f9fafb;
-      color: #374151;
-      white-space: nowrap;
-    }
-
-    code {
-      background: #f1f5f9;
-      color: #0f172a;
-      border-radius: 6px;
-      padding: 2px 5px;
-      font-size: 12px;
-    }
-
-    pre {
-      background: #0f172a;
-      color: #e5e7eb;
       border-radius: 12px;
-      padding: 14px;
-      overflow-x: auto;
-      font-size: 12px;
+      padding: 10px 12px;
+      font-weight: 800;
+      font-size: 13px;
+      display: none;
       line-height: 1.6;
     }
 
-    .notice {
-      color: #6b7280;
-      font-size: 13px;
-      line-height: 1.7;
+    .link-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .link-button {
+      display: block;
+      text-decoration: none;
+      color: white;
+      border-radius: 14px;
+      padding: 14px;
+      font-weight: 900;
+      text-align: center;
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+    }
+
+    .link-button.gray {
+      background: linear-gradient(135deg, #475569, #94a3b8);
+    }
+
+    .link-button.dark {
+      background: linear-gradient(135deg, #111827, #4b5563);
     }
 
     .loading {
       color: #6b7280;
       padding: 12px;
+      line-height: 1.7;
     }
 
     .error {
@@ -367,14 +324,10 @@
       font-weight: 700;
     }
 
-    .ok {
-      background: #dcfce7;
-      border: 1px solid #22c55e;
-      color: #166534;
-      border-radius: 12px;
-      padding: 12px;
+    .notice {
+      color: #6b7280;
+      font-size: 13px;
       line-height: 1.7;
-      font-weight: 700;
     }
 
     footer {
@@ -384,16 +337,20 @@
       padding: 24px 16px;
     }
 
-    @media (max-width: 700px) {
+    @media (max-width: 760px) {
       .summary-grid,
-      .status-grid,
+      .switch-grid,
       .template-grid,
-      .menu-grid {
+      .link-grid {
         grid-template-columns: 1fr;
       }
 
-      .status-item {
-        align-items: flex-start;
+      header h1 {
+        font-size: 22px;
+      }
+
+      .summary-value {
+        font-size: 20px;
       }
     }
   </style>
@@ -401,176 +358,69 @@
 
 <body>
   <header>
-    <h1>アラート設定確認</h1>
-    <p>
-      <code>alert_settings.json</code> の内容を読み込み、注意アラートの判定条件を確認します。
-    </p>
+    <h1>アラート設定ページ</h1>
+    <p>注意アラートの条件を日本語で確認し、設定例をコピーまたはJSONとしてダウンロードできます。</p>
   </header>
 
   <main>
     <section class="card">
-      <h2>読み込み状態</h2>
-      <div id="load-status" class="loading">alert_settings.json を読み込み中...</div>
+      <h2>現在のアラート設定サマリー</h2>
+      <div id="summary-area" class="loading">alert_settings.json を読み込み中です...</div>
     </section>
 
     <section class="card">
-      <h2>アラート設定サマリー</h2>
-
-      <div class="summary-grid">
-        <div class="summary-box box-ticket-warning">
-          <div class="summary-label">買い目点数 注意</div>
-          <div class="summary-value" id="ticket-warning">読み込み中...</div>
-          <div class="summary-sub">この点数以上で注意アラートを表示します。</div>
-        </div>
-
-        <div class="summary-box box-ticket-danger">
-          <div class="summary-label">買い目点数 危険</div>
-          <div class="summary-value" id="ticket-danger">読み込み中...</div>
-          <div class="summary-sub">この点数以上で強い注意を表示します。</div>
-        </div>
-
-        <div class="summary-box box-amount-warning">
-          <div class="summary-label">予定投資額 注意</div>
-          <div class="summary-value" id="amount-warning">読み込み中...</div>
-          <div class="summary-sub">この金額以上で注意アラートを表示します。</div>
-        </div>
-
-        <div class="summary-box box-amount-danger">
-          <div class="summary-label">予定投資額 危険</div>
-          <div class="summary-value" id="amount-danger">読み込み中...</div>
-          <div class="summary-sub">この金額以上で強い注意を表示します。</div>
-        </div>
-
-        <div class="summary-box box-time-warning">
-          <div class="summary-label">更新時間 注意</div>
-          <div class="summary-value" id="time-warning">読み込み中...</div>
-          <div class="summary-sub">更新からこの時間以上で注意を表示します。</div>
-        </div>
-
-        <div class="summary-box box-time-danger">
-          <div class="summary-label">更新時間 危険</div>
-          <div class="summary-value" id="time-danger">読み込み中...</div>
-          <div class="summary-sub">更新からこの時間以上で強い注意を表示します。</div>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>チェックON/OFF一覧</h2>
-      <div id="status-list" class="status-grid">
-        <div class="loading">チェック項目を読み込み中...</div>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>設定例テンプレート</h2>
-      <p class="notice">
-        使いたい設定の「コピーする」ボタンを押すと、JSONをクリップボードにコピーできます。
-        コピー後、GitHubで <code>docs/alert_settings.json</code> を開き、中身を全削除して貼り付けてください。
-      </p>
-      <div id="template-list" class="template-grid">
-        <div class="loading">設定例を読み込み中...</div>
-      </div>
+      <h2>チェック項目 ON/OFF</h2>
+      <div id="switch-area" class="loading">チェック項目を読み込み中です...</div>
     </section>
 
     <section class="card">
       <h2>設定項目の説明</h2>
-
-      <div class="explain-list">
-        <div class="explain-item">
-          <span class="key">ticket_count_warning</span>
-          買い目点数が何点以上なら「注意」を出すかの設定です。
-        </div>
-
-        <div class="explain-item">
-          <span class="key">ticket_count_danger</span>
-          買い目点数が何点以上なら「強い注意」を出すかの設定です。
-        </div>
-
-        <div class="explain-item">
-          <span class="key">total_amount_warning</span>
-          予定投資額が何円以上なら「注意」を出すかの設定です。
-        </div>
-
-        <div class="explain-item">
-          <span class="key">total_amount_danger</span>
-          予定投資額が何円以上なら「強い注意」を出すかの設定です。
-        </div>
-
-        <div class="explain-item">
-          <span class="key">updated_hours_warning</span>
-          予想更新から何時間以上経過したら「注意」を出すかの設定です。
-        </div>
-
-        <div class="explain-item">
-          <span class="key">updated_hours_danger</span>
-          予想更新から何時間以上経過したら「強い注意」を出すかの設定です。
-        </div>
-
-        <div class="explain-item">
-          <span class="key">check_...</span>
-          各チェック項目を有効にするか無効にするかの設定です。<code>true</code> でON、<code>false</code> でOFFです。
-        </div>
-      </div>
+      <div id="description-area"></div>
     </section>
 
     <section class="card">
-      <h2>現在の設定値一覧</h2>
-
-      <div id="settings-table">
-        <div class="loading">設定一覧を読み込み中...</div>
-      </div>
+      <h2>設定例テンプレート</h2>
+      <p>
+        下のテンプレートを使うと、目的に合わせた <code>alert_settings.json</code> を簡単に作れます。
+        「コピーする」でJSONをコピーできます。「JSONをダウンロード」で <code>alert_settings.json</code> として保存できます。
+      </p>
+      <div id="template-list" class="template-grid"></div>
+      <div id="copy-message" class="copy-message"></div>
     </section>
 
     <section class="card">
-      <h2>JSONプレビュー</h2>
-      <pre id="json-preview">読み込み中...</pre>
-    </section>
-
-    <section class="card">
-      <h2>ページ移動</h2>
-
-      <div class="menu-grid">
-        <a class="menu-button menu-home" href="./index.html">
-          <div class="menu-button-title">トップページ</div>
-          <div class="menu-button-sub">予想ページへ戻ります。</div>
-        </a>
-
-        <a class="menu-button menu-json" href="./alert_settings.json">
-          <div class="menu-button-title">アラート設定JSON</div>
-          <div class="menu-button-sub">元データのJSONを直接確認します。</div>
-        </a>
-
-        <a class="menu-button menu-prediction" href="./prediction.json">
-          <div class="menu-button-title">予想JSON</div>
-          <div class="menu-button-sub">現在の予想データを確認します。</div>
-        </a>
-
-        <a class="menu-button menu-update" href="./race_update.json">
-          <div class="menu-button-title">当日情報JSON</div>
-          <div class="menu-button-sub">水面・展示・オッズの入力データを確認します。</div>
-        </a>
-      </div>
-    </section>
-
-    <section class="card notice">
       <h2>使い方</h2>
       <p>
-        アラート条件を変更したい場合は、<code>docs/alert_settings.json</code> を編集してください。
-        例：買い目点数を10点以上で注意にしたい場合は、<code>ticket_count_warning</code> を <code>10</code> に変更します。
+        設定を変更したい場合は、テンプレートのJSONをコピーするか、JSONファイルをダウンロードしてください。
+        その後、GitHub上の <code>docs/alert_settings.json</code> の中身を置き換えてコミットします。
       </p>
       <p>
-        設定例テンプレートを使う場合は、このページの「コピーする」ボタンでJSONをコピーし、
-        GitHub上の <code>docs/alert_settings.json</code> に貼り付けてください。
+        変更後はトップページを開き、URLの末尾に <code>?v=35</code> のような値を付けて再読み込みすると、
+        ブラウザキャッシュの影響を避けやすくなります。
       </p>
-      <p>
-        変更後は GitHub Pages の反映に少し時間がかかる場合があります。古い表示が出る場合は、URL末尾に <code>?v=34</code> のような文字を付けて再読み込みしてください。
+    </section>
+
+    <section class="card">
+      <h2>関連リンク</h2>
+      <div class="link-grid">
+        <a class="link-button" href="./index.html">トップページへ戻る</a>
+        <a class="link-button gray" href="./alert_settings.json">alert_settings.json を見る</a>
+        <a class="link-button dark" href="./prediction.json">prediction.json を見る</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>注意</h2>
+      <p class="notice">
+        このページは <code>docs/alert_settings.json</code> を読み込んで表示します。
+        JSONの末尾カンマや全角記号が入ると読み込みエラーになる場合があります。
+        例：<code>{ "ticket_count_warning": 15, }</code> はNGです。
       </p>
     </section>
   </main>
 
   <footer>
-    boatrace-ai-free / alert settings viewer
+    boatrace-ai-free / GitHub Pages × Python × JSON
   </footer>
 
   <script>
@@ -592,8 +442,13 @@
     const SETTING_TEMPLATES = [
       {
         name: "標準設定",
-        description: "基本の設定です。買い目・投資額・更新時間をバランスよくチェックします。",
-        point: "買い目15点以上で注意、25点以上で強い注意。投資額3,000円以上で注意、5,000円以上で強い注意。",
+        description: "通常運用向けのバランス型設定です。",
+        points: [
+          "買い目点数：15点以上で注意、25点以上で危険",
+          "予定投資額：3,000円以上で注意、5,000円以上で危険",
+          "更新日時：12時間以上で注意、24時間以上で危険",
+          "すべてのチェックをON"
+        ],
         settings: {
           ticket_count_warning: 15,
           ticket_count_danger: 25,
@@ -611,8 +466,13 @@
       },
       {
         name: "慎重設定",
-        description: "少額運用や、買い目を絞りたい場合に向いています。早めに注意が出ます。",
-        point: "買い目10点以上で注意、18点以上で強い注意。投資額2,000円以上で注意、4,000円以上で強い注意。",
+        description: "少しでもリスクがある場合に早めに注意を出す設定です。",
+        points: [
+          "買い目点数：10点以上で注意、18点以上で危険",
+          "予定投資額：2,000円以上で注意、4,000円以上で危険",
+          "更新日時：8時間以上で注意、16時間以上で危険",
+          "資金管理を厳しめにしたい場合におすすめ"
+        ],
         settings: {
           ticket_count_warning: 10,
           ticket_count_danger: 18,
@@ -630,8 +490,13 @@
       },
       {
         name: "攻め設定",
-        description: "買い目点数や投資額の許容範囲を広めにします。穴狙い検証向けです。",
-        point: "買い目20点以上で注意、35点以上で強い注意。投資額5,000円以上で注意、8,000円以上で強い注意。",
+        description: "多少の買い目増加や投資額増加を許容する設定です。",
+        points: [
+          "買い目点数：20点以上で注意、35点以上で危険",
+          "予定投資額：5,000円以上で注意、8,000円以上で危険",
+          "更新日時：12時間以上で注意、24時間以上で危険",
+          "広めに買う運用を許容したい場合におすすめ"
+        ],
         settings: {
           ticket_count_warning: 20,
           ticket_count_danger: 35,
@@ -649,8 +514,13 @@
       },
       {
         name: "更新チェックOFF設定",
-        description: "サンプルデータやテスト用データで、更新日時の古さを警告したくない場合に使います。",
-        point: "updated_at / generated_at が古くても警告しません。他のチェックは標準設定と同じです。",
+        description: "更新日時によるアラートだけを無効化する設定です。",
+        points: [
+          "買い目点数と予定投資額のチェックは標準設定と同じ",
+          "展示タイム、展示ST、最終オッズのチェックはON",
+          "更新日時チェックのみOFF",
+          "手動更新や検証中で更新時刻を気にしない場合に便利"
+        ],
         settings: {
           ticket_count_warning: 15,
           ticket_count_danger: 25,
@@ -668,42 +538,286 @@
       }
     ];
 
-    const SETTING_LABELS = {
-      ticket_count_warning: "買い目点数 注意ライン",
-      ticket_count_danger: "買い目点数 危険ライン",
-      total_amount_warning: "予定投資額 注意ライン",
-      total_amount_danger: "予定投資額 危険ライン",
-      updated_hours_warning: "更新時間 注意ライン",
-      updated_hours_danger: "更新時間 危険ライン",
-      check_exhibition_time: "展示タイム未入力チェック",
-      check_exhibition_st: "展示ST未入力チェック",
-      check_final_odds: "FINALオッズ未入力チェック",
-      check_updated_at: "更新日時チェック",
-      check_ticket_count: "買い目点数チェック",
-      check_total_amount: "予定投資額チェック"
-    };
-
-    const SETTING_DESCRIPTIONS = {
-      ticket_count_warning: "この点数以上で買い目点数の注意アラートを表示します。",
-      ticket_count_danger: "この点数以上で買い目点数の強い注意アラートを表示します。",
-      total_amount_warning: "この金額以上で予定投資額の注意アラートを表示します。",
-      total_amount_danger: "この金額以上で予定投資額の強い注意アラートを表示します。",
-      updated_hours_warning: "予想更新からこの時間以上経過すると注意アラートを表示します。",
-      updated_hours_danger: "予想更新からこの時間以上経過すると強い注意アラートを表示します。",
-      check_exhibition_time: "POST_EXHIBITION または FINAL のとき、展示タイム未入力をチェックします。",
-      check_exhibition_st: "POST_EXHIBITION または FINAL のとき、展示ST未入力をチェックします。",
-      check_final_odds: "FINAL のとき、単勝オッズ未入力をチェックします。",
-      check_updated_at: "prediction.json の updated_at または generated_at が古くないかチェックします。",
-      check_ticket_count: "買い目点数が多すぎないかチェックします。",
-      check_total_amount: "予定投資額が高すぎないかチェックします。"
-    };
-
-    function escapeHtml(value) {
-      if (value === null || value === undefined) {
-        return "";
+    const DESCRIPTIONS = [
+      {
+        key: "ticket_count_warning",
+        name: "買い目点数 注意ライン",
+        description: "買い目点数がこの値以上になると、トップページの注意アラートに注意メッセージを出します。"
+      },
+      {
+        key: "ticket_count_danger",
+        name: "買い目点数 危険ライン",
+        description: "買い目点数がこの値以上になると、買い目が多すぎる可能性があるとして強めの注意を出します。"
+      },
+      {
+        key: "total_amount_warning",
+        name: "予定投資額 注意ライン",
+        description: "予定投資額がこの金額以上になると、資金管理上の注意メッセージを出します。"
+      },
+      {
+        key: "total_amount_danger",
+        name: "予定投資額 危険ライン",
+        description: "予定投資額がこの金額以上になると、投資額が大きすぎる可能性があるとして強めの注意を出します。"
+      },
+      {
+        key: "updated_hours_warning",
+        name: "更新日時 注意ライン",
+        description: "prediction.json の更新日時が現在時刻からこの時間以上古い場合に注意を出します。"
+      },
+      {
+        key: "updated_hours_danger",
+        name: "更新日時 危険ライン",
+        description: "prediction.json の更新日時が現在時刻からこの時間以上古い場合に強めの注意を出します。"
+      },
+      {
+        key: "check_exhibition_time",
+        name: "展示タイム確認",
+        description: "展示タイムが未入力、または不足している可能性がある場合に注意を出すかどうかを設定します。"
+      },
+      {
+        key: "check_exhibition_st",
+        name: "展示ST確認",
+        description: "展示STが未入力、または不足している可能性がある場合に注意を出すかどうかを設定します。"
+      },
+      {
+        key: "check_final_odds",
+        name: "最終オッズ確認",
+        description: "最終予想の段階でオッズ情報が不足している可能性がある場合に注意を出すかどうかを設定します。"
+      },
+      {
+        key: "check_updated_at",
+        name: "更新日時確認",
+        description: "prediction.json の更新日時が古い場合に注意を出すかどうかを設定します。"
+      },
+      {
+        key: "check_ticket_count",
+        name: "買い目点数確認",
+        description: "買い目点数が設定ラインを超えた場合に注意を出すかどうかを設定します。"
+      },
+      {
+        key: "check_total_amount",
+        name: "予定投資額確認",
+        description: "予定投資額が設定ラインを超えた場合に注意を出すかどうかを設定します。"
       }
+    ];
 
-      return String(value)
+    function yen(value) {
+      const num = Number(value || 0);
+      return num.toLocaleString("ja-JP") + "円";
+    }
+
+    function boolLabel(value) {
+      return value ? "ON" : "OFF";
+    }
+
+    function boolClass(value) {
+      return value ? "status-on" : "status-off";
+    }
+
+    function mergeSettings(settings) {
+      return {
+        ...DEFAULT_ALERT_SETTINGS,
+        ...(settings || {})
+      };
+    }
+
+    function renderSummary(settings) {
+      const el = document.getElementById("summary-area");
+      if (!el) return;
+
+      el.className = "summary-grid";
+      el.innerHTML = `
+        <div class="summary-box ticket">
+          <div class="summary-label">買い目点数</div>
+          <div class="summary-value">注意 ${settings.ticket_count_warning}点〜</div>
+          <div class="summary-sub">危険 ${settings.ticket_count_danger}点〜</div>
+        </div>
+
+        <div class="summary-box amount">
+          <div class="summary-label">予定投資額</div>
+          <div class="summary-value">注意 ${yen(settings.total_amount_warning)}〜</div>
+          <div class="summary-sub">危険 ${yen(settings.total_amount_danger)}〜</div>
+        </div>
+
+        <div class="summary-box updated">
+          <div class="summary-label">更新日時</div>
+          <div class="summary-value">注意 ${settings.updated_hours_warning}時間〜</div>
+          <div class="summary-sub">危険 ${settings.updated_hours_danger}時間〜</div>
+        </div>
+      `;
+    }
+
+    function renderSwitches(settings) {
+      const el = document.getElementById("switch-area");
+      if (!el) return;
+
+      const switches = [
+        {
+          key: "check_exhibition_time",
+          name: "展示タイム確認",
+          desc: "展示タイム不足をチェックします。"
+        },
+        {
+          key: "check_exhibition_st",
+          name: "展示ST確認",
+          desc: "展示ST不足をチェックします。"
+        },
+        {
+          key: "check_final_odds",
+          name: "最終オッズ確認",
+          desc: "最終予想時のオッズ不足をチェックします。"
+        },
+        {
+          key: "check_updated_at",
+          name: "更新日時確認",
+          desc: "prediction.json の更新が古くないかチェックします。"
+        },
+        {
+          key: "check_ticket_count",
+          name: "買い目点数確認",
+          desc: "買い目点数が多すぎないかチェックします。"
+        },
+        {
+          key: "check_total_amount",
+          name: "予定投資額確認",
+          desc: "予定投資額が高すぎないかチェックします。"
+        }
+      ];
+
+      el.className = "switch-grid";
+      el.innerHTML = switches.map(item => `
+        <div class="switch-item">
+          <div>
+            <div class="switch-name">${item.name}</div>
+            <div class="switch-desc">${item.desc}</div>
+          </div>
+          <span class="${boolClass(settings[item.key])}">${boolLabel(settings[item.key])}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderDescriptions(settings) {
+      const el = document.getElementById("description-area");
+      if (!el) return;
+
+      el.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>項目名</th>
+              <th>JSONキー</th>
+              <th>現在値</th>
+              <th>説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${DESCRIPTIONS.map(item => {
+              const value = settings[item.key];
+              let displayValue = value;
+
+              if (item.key.includes("amount")) {
+                displayValue = yen(value);
+              } else if (typeof value === "boolean") {
+                displayValue = boolLabel(value);
+              } else if (item.key.includes("hours")) {
+                displayValue = `${value}時間`;
+              } else if (item.key.includes("ticket_count")) {
+                displayValue = `${value}点`;
+              }
+
+              return `
+                <tr>
+                  <td><strong>${item.name}</strong></td>
+                  <td><code>${item.key}</code></td>
+                  <td>${displayValue}</td>
+                  <td class="description">${item.description}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderTemplates() {
+      const el = document.getElementById("template-list");
+      if (!el) return;
+
+      el.innerHTML = SETTING_TEMPLATES.map((template, index) => {
+        const jsonText = JSON.stringify(template.settings, null, 2);
+
+        return `
+          <div class="template-card">
+            <h3>${template.name}</h3>
+            <p>${template.description}</p>
+
+            <ul class="template-point-list">
+              ${template.points.map(point => `<li>${point}</li>`).join("")}
+            </ul>
+
+            <pre class="template-json">${escapeHtml(jsonText)}</pre>
+
+            <div class="template-actions">
+              <button class="copy-button" type="button" onclick="copyTemplate(${index})">
+                コピーする
+              </button>
+              <button class="download-button" type="button" onclick="downloadTemplate(${index})">
+                JSONをダウンロード
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    async function copyTemplate(index) {
+      const template = SETTING_TEMPLATES[index];
+      if (!template) return;
+
+      const jsonText = JSON.stringify(template.settings, null, 2);
+      const messageEl = document.getElementById("copy-message");
+
+      try {
+        await navigator.clipboard.writeText(jsonText);
+
+        if (messageEl) {
+          messageEl.style.display = "block";
+          messageEl.textContent = `${template.name}をコピーしました。docs/alert_settings.json に貼り付けてください。`;
+        }
+      } catch (error) {
+        if (messageEl) {
+          messageEl.style.display = "block";
+          messageEl.textContent = "コピーに失敗しました。表示されているJSONを手動で選択してコピーしてください。";
+        }
+      }
+    }
+
+    function downloadTemplate(index) {
+      const template = SETTING_TEMPLATES[index];
+      if (!template) return;
+
+      const jsonText = JSON.stringify(template.settings, null, 2);
+      const blob = new Blob([jsonText], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "alert_settings.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+
+      const messageEl = document.getElementById("copy-message");
+      if (messageEl) {
+        messageEl.style.display = "block";
+        messageEl.textContent = `${template.name}を alert_settings.json としてダウンロードしました。`;
+      }
+    }
+
+    function escapeHtml(text) {
+      return String(text)
         .replaceAll("&", "&amp;")
         .replaceAll("<", "&lt;")
         .replaceAll(">", "&gt;")
@@ -711,254 +825,51 @@
         .replaceAll("'", "&#039;");
     }
 
-    function yen(value) {
-      const num = Number(value || 0);
-      return num.toLocaleString("ja-JP") + "円";
-    }
-
-    function onOff(value) {
-      return value ? "ON" : "OFF";
-    }
-
-    function badgeClass(value) {
-      return value ? "badge-on" : "badge-off";
-    }
-
-    function displayValue(key, value) {
-      if (key.includes("amount")) {
-        return yen(value);
-      }
-
-      if (key.includes("hours")) {
-        return `${value}時間以上`;
-      }
-
-      if (key.includes("ticket_count")) {
-        return `${value}点以上`;
-      }
-
-      if (typeof value === "boolean") {
-        return onOff(value);
-      }
-
-      return String(value);
-    }
-
-    function templateJson(template) {
-      return JSON.stringify(template.settings, null, 2);
-    }
-
-    async function loadSettings() {
-      const response = await fetch("./alert_settings.json?cache=" + Date.now());
-
-      if (!response.ok) {
-        throw new Error("alert_settings.json を読み込めませんでした。");
-      }
-
-      const json = await response.json();
-
-      return {
-        ...DEFAULT_ALERT_SETTINGS,
-        ...json
-      };
-    }
-
-    function renderLoadStatus(settings) {
-      document.getElementById("load-status").innerHTML = `
-        <div class="ok">
-          alert_settings.json を正常に読み込みました。
-        </div>
-      `;
-    }
-
-    function renderSummary(settings) {
-      document.getElementById("ticket-warning").textContent =
-        `${settings.ticket_count_warning}点以上`;
-
-      document.getElementById("ticket-danger").textContent =
-        `${settings.ticket_count_danger}点以上`;
-
-      document.getElementById("amount-warning").textContent =
-        yen(settings.total_amount_warning);
-
-      document.getElementById("amount-danger").textContent =
-        yen(settings.total_amount_danger);
-
-      document.getElementById("time-warning").textContent =
-        `${settings.updated_hours_warning}時間以上`;
-
-      document.getElementById("time-danger").textContent =
-        `${settings.updated_hours_danger}時間以上`;
-    }
-
-    function renderStatusList(settings) {
-      const keys = [
-        "check_exhibition_time",
-        "check_exhibition_st",
-        "check_final_odds",
-        "check_updated_at",
-        "check_ticket_count",
-        "check_total_amount"
-      ];
-
-      const html = keys.map(key => {
-        const value = Boolean(settings[key]);
-
-        return `
-          <div class="status-item">
-            <div class="status-text">
-              <div class="status-title">${escapeHtml(SETTING_LABELS[key] || key)}</div>
-              <div class="status-desc">${escapeHtml(SETTING_DESCRIPTIONS[key] || "")}</div>
-            </div>
-            <span class="badge ${badgeClass(value)}">${onOff(value)}</span>
-          </div>
-        `;
-      }).join("");
-
-      document.getElementById("status-list").innerHTML = html;
-    }
-
-    function renderTemplates() {
-      const container = document.getElementById("template-list");
-
-      const html = SETTING_TEMPLATES.map((template, index) => {
-        return `
-          <div class="template-card">
-            <h3>${escapeHtml(template.name)}</h3>
-            <div class="template-description">${escapeHtml(template.description)}</div>
-            <div class="template-point">${escapeHtml(template.point)}</div>
-            <pre class="template-pre" id="template-json-${index}">${escapeHtml(templateJson(template))}</pre>
-            <button class="copy-button" type="button" onclick="copyTemplate(${index})">
-              ${escapeHtml(template.name)}をコピーする
-            </button>
-            <div class="copy-message" id="copy-message-${index}"></div>
-          </div>
-        `;
-      }).join("");
-
-      container.innerHTML = html;
-    }
-
-    async function copyTemplate(index) {
-      const template = SETTING_TEMPLATES[index];
-      const text = templateJson(template);
-      const messageElement = document.getElementById(`copy-message-${index}`);
+    async function loadAlertSettings() {
+      let settings = DEFAULT_ALERT_SETTINGS;
 
       try {
-        if (navigator.clipboard && window.isSecureContext) {
-          await navigator.clipboard.writeText(text);
-        } else {
-          const textarea = document.createElement("textarea");
-          textarea.value = text;
-          textarea.style.position = "fixed";
-          textarea.style.left = "-9999px";
-          document.body.appendChild(textarea);
-          textarea.focus();
-          textarea.select();
-          document.execCommand("copy");
-          document.body.removeChild(textarea);
+        const response = await fetch("./alert_settings.json", { cache: "no-store" });
+
+        if (!response.ok) {
+          throw new Error("alert_settings.json を読み込めませんでした。");
         }
 
-        messageElement.textContent = `${template.name}をコピーしました。docs/alert_settings.json に貼り付けてください。`;
+        const json = await response.json();
+        settings = mergeSettings(json);
+
+        renderSummary(settings);
+        renderSwitches(settings);
+        renderDescriptions(settings);
       } catch (error) {
-        console.error(error);
-        messageElement.textContent = "コピーに失敗しました。表示されているJSONを手動で選択してコピーしてください。";
+        settings = DEFAULT_ALERT_SETTINGS;
+
+        const summaryEl = document.getElementById("summary-area");
+        const switchEl = document.getElementById("switch-area");
+
+        if (summaryEl) {
+          summaryEl.className = "error";
+          summaryEl.innerHTML = `
+            alert_settings.json の読み込みに失敗しました。<br>
+            初期設定を使って表示します。<br>
+            原因：${escapeHtml(error.message)}
+          `;
+        }
+
+        if (switchEl) {
+          switchEl.className = "loading";
+          switchEl.textContent = "初期設定でチェック項目を表示します。";
+        }
+
+        renderSummary(settings);
+        renderSwitches(settings);
+        renderDescriptions(settings);
       }
-
-      setTimeout(() => {
-        messageElement.textContent = "";
-      }, 6000);
-    }
-
-    function renderSettingsTable(settings) {
-      const keys = Object.keys(DEFAULT_ALERT_SETTINGS);
-
-      const rows = keys.map(key => {
-        const value = settings[key];
-
-        return `
-          <tr>
-            <th>${escapeHtml(key)}</th>
-            <td>${escapeHtml(SETTING_LABELS[key] || key)}</td>
-            <td>${escapeHtml(displayValue(key, value))}</td>
-            <td>${escapeHtml(SETTING_DESCRIPTIONS[key] || "")}</td>
-          </tr>
-        `;
-      }).join("");
-
-      document.getElementById("settings-table").innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>JSONキー</th>
-              <th>項目名</th>
-              <th>現在値</th>
-              <th>説明</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rows}
-          </tbody>
-        </table>
-      `;
-    }
-
-    function renderJsonPreview(settings) {
-      document.getElementById("json-preview").textContent =
-        JSON.stringify(settings, null, 2);
-    }
-
-    function renderError(error) {
-      document.getElementById("load-status").innerHTML = `
-        <div class="error">
-          alert_settings.json の読み込みに失敗しました。<br>
-          docs/alert_settings.json が存在するか、JSONの書き方が正しいか確認してください。<br>
-          エラー内容：${escapeHtml(error.message)}
-        </div>
-      `;
-
-      document.getElementById("ticket-warning").textContent = "-";
-      document.getElementById("ticket-danger").textContent = "-";
-      document.getElementById("amount-warning").textContent = "-";
-      document.getElementById("amount-danger").textContent = "-";
-      document.getElementById("time-warning").textContent = "-";
-      document.getElementById("time-danger").textContent = "-";
-
-      document.getElementById("status-list").innerHTML = `
-        <div class="error">
-          チェック項目を表示できませんでした。
-        </div>
-      `;
-
-      document.getElementById("settings-table").innerHTML = `
-        <div class="error">
-          設定一覧を表示できませんでした。
-        </div>
-      `;
-
-      document.getElementById("json-preview").textContent =
-        "alert_settings.json を読み込めませんでした。";
 
       renderTemplates();
     }
 
-    async function main() {
-      try {
-        const settings = await loadSettings();
-
-        renderLoadStatus(settings);
-        renderSummary(settings);
-        renderStatusList(settings);
-        renderTemplates();
-        renderSettingsTable(settings);
-        renderJsonPreview(settings);
-      } catch (error) {
-        console.error(error);
-        renderError(error);
-      }
-    }
-
-    main();
+    loadAlertSettings();
   </script>
 </body>
 </html>
