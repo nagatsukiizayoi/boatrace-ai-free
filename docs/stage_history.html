@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ステージ別 過去成績</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    header {
+      background: linear-gradient(135deg, #be123c, #fb7185);
+      color: white;
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .info-box {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .best-box {
+      background: #fff1f2;
+      border: 1px solid #fb7185;
+      color: #881337;
+      border-radius: 14px;
+      padding: 14px;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 950px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #374151;
+    }
+
+    .plus {
+      color: #dc2626;
+      font-weight: 900;
+    }
+
+    .minus {
+      color: #2563eb;
+      font-weight: 900;
+    }
+
+    .zero {
+      color: #111827;
+      font-weight: 900;
+    }
+
+    .links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .link-button {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #be123c;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .notice {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 700px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>ステージ別 過去成績</h1>
+    <p>前日夜・展示後・最終予想の通算成績を確認します</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>全体サマリー</h2>
+
+      <div class="summary-grid">
+        <div class="info-box">
+          <div class="info-label">評価レース数</div>
+          <div class="info-value">1R</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">最終更新</div>
+          <div class="info-value">2026-05-15 09:50:45</div>
+        </div>
+      </div>
+
+      <br>
+
+      
+        <div class="best-box">
+          通算で最も成績が良いステージ：
+          <strong>前日夜予想</strong><br>
+          利益：<strong class="plus">+2,350円</strong>
+          / 回収率：<strong>267.86%</strong>
+          / 評価レース数：<strong>1R</strong>
+        </div>
+        
+    </section>
+
+    <section class="card">
+      <h2>ステージ別 通算成績</h2>
+      <p class="notice">スマホの場合は表を左右にスクロールできます。</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ステージ</th>
+            <th>評価R数</th>
+            <th>的中R数</th>
+            <th>的中R率</th>
+            <th>買い目数</th>
+            <th>的中点数</th>
+            <th>点数的中率</th>
+            <th>投資額</th>
+            <th>払戻額</th>
+            <th>利益</th>
+            <th>回収率</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr>
+          <td>前日夜予想</td>
+          <td>1R</td>
+          <td>1R</td>
+          <td>100.0%</td>
+          <td>8点</td>
+          <td>1点</td>
+          <td>12.5%</td>
+          <td>1,400円</td>
+          <td>3,750円</td>
+          <td class="plus">+2,350円</td>
+          <td>267.86%</td>
+        </tr>
+        
+        <tr>
+          <td>当日朝予想</td>
+          <td>0R</td>
+          <td>0R</td>
+          <td>0%</td>
+          <td>0点</td>
+          <td>0点</td>
+          <td>0%</td>
+          <td>0円</td>
+          <td>0円</td>
+          <td class="zero">0円</td>
+          <td>0%</td>
+        </tr>
+        
+        <tr>
+          <td>展示前予想</td>
+          <td>0R</td>
+          <td>0R</td>
+          <td>0%</td>
+          <td>0点</td>
+          <td>0点</td>
+          <td>0%</td>
+          <td>0円</td>
+          <td>0円</td>
+          <td class="zero">0円</td>
+          <td>0%</td>
+        </tr>
+        
+        <tr>
+          <td>展示後予想</td>
+          <td>1R</td>
+          <td>1R</td>
+          <td>100.0%</td>
+          <td>8点</td>
+          <td>1点</td>
+          <td>12.5%</td>
+          <td>1,400円</td>
+          <td>3,750円</td>
+          <td class="plus">+2,350円</td>
+          <td>267.86%</td>
+        </tr>
+        
+        <tr>
+          <td>最終予想</td>
+          <td>1R</td>
+          <td>1R</td>
+          <td>100.0%</td>
+          <td>8点</td>
+          <td>1点</td>
+          <td>12.5%</td>
+          <td>1,400円</td>
+          <td>3,750円</td>
+          <td class="plus">+2,350円</td>
+          <td>267.86%</td>
+        </tr>
+        
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>ステージ間 改善比較</h2>
+      <p class="notice">
+        例：「前日夜 → 展示後」で利益が増えたレース数を改善として数えます。
+      </p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>比較</th>
+            <th>比較R数</th>
+            <th>改善</th>
+            <th>悪化</th>
+            <th>変化なし</th>
+            <th>改善率</th>
+            <th>合計利益差</th>
+            <th>平均利益差</th>
+            <th>平均ROI差</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr>
+          <td>前日夜 → 展示後</td>
+          <td>1R</td>
+          <td class="plus">0R</td>
+          <td class="minus">0R</td>
+          <td>1R</td>
+          <td>0.0%</td>
+          <td class="zero">0円</td>
+          <td>0.0円</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>前日夜 → 最終</td>
+          <td>1R</td>
+          <td class="plus">0R</td>
+          <td class="minus">0R</td>
+          <td>1R</td>
+          <td>0.0%</td>
+          <td class="zero">0円</td>
+          <td>0.0円</td>
+          <td>0.0%</td>
+        </tr>
+        
+        <tr>
+          <td>展示後 → 最終</td>
+          <td>1R</td>
+          <td class="plus">0R</td>
+          <td class="minus">0R</td>
+          <td>1R</td>
+          <td>0.0%</td>
+          <td class="zero">0円</td>
+          <td>0.0円</td>
+          <td>0.0%</td>
+        </tr>
+        
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>レース別 ステージ成績</h2>
+      <p class="notice">各レースで、前日夜・展示後・最終の利益を比較します。</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>日付</th>
+            <th>場</th>
+            <th>R</th>
+            <th>結果</th>
+            <th>前日夜利益</th>
+            <th>展示後利益</th>
+            <th>最終利益</th>
+            <th>最良ステージ</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+        <tr>
+          <td>2026-05-14</td>
+          <td>サンプル競艇場</td>
+          <td>12R</td>
+          <td>1-2-3</td>
+          <td class="plus">+2,350円</td>
+          <td class="plus">+2,350円</td>
+          <td class="plus">+2,350円</td>
+          <td>前日夜予想</td>
+        </tr>
+        
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>ページ移動</h2>
+
+      <div class="links">
+        <a class="link-button" href="./index.html">予想ページへ</a>
+        <a class="link-button" href="./stage_evaluation.html">直近ステージ評価へ</a>
+        <a class="link-button" href="./compare.html">予想比較へ</a>
+        <a class="link-button" href="./history.html">過去成績へ</a>
+        <a class="link-button" href="./charts.html">成績グラフへ</a>
+        <a class="link-button" href="./stage_evaluation_history.json">履歴JSON</a>
+      </div>
+    </section>
+
+    <section class="card notice">
+      このページは学習用・分析練習用です。実際の購入や利益を保証するものではありません。
+      ステージ別の通算成績を見ることで、前日予想・展示後予想・最終予想のどこが有効かを検証できます。
+    </section>
+  </main>
+</body>
+</html>
