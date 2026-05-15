@@ -25,6 +25,9 @@ jobs:
       - name: Evaluate stage predictions
         run: python src/evaluate_stages.py
 
+      - name: Update stage evaluation history
+        run: python src/update_stage_history.py
+
       - name: Update evaluation history
         run: python src/update_history.py
 
@@ -37,6 +40,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/evaluation.json docs/evaluation.html || true
           git add docs/stage_evaluation.json docs/stage_evaluation.html || true
+          git add docs/stage_evaluation_history.json docs/stage_history.html || true
           git add docs/evaluation_history.json docs/history.html docs/charts.html || true
-          git commit -m "Update evaluation result history charts and stage evaluation" || echo "No changes to commit"
+          git commit -m "Update evaluation histories and charts" || echo "No changes to commit"
           git push
