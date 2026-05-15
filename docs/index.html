@@ -112,6 +112,38 @@
       background: linear-gradient(135deg, #475569, #94a3b8);
     }
 
+    .alert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .alert-item {
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      font-weight: 700;
+    }
+
+    .alert-ok {
+      background: #dcfce7;
+      border: 1px solid #22c55e;
+      color: #166534;
+    }
+
+    .alert-warning {
+      background: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+    }
+
+    .alert-danger {
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+      color: #991b1b;
+    }
+
     .menu-section {
       margin-bottom: 22px;
     }
@@ -614,6 +646,13 @@
     </section>
 
     <section class="card">
+      <h2>注意アラート</h2>
+      <div id="alert-list" class="alert-list">
+        <div class="loading">注意点を確認中...</div>
+      </div>
+    </section>
+
+    <section class="card">
       <h2>メニュー</h2>
 
       <div class="menu-section">
@@ -967,6 +1006,10 @@
       };
     }
 
+    function isBlank(value) {
+      return value === null || value === undefined || value === "";
+    }
+
     function getTicketCount(data) {
       const ticketGroups = data.ticket_groups || [];
       const simpleTickets = data.tickets || [];
@@ -1052,6 +1095,152 @@
       return sorted[0];
     }
 
+    function getBoatList(data) {
+      const allBoats = data.all_boats || [];
+      const boats = data.boats || [];
+      const predictions = data.predictions || [];
+
+      if (allBoats.length > 0) {
+        return allBoats;
+      }
+
+      if (boats.length > 0) {
+        return boats;
+      }
+
+      return predictions;
+    }
+
+    function buildAlerts(data) {
+      const alerts = [];
+      const stage = String(data.stage || "PRE_NIGHT");
+      const boats = getBoatList(data);
+      const ticketCount = getTicketCount(data);
+      const totalAmount = getTotalAmount(data);
+      const updatedAt = data.updated_at || data.generated_at || "";
+
+      const needsExhibition = stage === "POST_EXHIBITION" || stage === "FINAL";
+      const needsOdds = stage === "FINAL";
+
+      if (needsExhibition) {
+        const missingExhibitionTime = boats.filter(boat => isBlank(boat.exhibition_time));
+        const missingExhibitionSt = boats.filter(boat => isBlank(boat.exhibition_st));
+
+        if (missingExhibitionTime.length > 0) {
+          alerts.push({
+            level: "warning",
+            message: `展示後または最終予想ですが、展示タイムが未入力の艇が ${missingExhibitionTime.length} 件あります。`
+          });
+        }
+
+        if (missingExhibitionSt.length > 0) {
+          alerts.push({
+            level: "warning",
+            message: `展示後または最終予想ですが、展示STが未入力の艇が ${missingExhibitionSt.length} 件あります。`
+          });
+        }
+      }
+
+      if (needsOdds) {
+        const missingOdds = boats.filter(boat => isBlank(boat.win_odds));
+
+        if (missingOdds.length > 0) {
+          alerts.push({
+            level: "danger",
+            message: `FINAL予想ですが、単勝オッズが未入力の艇が ${missingOdds.length} 件あります。`
+          });
+        }
+      }
+
+      if (ticketCount >= 25) {
+        alerts.push({
+          level: "danger",
+          message: `買い目点数が ${ticketCount}点 あります。多すぎる可能性があるため、買い目を絞ることも検討してください。`
+        });
+      } else if (ticketCount >= 15) {
+        alerts.push({
+          level: "warning",
+          message: `買い目点数が ${ticketCount}点 あります。やや多めです。`
+        });
+      }
+
+      if (totalAmount >= 5000) {
+        alerts.push({
+          level: "danger",
+          message: `予定投資額が ${yen(totalAmount)} です。5,000円以上のため、資金管理に注意してください。`
+        });
+      } else if (totalAmount >= 3000) {
+        alerts.push({
+          level: "warning",
+          message: `予定投資額が ${yen(totalAmount)} です。3,000円以上のため、投資額を確認してください。`
+        });
+      }
+
+      if (!updatedAt) {
+        alerts.push({
+          level: "warning",
+          message: "prediction.json に updated_at または generated_at がありません。更新日時を確認できません。"
+        });
+      } else {
+        const updatedDate = new Date(updatedAt);
+
+        if (Number.isNaN(updatedDate.getTime())) {
+          alerts.push({
+            level: "warning",
+            message: "prediction.json の更新日時を日時として読み取れません。updated_at の形式を確認してください。"
+          });
+        } else {
+          const now = new Date();
+          const diffHours = (now.getTime() - updatedDate.getTime()) / (1000 * 60 * 60);
+
+          if (diffHours >= 24) {
+            alerts.push({
+              level: "danger",
+              message: `prediction.json の更新から約 ${diffHours.toFixed(1)} 時間経過しています。予想が古い可能性があります。`
+            });
+          } else if (diffHours >= 12) {
+            alerts.push({
+              level: "warning",
+              message: `prediction.json の更新から約 ${diffHours.toFixed(1)} 時間経過しています。最新化されているか確認してください。`
+            });
+          }
+        }
+      }
+
+      if (boats.length === 0) {
+        alerts.push({
+          level: "warning",
+          message: "全艇データが見つかりません。all_boats または boats が prediction.json に出力されているか確認してください。"
+        });
+      }
+
+      return alerts;
+    }
+
+    function renderAlerts(data) {
+      const container = document.getElementById("alert-list");
+      const alerts = buildAlerts(data);
+
+      if (alerts.length === 0) {
+        container.innerHTML = `
+          <div class="alert-item alert-ok">
+            現在、大きな注意点はありません。
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = alerts.map(alert => {
+        const className = alert.level === "danger" ? "alert-danger" : "alert-warning";
+
+        return `
+          <div class="alert-item ${className}">
+            ${escapeHtml(alert.message)}
+          </div>
+        `;
+      }).join("");
+    }
+
     function renderQuickSummary(data) {
       const predictions = data.predictions || [];
       const race = data.race || {};
@@ -1113,6 +1302,7 @@
         const data = await response.json();
 
         renderQuickSummary(data);
+        renderAlerts(data);
         renderStage(data);
         renderRace(data);
         renderWeather(data.weather || {});
@@ -1133,6 +1323,11 @@
         document.getElementById("summary-total-amount").textContent = "-";
         document.getElementById("summary-updated-at").textContent = "-";
         document.getElementById("summary-race-info").textContent = "読込エラー";
+
+        document.getElementById("alert-list").innerHTML =
+          `<div class="alert-item alert-danger">
+            prediction.json の読み込みに失敗しました。GitHub Actions の Make Prediction JSON が成功しているか確認してください。
+          </div>`;
 
         document.getElementById("predictions").innerHTML =
           `<div class="error">
