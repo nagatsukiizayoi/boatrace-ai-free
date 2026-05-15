@@ -155,6 +155,57 @@
       background: #6b7280;
     }
 
+    .alert-preview-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .alert-preview-item {
+      border-radius: 12px;
+      padding: 12px;
+      line-height: 1.6;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .alert-preview-ok {
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      color: #166534;
+    }
+
+    .alert-preview-warning {
+      background: #fffbeb;
+      border: 1px solid #facc15;
+      color: #92400e;
+    }
+
+    .alert-preview-danger {
+      background: #fee2e2;
+      border: 1px solid #f87171;
+      color: #991b1b;
+    }
+
+    .alert-preview-info {
+      background: #eff6ff;
+      border: 1px solid #93c5fd;
+      color: #1e40af;
+    }
+
+    .alert-preview-title {
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .alert-preview-meta {
+      margin-top: 10px;
+      color: #6b7280;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -359,7 +410,7 @@
 <body>
   <header>
     <h1>アラート設定ページ</h1>
-    <p>注意アラートの条件を日本語で確認し、設定例をコピーまたはJSONとしてダウンロードできます。</p>
+    <p>注意アラートの条件を日本語で確認し、現在の予想データに対する判定もプレビューできます。</p>
   </header>
 
   <main>
@@ -371,6 +422,15 @@
     <section class="card">
       <h2>チェック項目 ON/OFF</h2>
       <div id="switch-area" class="loading">チェック項目を読み込み中です...</div>
+    </section>
+
+    <section class="card">
+      <h2>現在のアラート判定プレビュー</h2>
+      <p>
+        現在の <code>alert_settings.json</code> と <code>prediction.json</code> を使って、
+        実際にどのアラートが出るかを確認します。
+      </p>
+      <div id="alert-preview-area" class="loading">アラート判定を読み込み中です...</div>
     </section>
 
     <section class="card">
@@ -395,7 +455,7 @@
         その後、GitHub上の <code>docs/alert_settings.json</code> の中身を置き換えてコミットします。
       </p>
       <p>
-        変更後はトップページを開き、URLの末尾に <code>?v=35</code> のような値を付けて再読み込みすると、
+        変更後はトップページを開き、URLの末尾に <code>?v=36</code> のような値を付けて再読み込みすると、
         ブラウザキャッシュの影響を避けやすくなります。
       </p>
     </section>
@@ -412,7 +472,7 @@
     <section class="card">
       <h2>注意</h2>
       <p class="notice">
-        このページは <code>docs/alert_settings.json</code> を読み込んで表示します。
+        このページは <code>docs/alert_settings.json</code> と <code>docs/prediction.json</code> を読み込んで表示します。
         JSONの末尾カンマや全角記号が入ると読み込みエラーになる場合があります。
         例：<code>{ "ticket_count_warning": 15, }</code> はNGです。
       </p>
@@ -621,6 +681,15 @@
       };
     }
 
+    function escapeHtml(text) {
+      return String(text ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
     function renderSummary(settings) {
       const el = document.getElementById("summary-area");
       if (!el) return;
@@ -739,6 +808,408 @@
       `;
     }
 
+    function asArray(value) {
+      if (Array.isArray(value)) return value;
+      return [];
+    }
+
+    function flattenTicketGroups(value) {
+      if (!value) return [];
+
+      if (Array.isArray(value)) {
+        return value;
+      }
+
+      if (typeof value === "object") {
+        let result = [];
+
+        Object.values(value).forEach(v => {
+          if (Array.isArray(v)) {
+            result = result.concat(v);
+          } else if (v && typeof v === "object") {
+            if (Array.isArray(v.tickets)) result = result.concat(v.tickets);
+            if (Array.isArray(v.items)) result = result.concat(v.items);
+            if (Array.isArray(v.bets)) result = result.concat(v.bets);
+          }
+        });
+
+        return result;
+      }
+
+      return [];
+    }
+
+    function getTicketsFromPrediction(data) {
+      const candidates = [
+        data?.tickets,
+        data?.ticket_candidates,
+        data?.bets,
+        data?.recommend_tickets,
+        data?.recommended_tickets,
+        data?.buy_tickets,
+        data?.buy_list,
+        data?.ticket_plan,
+        data?.bet_plan
+      ];
+
+      for (const candidate of candidates) {
+        const tickets = flattenTicketGroups(candidate);
+        if (tickets.length > 0) return tickets;
+      }
+
+      if (data?.prediction && typeof data.prediction === "object") {
+        const nested = getTicketsFromPrediction(data.prediction);
+        if (nested.length > 0) return nested;
+      }
+
+      if (data?.result && typeof data.result === "object") {
+        const nested = getTicketsFromPrediction(data.result);
+        if (nested.length > 0) return nested;
+      }
+
+      return [];
+    }
+
+    function getTicketCountFromPrediction(data) {
+      const directValues = [
+        data?.ticket_count,
+        data?.tickets_count,
+        data?.bet_count,
+        data?.buy_count
+      ];
+
+      for (const value of directValues) {
+        const num = Number(value);
+        if (Number.isFinite(num) && num > 0) return num;
+      }
+
+      const tickets = getTicketsFromPrediction(data);
+      return tickets.length;
+    }
+
+    function getAmountFromTicket(ticket) {
+      if (!ticket || typeof ticket !== "object") return 0;
+
+      const value =
+        ticket.amount ??
+        ticket.stake ??
+        ticket.bet_amount ??
+        ticket.price ??
+        ticket.money ??
+        ticket.investment ??
+        0;
+
+      const num = Number(String(value).replace(/[^\d.-]/g, ""));
+      return Number.isFinite(num) ? num : 0;
+    }
+
+    function getTotalAmountFromPrediction(data) {
+      const directValues = [
+        data?.total_amount,
+        data?.total_stake,
+        data?.investment_amount,
+        data?.planned_amount,
+        data?.planned_investment,
+        data?.total_investment,
+        data?.bet_total,
+        data?.ticket_total_amount
+      ];
+
+      for (const value of directValues) {
+        const num = Number(String(value ?? "").replace(/[^\d.-]/g, ""));
+        if (Number.isFinite(num) && num > 0) return num;
+      }
+
+      const tickets = getTicketsFromPrediction(data);
+      return tickets.reduce((sum, ticket) => sum + getAmountFromTicket(ticket), 0);
+    }
+
+    function getUpdatedAtFromPrediction(data) {
+      const candidates = [
+        data?.updated_at,
+        data?.generated_at,
+        data?.created_at,
+        data?.timestamp,
+        data?.update_time,
+        data?.datetime,
+        data?.prediction_updated_at
+      ];
+
+      for (const value of candidates) {
+        if (value) return value;
+      }
+
+      if (data?.meta && typeof data.meta === "object") {
+        return getUpdatedAtFromPrediction(data.meta);
+      }
+
+      if (data?.prediction && typeof data.prediction === "object") {
+        return getUpdatedAtFromPrediction(data.prediction);
+      }
+
+      return null;
+    }
+
+    function parseDate(value) {
+      if (!value) return null;
+
+      if (typeof value === "number") {
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? null : date;
+      }
+
+      let text = String(value).trim();
+      if (!text) return null;
+
+      text = text.replace(/\//g, "-");
+
+      if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}/.test(text)) {
+        text = text.replace(" ", "T");
+      }
+
+      const date = new Date(text);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function getHoursFromNow(dateText) {
+      const date = parseDate(dateText);
+      if (!date) return null;
+
+      const diffMs = Date.now() - date.getTime();
+      return diffMs / 1000 / 60 / 60;
+    }
+
+    function hasMissingExhibitionTime(data) {
+      const boats =
+        asArray(data?.boats).length ? asArray(data?.boats) :
+        asArray(data?.all_boats).length ? asArray(data?.all_boats) :
+        asArray(data?.entries).length ? asArray(data?.entries) :
+        asArray(data?.players);
+
+      if (!boats.length) return false;
+
+      return boats.some(boat => {
+        const value =
+          boat.exhibition_time ??
+          boat.ex_time ??
+          boat.display_time ??
+          boat.tenji_time ??
+          boat展示タイム;
+
+        return value === undefined || value === null || value === "" || Number(value) === 0;
+      });
+    }
+
+    function hasMissingExhibitionSt(data) {
+      const boats =
+        asArray(data?.boats).length ? asArray(data?.boats) :
+        asArray(data?.all_boats).length ? asArray(data?.all_boats) :
+        asArray(data?.entries).length ? asArray(data?.entries) :
+        asArray(data?.players);
+
+      if (!boats.length) return false;
+
+      return boats.some(boat => {
+        const value =
+          boat.exhibition_st ??
+          boat.ex_st ??
+          boat.display_st ??
+          boat.tenji_st ??
+          boat展示ST;
+
+        return value === undefined || value === null || value === "";
+      });
+    }
+
+    function isFinalStage(data) {
+      const stage = String(
+        data?.stage ??
+        data?.prediction_stage ??
+        data?.run_stage ??
+        data?.mode ??
+        ""
+      ).toLowerCase();
+
+      return (
+        stage.includes("final") ||
+        stage.includes("最終") ||
+        stage.includes("race_day_final")
+      );
+    }
+
+    function hasMissingFinalOdds(data) {
+      if (!isFinalStage(data)) return false;
+
+      const tickets = getTicketsFromPrediction(data);
+
+      if (!tickets.length) {
+        return false;
+      }
+
+      return tickets.some(ticket => {
+        const value =
+          ticket.odds ??
+          ticket.expected_odds ??
+          ticket.final_odds ??
+          ticket.return_odds;
+
+        return value === undefined || value === null || value === "" || Number(value) === 0;
+      });
+    }
+
+    function buildAlertPreview(settings, predictionData) {
+      const alerts = [];
+
+      const ticketCount = getTicketCountFromPrediction(predictionData);
+      const totalAmount = getTotalAmountFromPrediction(predictionData);
+      const updatedAt = getUpdatedAtFromPrediction(predictionData);
+      const hoursFromNow = getHoursFromNow(updatedAt);
+
+      if (settings.check_ticket_count) {
+        if (ticketCount >= Number(settings.ticket_count_danger)) {
+          alerts.push({
+            level: "danger",
+            title: "危険",
+            message: `買い目点数が ${ticketCount} 点です。設定上の危険ライン ${settings.ticket_count_danger} 点を超えています。`
+          });
+        } else if (ticketCount >= Number(settings.ticket_count_warning)) {
+          alerts.push({
+            level: "warning",
+            title: "注意",
+            message: `買い目点数が ${ticketCount} 点です。設定上の注意ライン ${settings.ticket_count_warning} 点を超えています。`
+          });
+        }
+      }
+
+      if (settings.check_total_amount) {
+        if (totalAmount >= Number(settings.total_amount_danger)) {
+          alerts.push({
+            level: "danger",
+            title: "危険",
+            message: `予定投資額が ${yen(totalAmount)} です。設定上の危険ライン ${yen(settings.total_amount_danger)} を超えています。`
+          });
+        } else if (totalAmount >= Number(settings.total_amount_warning)) {
+          alerts.push({
+            level: "warning",
+            title: "注意",
+            message: `予定投資額が ${yen(totalAmount)} です。設定上の注意ライン ${yen(settings.total_amount_warning)} を超えています。`
+          });
+        }
+      }
+
+      if (settings.check_updated_at) {
+        if (updatedAt && hoursFromNow !== null) {
+          if (hoursFromNow >= Number(settings.updated_hours_danger)) {
+            alerts.push({
+              level: "danger",
+              title: "危険",
+              message: `prediction.json の更新日時が ${hoursFromNow.toFixed(1)} 時間前です。危険ライン ${settings.updated_hours_danger} 時間を超えています。`
+            });
+          } else if (hoursFromNow >= Number(settings.updated_hours_warning)) {
+            alerts.push({
+              level: "warning",
+              title: "注意",
+              message: `prediction.json の更新日時が ${hoursFromNow.toFixed(1)} 時間前です。注意ライン ${settings.updated_hours_warning} 時間を超えています。`
+            });
+          }
+        } else {
+          alerts.push({
+            level: "warning",
+            title: "注意",
+            message: "prediction.json の更新日時を取得できませんでした。updated_at / generated_at / created_at などを確認してください。"
+          });
+        }
+      }
+
+      if (settings.check_exhibition_time && hasMissingExhibitionTime(predictionData)) {
+        alerts.push({
+          level: "warning",
+          title: "注意",
+          message: "展示タイムが未入力、または不足している艇があります。展示後予想の場合は入力状況を確認してください。"
+        });
+      }
+
+      if (settings.check_exhibition_st && hasMissingExhibitionSt(predictionData)) {
+        alerts.push({
+          level: "warning",
+          title: "注意",
+          message: "展示STが未入力、または不足している艇があります。展示後予想の場合は入力状況を確認してください。"
+        });
+      }
+
+      if (settings.check_final_odds && hasMissingFinalOdds(predictionData)) {
+        alerts.push({
+          level: "warning",
+          title: "注意",
+          message: "最終予想ですが、買い目のオッズが未入力、または不足している可能性があります。"
+        });
+      }
+
+      const meta = {
+        ticketCount,
+        totalAmount,
+        updatedAt,
+        hoursFromNow,
+        finalStage: isFinalStage(predictionData)
+      };
+
+      return { alerts, meta };
+    }
+
+    function renderAlertPreview(alerts, meta) {
+      const el = document.getElementById("alert-preview-area");
+      if (!el) return;
+
+      let html = "";
+
+      if (!alerts.length) {
+        html += `
+          <div class="alert-preview-list">
+            <div class="alert-preview-item alert-preview-ok">
+              <div class="alert-preview-title">正常</div>
+              現在の設定では、大きな注意点は検出されていません。
+            </div>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="alert-preview-list">
+            ${alerts.map(alert => `
+              <div class="alert-preview-item alert-preview-${alert.level}">
+                <div class="alert-preview-title">${escapeHtml(alert.title)}</div>
+                ${escapeHtml(alert.message)}
+              </div>
+            `).join("")}
+          </div>
+        `;
+      }
+
+      html += `
+        <div class="alert-preview-meta">
+          判定データ：
+          買い目点数 ${meta.ticketCount} 点 /
+          予定投資額 ${yen(meta.totalAmount)} /
+          更新日時 ${meta.updatedAt ? escapeHtml(meta.updatedAt) : "不明"}
+          ${meta.hoursFromNow !== null ? ` / 約 ${meta.hoursFromNow.toFixed(1)} 時間前` : ""}
+          / 最終予想判定 ${meta.finalStage ? "はい" : "いいえ"}
+        </div>
+      `;
+
+      el.className = "";
+      el.innerHTML = html;
+    }
+
+    function renderAlertPreviewError(message) {
+      const el = document.getElementById("alert-preview-area");
+      if (!el) return;
+
+      el.className = "error";
+      el.innerHTML = `
+        アラート判定プレビューの読み込みに失敗しました。<br>
+        原因：${escapeHtml(message)}
+      `;
+    }
+
     function renderTemplates() {
       const el = document.getElementById("template-list");
       if (!el) return;
@@ -752,7 +1223,7 @@
             <p>${template.description}</p>
 
             <ul class="template-point-list">
-              ${template.points.map(point => `<li>${point}</li>`).join("")}
+              ${template.points.map(point => `<li>${escapeHtml(point)}</li>`).join("")}
             </ul>
 
             <pre class="template-json">${escapeHtml(jsonText)}</pre>
@@ -816,31 +1287,22 @@
       }
     }
 
-    function escapeHtml(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    async function loadJson(url) {
+      const response = await fetch(url, { cache: "no-store" });
+
+      if (!response.ok) {
+        throw new Error(`${url} を読み込めませんでした。HTTP ${response.status}`);
+      }
+
+      return await response.json();
     }
 
     async function loadAlertSettings() {
       let settings = DEFAULT_ALERT_SETTINGS;
 
       try {
-        const response = await fetch("./alert_settings.json", { cache: "no-store" });
-
-        if (!response.ok) {
-          throw new Error("alert_settings.json を読み込めませんでした。");
-        }
-
-        const json = await response.json();
+        const json = await loadJson("./alert_settings.json");
         settings = mergeSettings(json);
-
-        renderSummary(settings);
-        renderSwitches(settings);
-        renderDescriptions(settings);
       } catch (error) {
         settings = DEFAULT_ALERT_SETTINGS;
 
@@ -860,13 +1322,20 @@
           switchEl.className = "loading";
           switchEl.textContent = "初期設定でチェック項目を表示します。";
         }
-
-        renderSummary(settings);
-        renderSwitches(settings);
-        renderDescriptions(settings);
       }
 
+      renderSummary(settings);
+      renderSwitches(settings);
+      renderDescriptions(settings);
       renderTemplates();
+
+      try {
+        const predictionData = await loadJson("./prediction.json");
+        const result = buildAlertPreview(settings, predictionData);
+        renderAlertPreview(result.alerts, result.meta);
+      } catch (error) {
+        renderAlertPreviewError(error.message);
+      }
     }
 
     loadAlertSettings();
