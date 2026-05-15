@@ -923,6 +923,12 @@
       return null;
     }
 
+    function shortenText(text, maxLength = 46) {
+      const value = String(text || "");
+      if (value.length <= maxLength) return value;
+      return value.slice(0, maxLength) + "…";
+    }
+
     async function loadJson(url) {
       const response = await fetch(url, { cache: "no-store" });
       if (!response.ok) {
@@ -1383,10 +1389,21 @@
       return alerts;
     }
 
+    function pickPrimaryAlert(alerts) {
+      const danger = alerts.find(alert => alert.level === "danger");
+      if (danger) return danger;
+
+      const warning = alerts.find(alert => alert.level === "warning");
+      if (warning) return warning;
+
+      return null;
+    }
+
     function renderAlertSummary(data, settings) {
       const alerts = buildAlerts(data, settings);
       const warningCount = alerts.filter(alert => alert.level === "warning").length;
       const dangerCount = alerts.filter(alert => alert.level === "danger").length;
+      const primaryAlert = pickPrimaryAlert(alerts);
 
       const box = document.querySelector(".summary-alert");
       const statusEl = document.getElementById("summary-alert-status");
@@ -1399,15 +1416,18 @@
       if (dangerCount > 0) {
         box.classList.add("summary-alert-danger");
         statusEl.textContent = "危険あり";
-        subEl.textContent = `注意 ${warningCount}件 / 危険 ${dangerCount}件`;
+        subEl.textContent = `注意 ${warningCount}件 / 危険 ${dangerCount}件：${shortenText(primaryAlert ? primaryAlert.message : "")}`;
+        subEl.title = primaryAlert ? primaryAlert.message : "";
       } else if (warningCount > 0) {
         box.classList.add("summary-alert-warning");
         statusEl.textContent = "注意あり";
-        subEl.textContent = `注意 ${warningCount}件 / 危険 ${dangerCount}件`;
+        subEl.textContent = `注意 ${warningCount}件 / 危険 ${dangerCount}件：${shortenText(primaryAlert ? primaryAlert.message : "")}`;
+        subEl.title = primaryAlert ? primaryAlert.message : "";
       } else {
         box.classList.add("summary-alert-ok");
         statusEl.textContent = "正常";
         subEl.textContent = "大きな注意点はありません。";
+        subEl.title = "";
       }
     }
 
@@ -1792,6 +1812,7 @@
       const alertSub = document.getElementById("summary-alert-sub");
       if (alertSub) {
         alertSub.textContent = "アラート状況を取得できませんでした。";
+        alertSub.title = "";
       }
 
       const alertBox = document.querySelector(".summary-alert");
