@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>アラート設定確認</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    header {
+      background: linear-gradient(135deg, #475569, #0f172a);
+      color: white;
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow-x: auto;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .summary-box {
+      border-radius: 16px;
+      padding: 14px;
+      color: white;
+      min-height: 100px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .summary-label {
+      font-size: 12px;
+      opacity: 0.92;
+      margin-bottom: 6px;
+    }
+
+    .summary-value {
+      font-size: 22px;
+      font-weight: 900;
+      line-height: 1.3;
+    }
+
+    .summary-sub {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 5px;
+      line-height: 1.5;
+    }
+
+    .box-ticket-warning {
+      background: linear-gradient(135deg, #f59e0b, #fbbf24);
+    }
+
+    .box-ticket-danger {
+      background: linear-gradient(135deg, #dc2626, #fb7185);
+    }
+
+    .box-amount-warning {
+      background: linear-gradient(135deg, #ea580c, #fb923c);
+    }
+
+    .box-amount-danger {
+      background: linear-gradient(135deg, #be123c, #fb7185);
+    }
+
+    .box-time-warning {
+      background: linear-gradient(135deg, #2563eb, #60a5fa);
+    }
+
+    .box-time-danger {
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .status-item {
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .status-text {
+      line-height: 1.5;
+    }
+
+    .status-title {
+      font-weight: 900;
+      font-size: 15px;
+    }
+
+    .status-desc {
+      color: #6b7280;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .badge {
+      display: inline-block;
+      min-width: 54px;
+      text-align: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 900;
+      color: white;
+      flex-shrink: 0;
+    }
+
+    .badge-on {
+      background: #16a34a;
+    }
+
+    .badge-off {
+      background: #6b7280;
+    }
+
+    .explain-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .explain-item {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .key {
+      display: inline-block;
+      background: #111827;
+      color: white;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-right: 4px;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .menu-button {
+      display: block;
+      text-decoration: none;
+      color: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-sizing: border-box;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .menu-button-title {
+      font-weight: 900;
+      font-size: 17px;
+      margin-bottom: 6px;
+    }
+
+    .menu-button-sub {
+      font-size: 12px;
+      line-height: 1.5;
+      opacity: 0.92;
+    }
+
+    .menu-home {
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+    }
+
+    .menu-json {
+      background: linear-gradient(135deg, #475569, #94a3b8);
+    }
+
+    .menu-prediction {
+      background: linear-gradient(135deg, #2563eb, #60a5fa);
+    }
+
+    .menu-update {
+      background: linear-gradient(135deg, #ea580c, #fb923c);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 760px;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 8px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #374151;
+      white-space: nowrap;
+    }
+
+    code {
+      background: #f1f5f9;
+      color: #0f172a;
+      border-radius: 6px;
+      padding: 2px 5px;
+      font-size: 12px;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .notice {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .loading {
+      color: #6b7280;
+      padding: 12px;
+    }
+
+    .error {
+      background: #fee2e2;
+      border: 1px solid #ef4444;
+      color: #991b1b;
+      border-radius: 12px;
+      padding: 12px;
+      line-height: 1.7;
+      font-weight: 700;
+    }
+
+    .ok {
+      background: #dcfce7;
+      border: 1px solid #22c55e;
+      color: #166534;
+      border-radius: 12px;
+      padding: 12px;
+      line-height: 1.7;
+      font-weight: 700;
+    }
+
+    footer {
+      text-align: center;
+      color: #6b7280;
+      font-size: 12px;
+      padding: 24px 16px;
+    }
+
+    @media (max-width: 700px) {
+      .summary-grid,
+      .status-grid,
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .status-item {
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>アラート設定確認</h1>
+    <p>
+      <code>alert_settings.json</code> の内容を読み込み、注意アラートの判定条件を確認します。
+    </p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>読み込み状態</h2>
+      <div id="load-status" class="loading">alert_settings.json を読み込み中...</div>
+    </section>
+
+    <section class="card">
+      <h2>アラート設定サマリー</h2>
+
+      <div class="summary-grid">
+        <div class="summary-box box-ticket-warning">
+          <div class="summary-label">買い目点数 注意</div>
+          <div class="summary-value" id="ticket-warning">読み込み中...</div>
+          <div class="summary-sub">この点数以上で注意アラートを表示します。</div>
+        </div>
+
+        <div class="summary-box box-ticket-danger">
+          <div class="summary-label">買い目点数 危険</div>
+          <div class="summary-value" id="ticket-danger">読み込み中...</div>
+          <div class="summary-sub">この点数以上で強い注意を表示します。</div>
+        </div>
+
+        <div class="summary-box box-amount-warning">
+          <div class="summary-label">予定投資額 注意</div>
+          <div class="summary-value" id="amount-warning">読み込み中...</div>
+          <div class="summary-sub">この金額以上で注意アラートを表示します。</div>
+        </div>
+
+        <div class="summary-box box-amount-danger">
+          <div class="summary-label">予定投資額 危険</div>
+          <div class="summary-value" id="amount-danger">読み込み中...</div>
+          <div class="summary-sub">この金額以上で強い注意を表示します。</div>
+        </div>
+
+        <div class="summary-box box-time-warning">
+          <div class="summary-label">更新時間 注意</div>
+          <div class="summary-value" id="time-warning">読み込み中...</div>
+          <div class="summary-sub">更新からこの時間以上で注意を表示します。</div>
+        </div>
+
+        <div class="summary-box box-time-danger">
+          <div class="summary-label">更新時間 危険</div>
+          <div class="summary-value" id="time-danger">読み込み中...</div>
+          <div class="summary-sub">更新からこの時間以上で強い注意を表示します。</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>チェックON/OFF一覧</h2>
+      <div id="status-list" class="status-grid">
+        <div class="loading">チェック項目を読み込み中...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>設定項目の説明</h2>
+
+      <div class="explain-list">
+        <div class="explain-item">
+          <span class="key">ticket_count_warning</span>
+          買い目点数が何点以上なら「注意」を出すかの設定です。
+        </div>
+
+        <div class="explain-item">
+          <span class="key">ticket_count_danger</span>
+          買い目点数が何点以上なら「強い注意」を出すかの設定です。
+        </div>
+
+        <div class="explain-item">
+          <span class="key">total_amount_warning</span>
+          予定投資額が何円以上なら「注意」を出すかの設定です。
+        </div>
+
+        <div class="explain-item">
+          <span class="key">total_amount_danger</span>
+          予定投資額が何円以上なら「強い注意」を出すかの設定です。
+        </div>
+
+        <div class="explain-item">
+          <span class="key">updated_hours_warning</span>
+          予想更新から何時間以上経過したら「注意」を出すかの設定です。
+        </div>
+
+        <div class="explain-item">
+          <span class="key">updated_hours_danger</span>
+          予想更新から何時間以上経過したら「強い注意」を出すかの設定です。
+        </div>
+
+        <div class="explain-item">
+          <span class="key">check_...</span>
+          各チェック項目を有効にするか無効にするかの設定です。<code>true</code> でON、<code>false</code> でOFFです。
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>現在の設定値一覧</h2>
+
+      <div id="settings-table">
+        <div class="loading">設定一覧を読み込み中...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>JSONプレビュー</h2>
+      <pre id="json-preview">読み込み中...</pre>
+    </section>
+
+    <section class="card">
+      <h2>ページ移動</h2>
+
+      <div class="menu-grid">
+        <a class="menu-button menu-home" href="./index.html">
+          <div class="menu-button-title">トップページ</div>
+          <div class="menu-button-sub">予想ページへ戻ります。</div>
+        </a>
+
+        <a class="menu-button menu-json" href="./alert_settings.json">
+          <div class="menu-button-title">アラート設定JSON</div>
+          <div class="menu-button-sub">元データのJSONを直接確認します。</div>
+        </a>
+
+        <a class="menu-button menu-prediction" href="./prediction.json">
+          <div class="menu-button-title">予想JSON</div>
+          <div class="menu-button-sub">現在の予想データを確認します。</div>
+        </a>
+
+        <a class="menu-button menu-update" href="./race_update.json">
+          <div class="menu-button-title">当日情報JSON</div>
+          <div class="menu-button-sub">水面・展示・オッズの入力データを確認します。</div>
+        </a>
+      </div>
+    </section>
+
+    <section class="card notice">
+      <h2>使い方</h2>
+      <p>
+        アラート条件を変更したい場合は、<code>docs/alert_settings.json</code> を編集してください。
+        例：買い目点数を10点以上で注意にしたい場合は、<code>ticket_count_warning</code> を <code>10</code> に変更します。
+      </p>
+      <p>
+        変更後は GitHub Pages の反映に少し時間がかかる場合があります。古い表示が出る場合は、URL末尾に <code>?v=32</code> のような文字を付けて再読み込みしてください。
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    boatrace-ai-free / alert settings viewer
+  </footer>
+
+  <script>
+    const DEFAULT_ALERT_SETTINGS = {
+      ticket_count_warning: 15,
+      ticket_count_danger: 25,
+      total_amount_warning: 3000,
+      total_amount_danger: 5000,
+      updated_hours_warning: 12,
+      updated_hours_danger: 24,
+      check_exhibition_time: true,
+      check_exhibition_st: true,
+      check_final_odds: true,
+      check_updated_at: true,
+      check_ticket_count: true,
+      check_total_amount: true
+    };
+
+    const SETTING_LABELS = {
+      ticket_count_warning: "買い目点数 注意ライン",
+      ticket_count_danger: "買い目点数 危険ライン",
+      total_amount_warning: "予定投資額 注意ライン",
+      total_amount_danger: "予定投資額 危険ライン",
+      updated_hours_warning: "更新時間 注意ライン",
+      updated_hours_danger: "更新時間 危険ライン",
+      check_exhibition_time: "展示タイム未入力チェック",
+      check_exhibition_st: "展示ST未入力チェック",
+      check_final_odds: "FINALオッズ未入力チェック",
+      check_updated_at: "更新日時チェック",
+      check_ticket_count: "買い目点数チェック",
+      check_total_amount: "予定投資額チェック"
+    };
+
+    const SETTING_DESCRIPTIONS = {
+      ticket_count_warning: "この点数以上で買い目点数の注意アラートを表示します。",
+      ticket_count_danger: "この点数以上で買い目点数の強い注意アラートを表示します。",
+      total_amount_warning: "この金額以上で予定投資額の注意アラートを表示します。",
+      total_amount_danger: "この金額以上で予定投資額の強い注意アラートを表示します。",
+      updated_hours_warning: "予想更新からこの時間以上経過すると注意アラートを表示します。",
+      updated_hours_danger: "予想更新からこの時間以上経過すると強い注意アラートを表示します。",
+      check_exhibition_time: "POST_EXHIBITION または FINAL のとき、展示タイム未入力をチェックします。",
+      check_exhibition_st: "POST_EXHIBITION または FINAL のとき、展示ST未入力をチェックします。",
+      check_final_odds: "FINAL のとき、単勝オッズ未入力をチェックします。",
+      check_updated_at: "prediction.json の updated_at または generated_at が古くないかチェックします。",
+      check_ticket_count: "買い目点数が多すぎないかチェックします。",
+      check_total_amount: "予定投資額が高すぎないかチェックします。"
+    };
+
+    function escapeHtml(value) {
+      if (value === null || value === undefined) {
+        return "";
+      }
+
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function yen(value) {
+      const num = Number(value || 0);
+      return num.toLocaleString("ja-JP") + "円";
+    }
+
+    function onOff(value) {
+      return value ? "ON" : "OFF";
+    }
+
+    function badgeClass(value) {
+      return value ? "badge-on" : "badge-off";
+    }
+
+    function displayValue(key, value) {
+      if (key.includes("amount")) {
+        return yen(value);
+      }
+
+      if (key.includes("hours")) {
+        return `${value}時間以上`;
+      }
+
+      if (key.includes("ticket_count")) {
+        return `${value}点以上`;
+      }
+
+      if (typeof value === "boolean") {
+        return onOff(value);
+      }
+
+      return String(value);
+    }
+
+    async function loadSettings() {
+      const response = await fetch("./alert_settings.json?cache=" + Date.now());
+
+      if (!response.ok) {
+        throw new Error("alert_settings.json を読み込めませんでした。");
+      }
+
+      const json = await response.json();
+
+      return {
+        ...DEFAULT_ALERT_SETTINGS,
+        ...json
+      };
+    }
+
+    function renderLoadStatus(settings) {
+      document.getElementById("load-status").innerHTML = `
+        <div class="ok">
+          alert_settings.json を正常に読み込みました。
+        </div>
+      `;
+    }
+
+    function renderSummary(settings) {
+      document.getElementById("ticket-warning").textContent =
+        `${settings.ticket_count_warning}点以上`;
+
+      document.getElementById("ticket-danger").textContent =
+        `${settings.ticket_count_danger}点以上`;
+
+      document.getElementById("amount-warning").textContent =
+        yen(settings.total_amount_warning);
+
+      document.getElementById("amount-danger").textContent =
+        yen(settings.total_amount_danger);
+
+      document.getElementById("time-warning").textContent =
+        `${settings.updated_hours_warning}時間以上`;
+
+      document.getElementById("time-danger").textContent =
+        `${settings.updated_hours_danger}時間以上`;
+    }
+
+    function renderStatusList(settings) {
+      const keys = [
+        "check_exhibition_time",
+        "check_exhibition_st",
+        "check_final_odds",
+        "check_updated_at",
+        "check_ticket_count",
+        "check_total_amount"
+      ];
+
+      const html = keys.map(key => {
+        const value = Boolean(settings[key]);
+
+        return `
+          <div class="status-item">
+            <div class="status-text">
+              <div class="status-title">${escapeHtml(SETTING_LABELS[key] || key)}</div>
+              <div class="status-desc">${escapeHtml(SETTING_DESCRIPTIONS[key] || "")}</div>
+            </div>
+            <span class="badge ${badgeClass(value)}">${onOff(value)}</span>
+          </div>
+        `;
+      }).join("");
+
+      document.getElementById("status-list").innerHTML = html;
+    }
+
+    function renderSettingsTable(settings) {
+      const keys = Object.keys(DEFAULT_ALERT_SETTINGS);
+
+      const rows = keys.map(key => {
+        const value = settings[key];
+
+        return `
+          <tr>
+            <th>${escapeHtml(key)}</th>
+            <td>${escapeHtml(SETTING_LABELS[key] || key)}</td>
+            <td>${escapeHtml(displayValue(key, value))}</td>
+            <td>${escapeHtml(SETTING_DESCRIPTIONS[key] || "")}</td>
+          </tr>
+        `;
+      }).join("");
+
+      document.getElementById("settings-table").innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>JSONキー</th>
+              <th>項目名</th>
+              <th>現在値</th>
+              <th>説明</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderJsonPreview(settings) {
+      document.getElementById("json-preview").textContent =
+        JSON.stringify(settings, null, 2);
+    }
+
+    function renderError(error) {
+      document.getElementById("load-status").innerHTML = `
+        <div class="error">
+          alert_settings.json の読み込みに失敗しました。<br>
+          docs/alert_settings.json が存在するか、JSONの書き方が正しいか確認してください。<br>
+          エラー内容：${escapeHtml(error.message)}
+        </div>
+      `;
+
+      document.getElementById("ticket-warning").textContent = "-";
+      document.getElementById("ticket-danger").textContent = "-";
+      document.getElementById("amount-warning").textContent = "-";
+      document.getElementById("amount-danger").textContent = "-";
+      document.getElementById("time-warning").textContent = "-";
+      document.getElementById("time-danger").textContent = "-";
+
+      document.getElementById("status-list").innerHTML = `
+        <div class="error">
+          チェック項目を表示できませんでした。
+        </div>
+      `;
+
+      document.getElementById("settings-table").innerHTML = `
+        <div class="error">
+          設定一覧を表示できませんでした。
+        </div>
+      `;
+
+      document.getElementById("json-preview").textContent =
+        "alert_settings.json を読み込めませんでした。";
+    }
+
+    async function main() {
+      try {
+        const settings = await loadSettings();
+
+        renderLoadStatus(settings);
+        renderSummary(settings);
+        renderStatusList(settings);
+        renderSettingsTable(settings);
+        renderJsonPreview(settings);
+      } catch (error) {
+        console.error(error);
+        renderError(error);
+      }
+    }
+
+    main();
+  </script>
+</body>
+</html>
+
