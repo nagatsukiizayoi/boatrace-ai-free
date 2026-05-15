@@ -198,6 +198,44 @@
       background: linear-gradient(135deg, #0f766e, #14b8a6);
     }
 
+    .alert-count-summary {
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+      line-height: 1.6;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .alert-count-ok {
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      color: #166534;
+    }
+
+    .alert-count-warning {
+      background: #fffbeb;
+      border: 1px solid #facc15;
+      color: #92400e;
+    }
+
+    .alert-count-danger {
+      background: #fee2e2;
+      border: 1px solid #f87171;
+      color: #991b1b;
+    }
+
+    .alert-count-title {
+      font-size: 15px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .alert-count-sub {
+      font-size: 13px;
+      opacity: 0.95;
+    }
+
     .alert-list {
       display: flex;
       flex-direction: column;
@@ -722,6 +760,10 @@
         </a>
       </div>
 
+      <div id="alert-count-summary" class="alert-count-summary loading">
+        アラート件数を確認中です...
+      </div>
+
       <div id="alert-area" class="loading">
         注意アラートを読み込み中です...
       </div>
@@ -989,9 +1031,7 @@
     function flattenTicketGroups(value) {
       if (!value) return [];
 
-      if (Array.isArray(value)) {
-        return value;
-      }
+      if (Array.isArray(value)) return value;
 
       if (typeof value === "object") {
         let result = [];
@@ -1240,7 +1280,6 @@
       });
 
       if (main) return main;
-
       if (predictions.length) return predictions[0];
 
       const boats = getBoats(data).slice().sort((a, b) => getScore(b) - getScore(a));
@@ -1444,6 +1483,34 @@
       }
     }
 
+    function renderAlertCountSummary(alerts) {
+      const el = document.getElementById("alert-count-summary");
+      if (!el) return;
+
+      const warningCount = alerts.filter(alert => alert.level === "warning").length;
+      const dangerCount = alerts.filter(alert => alert.level === "danger").length;
+      const totalCount = alerts.length;
+
+      let status = "正常";
+      let className = "alert-count-summary alert-count-ok";
+
+      if (dangerCount > 0) {
+        status = "危険あり";
+        className = "alert-count-summary alert-count-danger";
+      } else if (warningCount > 0) {
+        status = "注意あり";
+        className = "alert-count-summary alert-count-warning";
+      }
+
+      el.className = className;
+      el.innerHTML = `
+        <div class="alert-count-title">判定結果：${status}</div>
+        <div class="alert-count-sub">
+          注意 ${warningCount}件 / 危険 ${dangerCount}件 / 合計 ${totalCount}件
+        </div>
+      `;
+    }
+
     function renderQuickSummary(data) {
       const stage = getStage(data);
       const main = pickMainPrediction(data);
@@ -1489,6 +1556,7 @@
       if (!el) return;
 
       const alerts = buildAlerts(data, settings);
+      renderAlertCountSummary(alerts);
 
       if (!alerts.length) {
         el.className = "alert-list";
@@ -1796,6 +1864,7 @@
         "prediction-area",
         "ticket-area",
         "boat-area",
+        "alert-count-summary",
         "alert-area"
       ];
 
