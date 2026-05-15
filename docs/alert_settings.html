@@ -189,6 +189,80 @@
       margin-right: 4px;
     }
 
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .template-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      background: #ffffff;
+      padding: 14px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .template-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+
+    .template-description {
+      color: #4b5563;
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .template-point {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .template-pre {
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.6;
+      max-height: 260px;
+      white-space: pre;
+    }
+
+    .copy-button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 10px;
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+      color: white;
+      font-weight: 900;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .copy-button:hover {
+      opacity: 0.92;
+    }
+
+    .copy-message {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #166534;
+      font-weight: 800;
+      min-height: 18px;
+    }
+
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -313,6 +387,7 @@
     @media (max-width: 700px) {
       .summary-grid,
       .status-grid,
+      .template-grid,
       .menu-grid {
         grid-template-columns: 1fr;
       }
@@ -384,6 +459,17 @@
       <h2>チェックON/OFF一覧</h2>
       <div id="status-list" class="status-grid">
         <div class="loading">チェック項目を読み込み中...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>設定例テンプレート</h2>
+      <p class="notice">
+        使いたい設定の「コピーする」ボタンを押すと、JSONをクリップボードにコピーできます。
+        コピー後、GitHubで <code>docs/alert_settings.json</code> を開き、中身を全削除して貼り付けてください。
+      </p>
+      <div id="template-list" class="template-grid">
+        <div class="loading">設定例を読み込み中...</div>
       </div>
     </section>
 
@@ -474,7 +560,11 @@
         例：買い目点数を10点以上で注意にしたい場合は、<code>ticket_count_warning</code> を <code>10</code> に変更します。
       </p>
       <p>
-        変更後は GitHub Pages の反映に少し時間がかかる場合があります。古い表示が出る場合は、URL末尾に <code>?v=32</code> のような文字を付けて再読み込みしてください。
+        設定例テンプレートを使う場合は、このページの「コピーする」ボタンでJSONをコピーし、
+        GitHub上の <code>docs/alert_settings.json</code> に貼り付けてください。
+      </p>
+      <p>
+        変更後は GitHub Pages の反映に少し時間がかかる場合があります。古い表示が出る場合は、URL末尾に <code>?v=34</code> のような文字を付けて再読み込みしてください。
       </p>
     </section>
   </main>
@@ -498,6 +588,85 @@
       check_ticket_count: true,
       check_total_amount: true
     };
+
+    const SETTING_TEMPLATES = [
+      {
+        name: "標準設定",
+        description: "基本の設定です。買い目・投資額・更新時間をバランスよくチェックします。",
+        point: "買い目15点以上で注意、25点以上で強い注意。投資額3,000円以上で注意、5,000円以上で強い注意。",
+        settings: {
+          ticket_count_warning: 15,
+          ticket_count_danger: 25,
+          total_amount_warning: 3000,
+          total_amount_danger: 5000,
+          updated_hours_warning: 12,
+          updated_hours_danger: 24,
+          check_exhibition_time: true,
+          check_exhibition_st: true,
+          check_final_odds: true,
+          check_updated_at: true,
+          check_ticket_count: true,
+          check_total_amount: true
+        }
+      },
+      {
+        name: "慎重設定",
+        description: "少額運用や、買い目を絞りたい場合に向いています。早めに注意が出ます。",
+        point: "買い目10点以上で注意、18点以上で強い注意。投資額2,000円以上で注意、4,000円以上で強い注意。",
+        settings: {
+          ticket_count_warning: 10,
+          ticket_count_danger: 18,
+          total_amount_warning: 2000,
+          total_amount_danger: 4000,
+          updated_hours_warning: 8,
+          updated_hours_danger: 16,
+          check_exhibition_time: true,
+          check_exhibition_st: true,
+          check_final_odds: true,
+          check_updated_at: true,
+          check_ticket_count: true,
+          check_total_amount: true
+        }
+      },
+      {
+        name: "攻め設定",
+        description: "買い目点数や投資額の許容範囲を広めにします。穴狙い検証向けです。",
+        point: "買い目20点以上で注意、35点以上で強い注意。投資額5,000円以上で注意、8,000円以上で強い注意。",
+        settings: {
+          ticket_count_warning: 20,
+          ticket_count_danger: 35,
+          total_amount_warning: 5000,
+          total_amount_danger: 8000,
+          updated_hours_warning: 12,
+          updated_hours_danger: 24,
+          check_exhibition_time: true,
+          check_exhibition_st: true,
+          check_final_odds: true,
+          check_updated_at: true,
+          check_ticket_count: true,
+          check_total_amount: true
+        }
+      },
+      {
+        name: "更新チェックOFF設定",
+        description: "サンプルデータやテスト用データで、更新日時の古さを警告したくない場合に使います。",
+        point: "updated_at / generated_at が古くても警告しません。他のチェックは標準設定と同じです。",
+        settings: {
+          ticket_count_warning: 15,
+          ticket_count_danger: 25,
+          total_amount_warning: 3000,
+          total_amount_danger: 5000,
+          updated_hours_warning: 12,
+          updated_hours_danger: 24,
+          check_exhibition_time: true,
+          check_exhibition_st: true,
+          check_final_odds: true,
+          check_updated_at: false,
+          check_ticket_count: true,
+          check_total_amount: true
+        }
+      }
+    ];
 
     const SETTING_LABELS = {
       ticket_count_warning: "買い目点数 注意ライン",
@@ -575,6 +744,10 @@
       return String(value);
     }
 
+    function templateJson(template) {
+      return JSON.stringify(template.settings, null, 2);
+    }
+
     async function loadSettings() {
       const response = await fetch("./alert_settings.json?cache=" + Date.now());
 
@@ -645,6 +818,58 @@
       document.getElementById("status-list").innerHTML = html;
     }
 
+    function renderTemplates() {
+      const container = document.getElementById("template-list");
+
+      const html = SETTING_TEMPLATES.map((template, index) => {
+        return `
+          <div class="template-card">
+            <h3>${escapeHtml(template.name)}</h3>
+            <div class="template-description">${escapeHtml(template.description)}</div>
+            <div class="template-point">${escapeHtml(template.point)}</div>
+            <pre class="template-pre" id="template-json-${index}">${escapeHtml(templateJson(template))}</pre>
+            <button class="copy-button" type="button" onclick="copyTemplate(${index})">
+              ${escapeHtml(template.name)}をコピーする
+            </button>
+            <div class="copy-message" id="copy-message-${index}"></div>
+          </div>
+        `;
+      }).join("");
+
+      container.innerHTML = html;
+    }
+
+    async function copyTemplate(index) {
+      const template = SETTING_TEMPLATES[index];
+      const text = templateJson(template);
+      const messageElement = document.getElementById(`copy-message-${index}`);
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          textarea.style.position = "fixed";
+          textarea.style.left = "-9999px";
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+        }
+
+        messageElement.textContent = `${template.name}をコピーしました。docs/alert_settings.json に貼り付けてください。`;
+      } catch (error) {
+        console.error(error);
+        messageElement.textContent = "コピーに失敗しました。表示されているJSONを手動で選択してコピーしてください。";
+      }
+
+      setTimeout(() => {
+        messageElement.textContent = "";
+      }, 6000);
+    }
+
     function renderSettingsTable(settings) {
       const keys = Object.keys(DEFAULT_ALERT_SETTINGS);
 
@@ -713,6 +938,8 @@
 
       document.getElementById("json-preview").textContent =
         "alert_settings.json を読み込めませんでした。";
+
+      renderTemplates();
     }
 
     async function main() {
@@ -722,6 +949,7 @@
         renderLoadStatus(settings);
         renderSummary(settings);
         renderStatusList(settings);
+        renderTemplates();
         renderSettingsTable(settings);
         renderJsonPreview(settings);
       } catch (error) {
