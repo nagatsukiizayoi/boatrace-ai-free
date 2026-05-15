@@ -1,0 +1,141 @@
+{
+  "generated_at": "2026-05-15T12:37:07+09:00",
+  "best_roi": {
+    "stage": "PRE_NIGHT",
+    "label": "前日夜予想",
+    "race_count": 1,
+    "hit_race_count": 0,
+    "total_stake": 0.0,
+    "total_return": 0.0,
+    "total_profit": 0.0,
+    "roi": 0,
+    "hit_rate": 0.0
+  },
+  "best_profit": {
+    "stage": "PRE_NIGHT",
+    "label": "前日夜予想",
+    "race_count": 1,
+    "hit_race_count": 0,
+    "total_stake": 0.0,
+    "total_return": 0.0,
+    "total_profit": 0.0,
+    "roi": 0,
+    "hit_rate": 0.0
+  },
+  "best_hit_rate": {
+    "stage": "PRE_NIGHT",
+    "label": "前日夜予想",
+    "race_count": 1,
+    "hit_race_count": 0,
+    "total_stake": 0.0,
+    "total_return": 0.0,
+    "total_profit": 0.0,
+    "roi": 0,
+    "hit_rate": 0.0
+  },
+  "comparisons": [
+    {
+      "before": "PRE_NIGHT",
+      "before_label": "前日夜予想",
+      "after": "POST_EXHIBITION",
+      "after_label": "展示後予想",
+      "roi_diff": 0,
+      "profit_diff": 0.0,
+      "hit_rate_diff": 0.0,
+      "improved_roi": false,
+      "improved_profit": false,
+      "improved_hit_rate": false
+    },
+    {
+      "before": "POST_EXHIBITION",
+      "before_label": "展示後予想",
+      "after": "FINAL",
+      "after_label": "最終予想",
+      "roi_diff": 0,
+      "profit_diff": 0.0,
+      "hit_rate_diff": 0.0,
+      "improved_roi": false,
+      "improved_profit": false,
+      "improved_hit_rate": false
+    },
+    {
+      "before": "PRE_NIGHT",
+      "before_label": "前日夜予想",
+      "after": "FINAL",
+      "after_label": "最終予想",
+      "roi_diff": 0,
+      "profit_diff": 0.0,
+      "hit_rate_diff": 0.0,
+      "improved_roi": false,
+      "improved_profit": false,
+      "improved_hit_rate": false
+    }
+  ],
+  "comments": [
+    "現時点で回収率が最も高いのは「前日夜予想」で、回収率は 0.00% です。",
+    "利益が最も大きいのは「前日夜予想」で、累計利益は 0円 です。",
+    "的中率が最も高いのは「前日夜予想」で、的中率は 0.00% です。",
+    "「前日夜予想」から「展示後予想」では、回収率が 0.00% 低下しています。",
+    "「展示後予想」から「最終予想」では、回収率が 0.00% 低下しています。",
+    "「前日夜予想」から「最終予想」では、回収率が 0.00% 低下しています。",
+    "まだレース数が少ないため、現時点の傾向は参考程度です。まずは5レース以上の蓄積を目指してください。"
+  ],
+  "stage_summary": {
+    "PRE_NIGHT": {
+      "stage": "PRE_NIGHT",
+      "label": "前日夜予想",
+      "race_count": 1,
+      "hit_race_count": 0,
+      "total_stake": 0.0,
+      "total_return": 0.0,
+      "total_profit": 0.0,
+      "roi": 0,
+      "hit_rate": 0.0
+    },
+    "MORNING": {
+      "stage": "MORNING",
+      "label": "当日朝予想",
+      "race_count": 1,
+      "hit_race_count": 0,
+      "total_stake": 0.0,
+      "total_return": 0.0,
+      "total_profit": 0.0,
+      "roi": 0,
+      "hit_rate": 0.0
+    },
+    "PRE_EXHIBITION": {
+      "stage": "PRE_EXHIBITION",
+      "label": "展示前予想",
+      "race_count": 1,
+      "hit_race_count": 0,
+      "total_stake": 0.0,
+      "total_return": 0.0,
+      "total_profit": 0.0,
+      "roi": 0,
+      "hit_rate": 0.0
+    },
+    "POST_EXHIBITION": {
+      "stage": "POST_EXHIBITION",
+      "label": "展示後予想",
+      "race_count": 1,
+      "hit_race_count": 0,
+      "total_stake": 0.0,
+      "total_return": 0.0,
+      "total_profit": 0.0,
+      "roi": 0,
+      "hit_rate": 0.0
+    },
+    "FINAL": {
+      "stage": "FINAL",
+      "label": "最終予想",
+      "race_count": 1,
+      "hit_race_count": 0,
+      "total_stake": 0.0,
+      "total_return": 0.0,
+      "total_profit": 0.0,
+      "roi": 0,
+      "hit_rate": 0.0
+    }
+  },
+  "record_count": 1
+}
