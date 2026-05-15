@@ -316,6 +316,39 @@
       color: #4b5563;
     }
 
+    .alert-visible-summary {
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin: 0 0 12px;
+      font-size: 13px;
+      font-weight: 900;
+      border: 1px solid #e5e7eb;
+      background: #f8fafc;
+      color: #374151;
+    }
+
+    .alert-visible-summary strong {
+      color: #111827;
+    }
+
+    .alert-visible-summary-all {
+      border-color: #cbd5e1;
+      background: #f8fafc;
+      color: #334155;
+    }
+
+    .alert-visible-summary-warning {
+      border-color: #fde68a;
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .alert-visible-summary-danger {
+      border-color: #fecaca;
+      background: #fef2f2;
+      color: #991b1b;
+    }
+
     .alert-filter-empty {
       border: 1px dashed #d1d5db;
       background: #f9fafb;
@@ -570,6 +603,10 @@
           現在のフィルターURLをコピー
         </button>
         <span id="alert-share-message" class="alert-share-message"></span>
+      </div>
+
+      <div id="alert-visible-summary" class="alert-visible-summary loading">
+        表示条件を確認中です...
       </div>
 
       <div id="alert-area" class="loading">注意アラートを読み込み中です...</div>
@@ -1090,6 +1127,12 @@
       return alerts;
     }
 
+    function getAlertFilterLabel(filter) {
+      if (filter === "warning") return "注意アラート";
+      if (filter === "danger") return "危険アラート";
+      return "すべてのアラート";
+    }
+
     function renderQuickSummary(data) {
       const main = getMainPrediction(data);
       const stage = getStage(data) || "未判定";
@@ -1207,9 +1250,40 @@
           }
 
           renderAlertFilters(latestAlerts);
+          renderAlertVisibleSummary(latestAlerts);
           renderAlertList(latestAlerts);
         });
       });
+    }
+
+    function renderAlertVisibleSummary(alerts) {
+      const area = document.getElementById("alert-visible-summary");
+      if (!area) return;
+
+      const filteredAlerts = getFilteredAlerts(alerts, currentAlertFilter);
+      const totalCount = Array.isArray(alerts) ? alerts.length : 0;
+      const visibleCount = filteredAlerts.length;
+      const label = getAlertFilterLabel(currentAlertFilter);
+
+      area.className = "alert-visible-summary";
+
+      if (currentAlertFilter === "warning") {
+        area.classList.add("alert-visible-summary-warning");
+      } else if (currentAlertFilter === "danger") {
+        area.classList.add("alert-visible-summary-danger");
+      } else {
+        area.classList.add("alert-visible-summary-all");
+      }
+
+      if (currentAlertFilter === "all") {
+        area.innerHTML = `
+          現在の表示：<strong>${escapeHtml(label)}</strong> ${visibleCount}件
+        `;
+      } else {
+        area.innerHTML = `
+          現在の表示：<strong>${escapeHtml(label)}</strong> ${visibleCount}件 / 全体 ${totalCount}件
+        `;
+      }
     }
 
     function renderAlertList(alerts) {
@@ -1258,6 +1332,7 @@
 
       renderAlertCountSummary(alerts);
       renderAlertFilters(alerts);
+      renderAlertVisibleSummary(alerts);
       renderAlertList(alerts);
     }
 
@@ -1548,6 +1623,7 @@
         "summary-ticket-count",
         "summary-alert-status",
         "alert-count-summary",
+        "alert-visible-summary",
         "alert-area",
         "stage-area",
         "race-area",
