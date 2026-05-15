@@ -310,6 +310,27 @@
       transform: translateY(0);
     }
 
+    .alert-reset-button {
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #374151;
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .alert-reset-button:hover {
+      background: #f3f4f6;
+      transform: translateY(-1px);
+    }
+
+    .alert-reset-button:active {
+      transform: translateY(0);
+    }
+
     .alert-share-message {
       font-size: 12px;
       font-weight: 800;
@@ -602,6 +623,9 @@
         <button id="copy-alert-filter-url" class="alert-share-button" type="button">
           現在のフィルターURLをコピー
         </button>
+        <button id="reset-alert-filter" class="alert-reset-button" type="button">
+          フィルターをリセット
+        </button>
         <span id="alert-share-message" class="alert-share-message"></span>
       </div>
 
@@ -700,6 +724,14 @@
       }
     }
 
+    function clearSavedAlertFilter() {
+      try {
+        localStorage.removeItem("alert_filter");
+      } catch (error) {
+        console.warn("alert_filter の削除に失敗しました。", error);
+      }
+    }
+
     function updateAlertFilterUrl(filter) {
       if (!isValidAlertFilter(filter)) return;
 
@@ -755,6 +787,28 @@
       if (!button) return;
 
       button.addEventListener("click", copyAlertFilterUrl);
+    }
+
+    function resetAlertFilter() {
+      currentAlertFilter = "all";
+      clearSavedAlertFilter();
+      updateAlertFilterUrl(currentAlertFilter);
+
+      const message = document.getElementById("alert-share-message");
+      if (message) {
+        message.textContent = "フィルターをリセットしました。";
+      }
+
+      renderAlertFilters(latestAlerts);
+      renderAlertVisibleSummary(latestAlerts);
+      renderAlertList(latestAlerts);
+    }
+
+    function setupAlertResetButton() {
+      const button = document.getElementById("reset-alert-filter");
+      if (!button) return;
+
+      button.addEventListener("click", resetAlertFilter);
     }
 
     let currentAlertFilter = getInitialAlertFilter();
@@ -1706,8 +1760,8 @@
     }
 
     setupAlertShareButton();
+    setupAlertResetButton();
     loadPrediction();
   </script>
 </body>
 </html>
-
