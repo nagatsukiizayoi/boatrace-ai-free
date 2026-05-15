@@ -5,279 +5,325 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>競艇AI予想ダッシュボード</title>
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --success: #16a34a;
+      --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f3f4f6;
-      color: #111827;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(239, 68, 68, 0.10), transparent 24%),
+        var(--bg);
+      color: var(--text);
       line-height: 1.6;
     }
 
-    header {
-      background: linear-gradient(135deg, #0f172a, #2563eb);
-      color: white;
-      padding: 28px 18px 34px;
-      text-align: center;
+    a {
+      color: inherit;
     }
 
-    header h1 {
-      margin: 0;
-      font-size: 28px;
-      font-weight: 900;
-      letter-spacing: 0.02em;
+    .page {
+      width: min(1120px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 48px;
     }
 
-    header p {
-      margin: 8px 0 0;
-      font-size: 14px;
-      opacity: 0.9;
-    }
-
-    main {
-      width: min(1100px, calc(100% - 24px));
-      margin: -22px auto 40px;
-    }
-
-    .card {
-      background: white;
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-    }
-
-    .card h2 {
-      margin: 0 0 12px;
-      font-size: 20px;
-      font-weight: 900;
-      color: #111827;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .card h3 {
-      margin: 16px 0 8px;
-      font-size: 16px;
-      font-weight: 900;
-    }
-
-    .loading {
-      color: #6b7280;
-      background: #f9fafb;
-      border: 1px dashed #d1d5db;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 14px;
-    }
-
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-
-    .menu-link {
-      display: block;
-      text-decoration: none;
-      background: #f8fafc;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 12px;
-      color: #111827;
-      font-weight: 800;
-      text-align: center;
-      transition: 0.15s;
-    }
-
-    .menu-link:hover {
-      transform: translateY(-1px);
-      background: #eff6ff;
-      border-color: #93c5fd;
-    }
-
-    .quick-summary-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-
-    .quick-summary-box {
-      border-radius: 16px;
-      padding: 14px;
-      color: white;
-      min-height: 108px;
-      display: block;
+    .hero {
+      background: linear-gradient(135deg, #0f172a, #1e3a8a 55%, #2563eb);
+      color: #ffffff;
+      border-radius: 26px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      position: relative;
       overflow: hidden;
     }
 
-    .quick-summary-label {
-      font-size: 12px;
-      font-weight: 800;
-      opacity: 0.9;
-      margin-bottom: 6px;
-    }
-
-    .quick-summary-value {
-      font-size: 22px;
-      font-weight: 900;
-      line-height: 1.25;
-      word-break: break-word;
-    }
-
-    .quick-summary-sub {
-      margin-top: 6px;
-      font-size: 12px;
-      opacity: 0.92;
-      font-weight: 700;
-      line-height: 1.45;
-    }
-
-    .summary-main { background: linear-gradient(135deg, #2563eb, #60a5fa); }
-    .summary-stage { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
-    .summary-ticket { background: linear-gradient(135deg, #ea580c, #fb923c); }
-    .summary-alert { background: linear-gradient(135deg, #111827, #6b7280); }
-    .summary-alert-ok { background: linear-gradient(135deg, #16a34a, #4ade80); }
-    .summary-alert-warning { background: linear-gradient(135deg, #ca8a04, #facc15); }
-    .summary-alert-danger { background: linear-gradient(135deg, #dc2626, #f87171); }
-
-    .summary-link-card {
-      text-decoration: none;
-      color: white;
-      cursor: pointer;
-      transition: 0.15s;
-    }
-
-    .summary-link-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.16);
-      opacity: 0.96;
-    }
-
-    .summary-link-card:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
-
-    .summary-alert-action {
-      margin-top: 8px;
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 900;
-      opacity: 0.95;
-      background: rgba(255, 255, 255, 0.18);
-      border: 1px solid rgba(255, 255, 255, 0.35);
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 260px;
+      height: 260px;
       border-radius: 999px;
-      padding: 4px 9px;
+      background: rgba(255, 255, 255, 0.12);
     }
 
-    #alert-section { scroll-margin-top: 16px; }
-
-    .alert-link-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 12px;
+    .hero-top {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
     }
 
-    .alert-link-button {
-      display: block;
-      text-align: center;
-      text-decoration: none;
-      color: white;
-      border-radius: 12px;
-      padding: 10px 12px;
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(25px, 5vw, 40px);
+      line-height: 1.18;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      margin: 8px 0 0;
+      color: rgba(255, 255, 255, 0.82);
+      font-weight: 700;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(255, 255, 255, 0.16);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      padding: 8px 12px;
       font-size: 13px;
       font-weight: 900;
-      transition: 0.15s;
+      white-space: nowrap;
     }
 
-    .alert-link-button:hover {
+    .nav-row {
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.14);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-weight: 900;
+      font-size: 13px;
+      transition: 0.15s ease;
+    }
+
+    .nav-link:hover {
       transform: translateY(-1px);
-      opacity: 0.95;
+      background: rgba(255, 255, 255, 0.20);
     }
 
-    .alert-link-settings { background: linear-gradient(135deg, #2563eb, #60a5fa); }
-    .alert-link-json { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
-    .alert-link-prediction { background: linear-gradient(135deg, #059669, #34d399); }
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
 
-    .alert-count-summary {
+    .status-card,
+    .section-card,
+    .race-card {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .status-card {
+      padding: 16px;
+    }
+
+    .status-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-value {
+      margin-top: 4px;
+      font-size: 22px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+    }
+
+    .status-note {
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .section-card {
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+    }
+
+    .section-description {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .small-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: #1d4ed8;
+      background: #dbeafe;
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-weight: 900;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .loading {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .error {
+      color: #b91c1c;
+      background: #fee2e2;
+      border: 1px solid #fecaca;
+      border-radius: 14px;
+      padding: 12px;
+      font-weight: 900;
+    }
+
+    .empty {
+      color: var(--muted);
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
       border-radius: 14px;
       padding: 14px;
-      margin-bottom: 12px;
-      border: 1px solid #e5e7eb;
-      background: #f9fafb;
-    }
-
-    .alert-count-title {
-      font-weight: 900;
-      font-size: 16px;
-      margin-bottom: 4px;
-    }
-
-    .alert-count-sub {
       font-weight: 800;
-      font-size: 13px;
     }
 
-    .alert-count-ok {
-      background: #ecfdf5;
-      border-color: #86efac;
-      color: #166534;
+    .alert-count-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
-    .alert-count-warning {
-      background: #fffbeb;
+    .alert-count-card {
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .alert-count-label {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+    }
+
+    .alert-count-value {
+      margin-top: 2px;
+      font-size: 22px;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+    }
+
+    .alert-count-card.warning {
+      background: #fef9c3;
       border-color: #fde68a;
+    }
+
+    .alert-count-card.warning .alert-count-value {
       color: #92400e;
     }
 
-    .alert-count-danger {
-      background: #fef2f2;
+    .alert-count-card.danger {
+      background: #fee2e2;
       border-color: #fecaca;
-      color: #991b1b;
+    }
+
+    .alert-count-card.danger .alert-count-value {
+      color: #b91c1c;
     }
 
     .alert-filter-bar {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin: 12px 0 14px;
+      margin: 0 0 12px;
     }
 
     .alert-filter-button {
-      border: 1px solid #d1d5db;
+      border: 1px solid #cbd5e1;
       background: #ffffff;
-      color: #374151;
+      color: #334155;
       border-radius: 999px;
-      padding: 7px 13px;
+      padding: 8px 13px;
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
-      transition: 0.15s;
+      transition: 0.15s ease;
     }
 
     .alert-filter-button:hover {
-      background: #f3f4f6;
       transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.10);
     }
 
     .alert-filter-button.active {
-      background: #111827;
+      background: #0f172a;
       color: #ffffff;
-      border-color: #111827;
+      border-color: #0f172a;
     }
 
     .alert-filter-button.filter-warning.active {
-      background: #ca8a04;
-      border-color: #ca8a04;
+      background: #facc15;
+      color: #78350f;
+      border-color: #eab308;
     }
 
     .alert-filter-button.filter-danger.active {
-      background: #dc2626;
+      background: #ef4444;
+      color: #ffffff;
       border-color: #dc2626;
     }
 
@@ -292,7 +338,7 @@
     .alert-share-button {
       border: none;
       background: linear-gradient(135deg, #0f172a, #334155);
-      color: #ffffff;
+      color: #fff;
       border-radius: 999px;
       padding: 8px 13px;
       font-size: 13px;
@@ -311,9 +357,9 @@
     }
 
     .alert-reset-button {
-      border: 1px solid #d1d5db;
+      border: 1px solid #cbd5e1;
       background: #ffffff;
-      color: #374151;
+      color: #475569;
       border-radius: 999px;
       padding: 8px 13px;
       font-size: 13px;
@@ -323,12 +369,9 @@
     }
 
     .alert-reset-button:hover {
-      background: #f3f4f6;
       transform: translateY(-1px);
-    }
-
-    .alert-reset-button:active {
-      transform: translateY(0);
+      background: #f8fafc;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
     }
 
     .alert-share-message {
@@ -338,134 +381,123 @@
     }
 
     .alert-visible-summary {
-      border-radius: 12px;
-      padding: 10px 12px;
       margin: 0 0 12px;
-      font-size: 13px;
-      font-weight: 900;
-      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 11px 13px;
       background: #f8fafc;
-      color: #374151;
+      border: 1px solid #e2e8f0;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 800;
     }
 
     .alert-visible-summary strong {
-      color: #111827;
+      font-weight: 950;
     }
 
-    .alert-visible-summary-all {
-      border-color: #cbd5e1;
-      background: #f8fafc;
-      color: #334155;
+    .alert-visible-summary.summary-all {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+      color: #1e3a8a;
     }
 
-    .alert-visible-summary-warning {
+    .alert-visible-summary.summary-warning {
+      background: #fef9c3;
       border-color: #fde68a;
-      background: #fffbeb;
-      color: #92400e;
+      color: #78350f;
     }
 
-    .alert-visible-summary-danger {
+    .alert-visible-summary.summary-danger {
+      background: #fee2e2;
       border-color: #fecaca;
-      background: #fef2f2;
       color: #991b1b;
     }
 
     .alert-type-summary {
-      border-radius: 12px;
-      padding: 12px;
-      margin: 0 0 12px;
-      border: 1px solid #e5e7eb;
-      background: #f9fafb;
+      margin: 0 0 14px;
+      border-radius: 16px;
+      padding: 13px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
     }
 
     .alert-type-summary-title {
       font-size: 13px;
-      font-weight: 900;
-      color: #374151;
-      margin-bottom: 8px;
+      font-weight: 950;
+      color: #334155;
+      margin-bottom: 9px;
     }
 
     .alert-type-summary-grid {
       display: flex;
       flex-wrap: wrap;
-      gap: 7px;
+      gap: 8px;
     }
 
     .alert-type-summary-chip {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 7px;
       border-radius: 999px;
-      padding: 5px 9px;
+      padding: 6px 10px;
       font-size: 12px;
       font-weight: 900;
-      border: 1px solid #d1d5db;
+      border: 1px solid #cbd5e1;
       background: #ffffff;
-      color: #374151;
+      color: #334155;
     }
 
     .alert-type-summary-count {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 20px;
-      height: 20px;
-      border-radius: 999px;
-      padding: 0 6px;
-      background: rgba(17, 24, 39, 0.08);
-      color: #111827;
-      font-size: 11px;
-      font-weight: 900;
+      font-weight: 950;
     }
 
-    .alert-filter-empty {
-      border: 1px dashed #d1d5db;
-      background: #f9fafb;
-      color: #6b7280;
-      border-radius: 12px;
-      padding: 14px;
-      font-size: 14px;
-      font-weight: 700;
+    .alert-type-filter-chip {
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
     }
 
-    .alert-ok,
-    .alert-warning,
-    .alert-danger {
-      border-radius: 14px;
-      padding: 14px;
-      border: 1px solid;
-      font-size: 14px;
+    .alert-type-filter-chip:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
     }
 
-    .alert-ok {
-      background: #ecfdf5;
-      border-color: #86efac;
-      color: #166534;
+    .alert-type-filter-chip.active {
+      outline: 3px solid rgba(15, 23, 42, 0.22);
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.9), 0 8px 18px rgba(15, 23, 42, 0.16);
     }
 
-    .alert-warning {
-      background: #fffbeb;
-      border-color: #fde68a;
-      color: #92400e;
+    .alert-type-filter-chip.active span,
+    .alert-type-filter-chip.active strong {
+      font-weight: 950;
     }
 
-    .alert-danger {
-      background: #fef2f2;
-      border-color: #fecaca;
-      color: #991b1b;
+    .alert-type-filter-chip[data-alert-type-filter="all"] {
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #0f172a;
+    }
+
+    .alert-list {
+      display: grid;
+      gap: 10px;
     }
 
     .alert-item {
-      border-radius: 12px;
-      padding: 12px;
-      margin-bottom: 10px;
-      background: rgba(255, 255, 255, 0.65);
-      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 16px;
+      padding: 13px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
     }
 
-    .alert-item:last-child { margin-bottom: 0; }
-    .alert-item-warning { border-left: 6px solid #ca8a04; }
-    .alert-item-danger { border-left: 6px solid #dc2626; }
+    .alert-item.warning {
+      background: #fffbeb;
+      border-color: #fde68a;
+    }
+
+    .alert-item.danger {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
 
     .alert-item-header {
       display: flex;
@@ -493,7 +525,7 @@
 
     .alert-level-danger {
       background: #ef4444;
-      color: #ffffff;
+      color: #fff;
     }
 
     .alert-type-badge {
@@ -556,204 +588,238 @@
       line-height: 1.6;
     }
 
-    .stage-badge {
-      display: inline-block;
-      border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 13px;
+    .alert-filter-empty {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      color: #64748b;
+      border-radius: 16px;
+      padding: 14px;
       font-weight: 900;
-      background: #eff6ff;
-      color: #1d4ed8;
-      border: 1px solid #bfdbfe;
     }
 
-    .data-grid {
+    .race-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
     }
 
-    .data-box {
-      background: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 12px;
+    .race-card {
+      padding: 16px;
     }
 
-    .data-label {
+    .race-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .race-title {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 950;
+      letter-spacing: -0.02em;
+    }
+
+    .race-meta {
+      margin-top: 3px;
+      color: var(--muted);
       font-size: 12px;
-      color: #6b7280;
       font-weight: 800;
-      margin-bottom: 4px;
     }
 
-    .data-value {
-      font-size: 17px;
-      font-weight: 900;
-      color: #111827;
-      word-break: break-word;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      overflow: hidden;
-      border-radius: 12px;
-      font-size: 14px;
-    }
-
-    th,
-    td {
-      border-bottom: 1px solid #e5e7eb;
-      padding: 10px 8px;
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th {
-      background: #f9fafb;
+    .confidence {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 62px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: #dcfce7;
+      color: #166534;
       font-size: 12px;
-      color: #374151;
-      font-weight: 900;
+      font-weight: 950;
+      white-space: nowrap;
     }
 
-    tr:last-child td { border-bottom: none; }
+    .confidence.mid {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .confidence.low {
+      background: #fee2e2;
+      color: #991b1b;
+    }
 
     .ticket-list {
       display: grid;
-      gap: 10px;
+      gap: 8px;
+      margin-top: 10px;
     }
 
-    .ticket-item {
-      border: 1px solid #e5e7eb;
+    .ticket {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
       border-radius: 14px;
-      padding: 12px;
-      background: #f9fafb;
+      padding: 10px;
     }
 
     .ticket-main {
-      font-size: 17px;
-      font-weight: 900;
-      color: #111827;
+      font-weight: 950;
+      letter-spacing: 0.02em;
     }
 
     .ticket-sub {
-      margin-top: 4px;
-      font-size: 13px;
-      color: #6b7280;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
       font-weight: 700;
     }
 
-    footer {
+    .ticket-amount {
+      font-weight: 950;
+      color: #1d4ed8;
+      white-space: nowrap;
+    }
+
+    .detail-link {
+      display: inline-flex;
+      margin-top: 12px;
+      color: #1d4ed8;
+      font-size: 13px;
+      font-weight: 950;
+      text-decoration: none;
+    }
+
+    .footer {
+      color: var(--muted);
       text-align: center;
-      color: #6b7280;
       font-size: 12px;
-      padding: 22px 12px 36px;
+      font-weight: 700;
+      padding: 14px 0 0;
     }
 
-    @media (max-width: 900px) {
-      .quick-summary-grid,
-      .data-grid {
-        grid-template-columns: repeat(2, 1fr);
+    @media (max-width: 860px) {
+      .status-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .menu-grid {
-        grid-template-columns: repeat(2, 1fr);
+      .race-grid {
+        grid-template-columns: 1fr;
       }
     }
 
-    @media (max-width: 700px) {
-      header h1 { font-size: 23px; }
-
-      main {
-        width: min(100% - 18px, 1100px);
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 20px, 1120px);
+        padding-top: 12px;
       }
 
-      .quick-summary-grid,
-      .data-grid,
-      .menu-grid,
-      .alert-link-grid {
+      .hero {
+        border-radius: 20px;
+        padding: 20px;
+      }
+
+      .section-card {
+        padding: 16px;
+      }
+
+      .status-grid {
         grid-template-columns: 1fr;
       }
 
-      .card {
-        padding: 15px;
-        border-radius: 16px;
+      .alert-count-summary {
+        grid-template-columns: 1fr;
       }
 
-      table { font-size: 13px; }
+      .alert-share-row,
+      .alert-filter-bar,
+      .alert-type-summary-grid {
+        gap: 7px;
+      }
 
-      th,
-      td {
-        padding: 8px 6px;
+      .alert-filter-button,
+      .alert-share-button,
+      .alert-reset-button,
+      .alert-type-summary-chip {
+        font-size: 12px;
+      }
+
+      .ticket {
+        align-items: flex-start;
+        flex-direction: column;
       }
     }
   </style>
 </head>
 
 <body>
-  <header>
-    <h1>競艇AI予想ダッシュボード</h1>
-    <p>機械学習予測・アラート判定・買い目候補を自動表示します</p>
-  </header>
-
-  <main>
-    <section class="card">
-      <h2>現在の状況</h2>
-
-      <div class="quick-summary-grid">
-        <div class="quick-summary-box summary-main">
-          <div class="quick-summary-label">本命予想</div>
-          <div id="summary-main-prediction" class="quick-summary-value">読込中</div>
-          <div id="summary-main-sub" class="quick-summary-sub">prediction.json を確認中です。</div>
+  <main class="page">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <h1>競艇AI予想ダッシュボード</h1>
+          <p>自動生成された買い目・投資額・更新状況を確認します。</p>
         </div>
+        <div class="hero-badge">STEP 53</div>
+      </div>
 
-        <div class="quick-summary-box summary-stage">
-          <div class="quick-summary-label">予想ステージ</div>
-          <div id="summary-stage" class="quick-summary-value">読込中</div>
-          <div id="summary-stage-sub" class="quick-summary-sub">判定中です。</div>
-        </div>
-
-        <div class="quick-summary-box summary-ticket">
-          <div class="quick-summary-label">買い目点数</div>
-          <div id="summary-ticket-count" class="quick-summary-value">読込中</div>
-          <div id="summary-ticket-sub" class="quick-summary-sub">投資予定額を確認中です。</div>
-        </div>
-
-        <a class="quick-summary-box summary-alert summary-link-card" href="#alert-section">
-          <div class="quick-summary-label">アラート状況</div>
-          <div id="summary-alert-status" class="quick-summary-value">読込中</div>
-          <div id="summary-alert-sub" class="quick-summary-sub">注意アラートを確認中です。</div>
-          <div class="summary-alert-action">タップして詳細確認 →</div>
-        </a>
+      <div class="nav-row">
+        <a class="nav-link" href="./index.html">予想一覧</a>
+        <a class="nav-link" href="./alert_settings.html">アラート設定</a>
+        <a class="nav-link" href="./alert_settings.json">設定JSON</a>
       </div>
     </section>
 
-    <section class="card">
-      <h2>メニュー</h2>
-      <div class="menu-grid">
-        <a class="menu-link" href="#alert-section">注意アラート</a>
-        <a class="menu-link" href="#prediction-section">予想結果</a>
-        <a class="menu-link" href="#ticket-section">買い目</a>
-        <a class="menu-link" href="./alert_settings.html">アラート設定</a>
+    <section class="status-grid">
+      <div class="status-card">
+        <div class="status-label">更新日時</div>
+        <div id="updated-at" class="status-value loading">確認中</div>
+        <div class="status-note">JSON データ基準</div>
+      </div>
+
+      <div class="status-card">
+        <div class="status-label">対象レース</div>
+        <div id="race-count" class="status-value loading">-</div>
+        <div class="status-note">読み込み済み件数</div>
+      </div>
+
+      <div class="status-card">
+        <div class="status-label">買い目数</div>
+        <div id="ticket-count" class="status-value loading">-</div>
+        <div class="status-note">全レース合計</div>
+      </div>
+
+      <div class="status-card">
+        <div class="status-label">投資予定</div>
+        <div id="total-amount" class="status-value loading">-</div>
+        <div class="status-note">全買い目合計</div>
       </div>
     </section>
 
-    <section class="card" id="alert-section">
-      <h2>注意アラート</h2>
-
-      <div class="alert-link-grid">
-        <a class="alert-link-button alert-link-settings" href="./alert_settings.html">アラート設定ページ</a>
-        <a class="alert-link-button alert-link-json" href="./alert_settings.json">alert_settings.json</a>
-        <a class="alert-link-button alert-link-prediction" href="./prediction.json">prediction.json</a>
+    <section class="section-card">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">注意アラート</h2>
+          <p class="section-description">
+            買い目点数・投資額・更新遅延・展示情報・オッズ欠損などを監視します。
+          </p>
+        </div>
+        <a class="small-link" href="./alert_settings.html">アラート設定を開く</a>
       </div>
 
       <div id="alert-count-summary" class="alert-count-summary loading">アラート件数を確認中です...</div>
 
       <div id="alert-filter-bar" class="alert-filter-bar">
-        <button class="alert-filter-button active" data-alert-filter="all">すべて</button>
-        <button class="alert-filter-button" data-alert-filter="warning">注意</button>
-        <button class="alert-filter-button" data-alert-filter="danger">危険</button>
+        <button class="alert-filter-button active" data-alert-filter="all" type="button">すべて</button>
+        <button class="alert-filter-button" data-alert-filter="warning" type="button">注意</button>
+        <button class="alert-filter-button" data-alert-filter="danger" type="button">危険</button>
       </div>
 
       <div class="alert-share-row">
@@ -766,122 +832,167 @@
         <span id="alert-share-message" class="alert-share-message"></span>
       </div>
 
-      <div id="alert-visible-summary" class="alert-visible-summary loading">
-        表示条件を確認中です...
-      </div>
-
-      <div id="alert-type-summary" class="alert-type-summary loading">
-        分類別件数を確認中です...
-      </div>
-
+      <div id="alert-visible-summary" class="alert-visible-summary loading">表示条件を確認中です...</div>
+      <div id="alert-type-summary" class="alert-type-summary loading">分類別件数を確認中です...</div>
       <div id="alert-area" class="loading">注意アラートを読み込み中です...</div>
     </section>
 
-    <section class="card">
-      <h2>ステージ情報</h2>
-      <div id="stage-area" class="loading">ステージ情報を読み込み中です...</div>
+    <section class="section-card">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">本日の予想</h2>
+          <p class="section-description">買い目候補と投資額を一覧表示します。</p>
+        </div>
+      </div>
+
+      <div id="race-area" class="loading">予想データを読み込み中です...</div>
     </section>
 
-    <section class="card">
-      <h2>レース情報</h2>
-      <div id="race-area" class="loading">レース情報を読み込み中です...</div>
-    </section>
-
-    <section class="card">
-      <h2>天候・水面情報</h2>
-      <div id="weather-area" class="loading">天候情報を読み込み中です...</div>
-    </section>
-
-    <section class="card" id="prediction-section">
-      <h2>予想結果</h2>
-      <div id="prediction-area" class="loading">予想結果を読み込み中です...</div>
-    </section>
-
-    <section class="card" id="ticket-section">
-      <h2>買い目候補</h2>
-      <div id="ticket-area" class="loading">買い目候補を読み込み中です...</div>
-    </section>
-
-    <section class="card">
-      <h2>艇別評価</h2>
-      <div id="boat-area" class="loading">艇別評価を読み込み中です...</div>
-    </section>
+    <div class="footer">
+      boatrace-ai-free dashboard
+    </div>
   </main>
-
-  <footer>
-    boatrace-ai-free dashboard / prediction.json をもとに自動表示
-  </footer>
 
   <script>
     const DEFAULT_ALERT_SETTINGS = {
-      check_ticket_count: true,
-      ticket_count_warning: 15,
-      ticket_count_danger: 24,
-
-      check_total_amount: true,
-      total_amount_warning: 5000,
-      total_amount_danger: 10000,
-
-      check_update_delay: true,
-      update_delay_warning_hours: 12,
-      update_delay_danger_hours: 24,
-
-      check_missing_exhibition_time: true,
-      check_missing_exhibition_st: true,
-      check_missing_final_odds: true
+      ticket_count_warning: 8,
+      ticket_count_danger: 12,
+      total_amount_warning: 8000,
+      total_amount_danger: 12000,
+      update_delay_warning_minutes: 60,
+      update_delay_danger_minutes: 180,
+      require_exhibition_time: true,
+      require_exhibition_st: true,
+      require_final_odds: true
     };
+
+    let currentAlertFilter = getInitialAlertFilter();
+    let currentAlertTypeFilter = "all";
+    let latestAlerts = [];
+    let latestData = null;
+    let latestSettings = DEFAULT_ALERT_SETTINGS;
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function formatNumber(value) {
+      const number = Number(value || 0);
+      return number.toLocaleString("ja-JP");
+    }
+
+    function formatYen(value) {
+      return `${formatNumber(value)}円`;
+    }
+
+    function asArray(value) {
+      return Array.isArray(value) ? value : [];
+    }
+
+    function normalizeLevel(level) {
+      const value = String(level || "").toLowerCase();
+      if (["danger", "error", "critical", "危険"].includes(value)) return "danger";
+      return "warning";
+    }
+
+    function getAlertLevelLabel(level) {
+      return normalizeLevel(level) === "danger" ? "危険" : "注意";
+    }
+
+    function getAlertTypeLabel(type) {
+      const labels = {
+        ticket_count: "買い目点数",
+        total_amount: "投資額",
+        update_delay: "更新遅延",
+        update_unknown: "更新日時不明",
+        missing_exhibition_time: "展示タイム",
+        missing_exhibition_st: "展示ST",
+        missing_final_odds: "最終オッズ",
+        other: "その他"
+      };
+      return labels[type] || "その他";
+    }
+
+    function getAlertTypeClass(type) {
+      const classes = {
+        ticket_count: "alert-type-ticket",
+        total_amount: "alert-type-amount",
+        update_delay: "alert-type-update",
+        update_unknown: "alert-type-update-unknown",
+        missing_exhibition_time: "alert-type-exhibition-time",
+        missing_exhibition_st: "alert-type-exhibition-st",
+        missing_final_odds: "alert-type-odds",
+        other: "alert-type-other"
+      };
+      return classes[type] || "alert-type-other";
+    }
+
+    function getAlertTypeOrder() {
+      return [
+        { type: "ticket_count", label: "買い目点数" },
+        { type: "total_amount", label: "投資額" },
+        { type: "update_delay", label: "更新遅延" },
+        { type: "update_unknown", label: "更新日時不明" },
+        { type: "missing_exhibition_time", label: "展示タイム" },
+        { type: "missing_exhibition_st", label: "展示ST" },
+        { type: "missing_final_odds", label: "最終オッズ" },
+        { type: "other", label: "その他" }
+      ];
+    }
 
     function isValidAlertFilter(filter) {
       return ["all", "warning", "danger"].includes(filter);
     }
 
+    function isValidAlertTypeFilter(type) {
+      if (type === "all") return true;
+      return getAlertTypeOrder().some((item) => item.type === type);
+    }
+
     function getInitialAlertFilter() {
-      const params = new URLSearchParams(window.location.search);
-      const urlFilter = params.get("alert_filter");
-
-      if (isValidAlertFilter(urlFilter)) {
-        return urlFilter;
-      }
-
       try {
-        const savedFilter = localStorage.getItem("alert_filter");
-        if (isValidAlertFilter(savedFilter)) {
-          return savedFilter;
-        }
-      } catch (error) {
-        console.warn("alert_filter の読み込みに失敗しました。", error);
-      }
+        const params = new URLSearchParams(window.location.search);
+        const urlFilter = params.get("alert_filter");
+        if (isValidAlertFilter(urlFilter)) return urlFilter;
 
+        const savedFilter = localStorage.getItem("alert_filter");
+        if (isValidAlertFilter(savedFilter)) return savedFilter;
+      } catch (e) {
+        console.warn("alert_filter の初期化に失敗しました。", e);
+      }
       return "all";
     }
 
     function saveAlertFilter(filter) {
       if (!isValidAlertFilter(filter)) return;
-
       try {
         localStorage.setItem("alert_filter", filter);
-      } catch (error) {
-        console.warn("alert_filter の保存に失敗しました。", error);
+      } catch (e) {
+        console.warn("alert_filter の保存に失敗しました。", e);
       }
     }
 
     function clearSavedAlertFilter() {
       try {
         localStorage.removeItem("alert_filter");
-      } catch (error) {
-        console.warn("alert_filter の削除に失敗しました。", error);
+      } catch (e) {
+        console.warn("alert_filter の削除に失敗しました。", e);
       }
     }
 
     function updateAlertFilterUrl(filter) {
       if (!isValidAlertFilter(filter)) return;
-
       try {
         const url = new URL(window.location.href);
         url.searchParams.set("alert_filter", filter);
         window.history.replaceState({}, "", url.toString());
-      } catch (error) {
-        console.warn("alert_filter のURL更新に失敗しました。", error);
+      } catch (e) {
+        console.warn("alert_filter のURL更新に失敗しました。", e);
       }
     }
 
@@ -903,20 +1014,15 @@
           textarea.value = url;
           textarea.style.position = "fixed";
           textarea.style.left = "-9999px";
-          textarea.style.top = "0";
           document.body.appendChild(textarea);
-          textarea.focus();
           textarea.select();
           document.execCommand("copy");
           document.body.removeChild(textarea);
         }
 
-        if (message) {
-          message.textContent = "現在のフィルターURLをコピーしました。";
-        }
-      } catch (error) {
-        console.warn("URLコピーに失敗しました。", error);
-
+        if (message) message.textContent = "現在のフィルターURLをコピーしました。";
+      } catch (e) {
+        console.warn("URLコピーに失敗しました。", e);
         if (message) {
           message.textContent = "URLコピーに失敗しました。ブラウザのアドレスバーからコピーしてください。";
         }
@@ -924,384 +1030,253 @@
     }
 
     function setupAlertShareButton() {
-      const button = document.getElementById("copy-alert-filter-url");
-      if (!button) return;
+      const btn = document.getElementById("copy-alert-filter-url");
+      if (!btn) return;
+      btn.addEventListener("click", copyAlertFilterUrl);
+    }
 
-      button.addEventListener("click", copyAlertFilterUrl);
+    function setupAlertResetButton() {
+      const btn = document.getElementById("reset-alert-filter");
+      if (!btn) return;
+      btn.addEventListener("click", resetAlertFilter);
     }
 
     function resetAlertFilter() {
       currentAlertFilter = "all";
+      currentAlertTypeFilter = "all";
+
       clearSavedAlertFilter();
       updateAlertFilterUrl(currentAlertFilter);
 
       const message = document.getElementById("alert-share-message");
-      if (message) {
-        message.textContent = "フィルターをリセットしました。";
-      }
+      if (message) message.textContent = "フィルターをリセットしました。";
 
       renderAlertFilters(latestAlerts);
-      renderAlertVisibleSummary(latestAlerts);
       renderAlertTypeSummary(latestAlerts);
+      renderAlertVisibleSummary(latestAlerts);
       renderAlertList(latestAlerts);
     }
 
-    function setupAlertResetButton() {
-      const button = document.getElementById("reset-alert-filter");
-      if (!button) return;
-
-      button.addEventListener("click", resetAlertFilter);
-    }
-
-    let currentAlertFilter = getInitialAlertFilter();
-    let latestAlerts = [];
-
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function formatYen(value) {
-      const num = Number(value);
-      if (!Number.isFinite(num)) return "-";
-      return `${num.toLocaleString("ja-JP")}円`;
-    }
-
-    function firstValue(...values) {
-      for (const value of values) {
-        if (value !== undefined && value !== null && value !== "") return value;
-      }
-      return undefined;
-    }
-
-    function normalizeSettings(settings) {
-      return {
-        ...DEFAULT_ALERT_SETTINGS,
-        ...(settings || {})
-      };
-    }
-
-    function findArray(data, keys) {
-      for (const key of keys) {
-        if (Array.isArray(data?.[key])) return data[key];
-      }
-
-      for (const parentKey of ["data", "result", "prediction", "meta"]) {
-        const parent = data?.[parentKey];
-        if (!parent || typeof parent !== "object") continue;
-
-        for (const key of keys) {
-          if (Array.isArray(parent?.[key])) return parent[key];
-        }
-      }
-
-      return [];
-    }
-
-    function getTickets(data) {
-      return findArray(data, [
-        "tickets",
-        "ticket_list",
-        "buy_tickets",
-        "buy_list",
-        "bets",
-        "recommendations",
-        "recommended_tickets"
-      ]);
-    }
-
-    function getBoats(data) {
-      return findArray(data, [
-        "boats",
-        "boat_evaluations",
-        "boatEvaluation",
-        "racers",
-        "entries",
-        "members"
-      ]);
-    }
-
-    function getTicketCount(data) {
-      const direct = firstValue(
-        data?.ticket_count,
-        data?.tickets_count,
-        data?.bet_count,
-        data?.buy_count,
-        data?.summary?.ticket_count,
-        data?.meta?.ticket_count
+    function getRaces(data) {
+      if (Array.isArray(data)) return data;
+      return asArray(
+        data?.races ||
+        data?.predictions ||
+        data?.results ||
+        data?.items ||
+        data?.data
       );
-
-      if (Number.isFinite(Number(direct))) return Number(direct);
-
-      return getTickets(data).length;
-    }
-
-    function getTotalAmount(data) {
-      const direct = firstValue(
-        data?.total_amount,
-        data?.totalInvestment,
-        data?.total_investment,
-        data?.planned_investment,
-        data?.investment,
-        data?.summary?.total_amount,
-        data?.summary?.planned_investment,
-        data?.meta?.total_amount
-      );
-
-      if (Number.isFinite(Number(direct))) return Number(direct);
-
-      const tickets = getTickets(data);
-      const sum = tickets.reduce((acc, ticket) => {
-        const amount = firstValue(
-          ticket?.amount,
-          ticket?.bet_amount,
-          ticket?.investment,
-          ticket?.money,
-          ticket?.stake
-        );
-
-        return acc + (Number.isFinite(Number(amount)) ? Number(amount) : 0);
-      }, 0);
-
-      return sum || 0;
     }
 
     function getUpdatedAt(data) {
-      return firstValue(
-        data?.updated_at,
-        data?.generated_at,
-        data?.created_at,
-        data?.last_updated,
-        data?.prediction_updated_at,
-        data?.meta?.updated_at,
-        data?.meta?.generated_at,
-        data?.race?.updated_at
-      );
-    }
-
-    function getHoursFromNow(dateText) {
-      if (!dateText) return null;
-
-      const date = new Date(dateText);
-      if (Number.isNaN(date.getTime())) return null;
-
-      return (Date.now() - date.getTime()) / 1000 / 60 / 60;
-    }
-
-    function getStage(data) {
-      return firstValue(
-        data?.stage,
-        data?.prediction_stage,
-        data?.current_stage,
-        data?.final_stage,
-        data?.meta?.stage,
-        data?.summary?.stage
-      );
-    }
-
-    function isFinalStage(data) {
-      const stage = String(getStage(data) || "").toLowerCase();
-
-      if (
-        data?.is_final === true ||
-        data?.final === true ||
-        data?.isFinal === true ||
-        data?.meta?.is_final === true
-      ) {
-        return true;
-      }
-
       return (
-        stage.includes("final") ||
-        stage.includes("直前") ||
-        stage.includes("最終") ||
-        stage.includes("展示後")
+        data?.updated_at ||
+        data?.updatedAt ||
+        data?.last_updated ||
+        data?.lastUpdated ||
+        data?.generated_at ||
+        data?.generatedAt ||
+        data?.created_at ||
+        null
       );
     }
 
-    function hasAnyValueInBoats(data, keys) {
-      const boats = getBoats(data);
-      if (!boats.length) return false;
-
-      return boats.some(boat => {
-        return keys.some(key => {
-          const value = boat?.[key];
-          return value !== undefined && value !== null && value !== "";
-        });
+    function formatDateTime(value) {
+      if (!value) return "不明";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleString("ja-JP", {
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
       });
     }
 
-    function hasFinalOdds(data) {
-      const direct = firstValue(
-        data?.final_odds,
-        data?.odds,
-        data?.odds_updated_at,
-        data?.meta?.final_odds
+    function getRecommendations(race) {
+      return asArray(
+        race?.recommendations ||
+        race?.tickets ||
+        race?.bets ||
+        race?.buy_tickets ||
+        race?.buyTickets ||
+        race?.prediction?.tickets
       );
+    }
 
-      if (direct !== undefined) return true;
+    function getTicketAmount(ticket) {
+      return Number(
+        ticket?.amount ??
+        ticket?.stake ??
+        ticket?.bet_amount ??
+        ticket?.money ??
+        ticket?.price ??
+        0
+      );
+    }
 
-      const tickets = getTickets(data);
-      return tickets.some(ticket => {
-        const odds = firstValue(
-          ticket?.odds,
-          ticket?.final_odds,
-          ticket?.expected_odds
-        );
+    function getRaceAmount(race) {
+      const explicit = race?.total_amount ?? race?.totalAmount ?? race?.investment ?? race?.amount;
+      if (explicit !== undefined && explicit !== null && explicit !== "") return Number(explicit) || 0;
+      return getRecommendations(race).reduce((sum, ticket) => sum + getTicketAmount(ticket), 0);
+    }
 
-        return odds !== undefined;
+    function getAllTickets(data) {
+      return getRaces(data).flatMap((race) => getRecommendations(race));
+    }
+
+    function getAllAmount(data) {
+      return getRaces(data).reduce((sum, race) => sum + getRaceAmount(race), 0);
+    }
+
+    function normalizeAlert(alert) {
+      return {
+        level: normalizeLevel(alert.level || alert.severity || alert.status),
+        type: alert.type || alert.category || "other",
+        message: alert.message || alert.text || alert.title || "アラートがあります。"
+      };
+    }
+
+    function hasValue(value) {
+      return value !== undefined && value !== null && value !== "";
+    }
+
+    function hasAnyField(object, keys) {
+      if (!object) return false;
+      return keys.some((key) => hasValue(object[key]));
+    }
+
+    function hasNestedAnyField(race, directKeys, arrayKeys, nestedKeys) {
+      if (hasAnyField(race, directKeys)) return true;
+
+      return arrayKeys.some((arrayKey) => {
+        return asArray(race?.[arrayKey]).some((item) => hasAnyField(item, nestedKeys));
       });
     }
 
-    function getMainPrediction(data) {
-      const direct = firstValue(
-        data?.main_prediction,
-        data?.prediction,
-        data?.prediction_text,
-        data?.final_prediction,
-        data?.result?.main_prediction,
-        data?.summary?.main_prediction
-      );
-
-      if (typeof direct === "string") return direct;
-
-      const tickets = getTickets(data);
-      if (tickets.length > 0) {
-        const t = tickets[0];
-        return firstValue(
-          t?.combination,
-          t?.ticket,
-          t?.bet,
-          t?.formation,
-          t?.numbers
-        ) || "買い目あり";
-      }
-
-      return "未判定";
-    }
-
-    function shortenText(text, maxLength = 46) {
-      const str = String(text ?? "");
-      if (str.length <= maxLength) return str;
-      return str.slice(0, maxLength) + "…";
-    }
-
-    function pickPrimaryAlert(alerts) {
-      if (!Array.isArray(alerts) || alerts.length === 0) return null;
-
-      return alerts.find(alert => alert.level === "danger") ||
-             alerts.find(alert => alert.level === "warning") ||
-             null;
-    }
-
-    function buildAlerts(data, settings) {
-      const s = normalizeSettings(settings);
+    function buildRuleAlerts(data, settings) {
       const alerts = [];
+      const races = getRaces(data);
+      const tickets = getAllTickets(data);
+      const ticketCount = tickets.length;
+      const totalAmount = getAllAmount(data);
 
-      const ticketCount = getTicketCount(data);
-      const totalAmount = getTotalAmount(data);
+      const ticketWarning = Number(settings.ticket_count_warning ?? settings.max_ticket_count_warning ?? 8);
+      const ticketDanger = Number(settings.ticket_count_danger ?? settings.max_ticket_count_danger ?? 12);
+      const amountWarning = Number(settings.total_amount_warning ?? settings.max_total_amount_warning ?? 8000);
+      const amountDanger = Number(settings.total_amount_danger ?? settings.max_total_amount_danger ?? 12000);
+
+      if (ticketCount >= ticketDanger) {
+        alerts.push({
+          level: "danger",
+          type: "ticket_count",
+          message: `買い目点数が多すぎます。現在 ${ticketCount}点 / 危険基準 ${ticketDanger}点以上です。`
+        });
+      } else if (ticketCount >= ticketWarning) {
+        alerts.push({
+          level: "warning",
+          type: "ticket_count",
+          message: `買い目点数が多めです。現在 ${ticketCount}点 / 注意基準 ${ticketWarning}点以上です。`
+        });
+      }
+
+      if (totalAmount >= amountDanger) {
+        alerts.push({
+          level: "danger",
+          type: "total_amount",
+          message: `投資予定額が高すぎます。現在 ${formatYen(totalAmount)} / 危険基準 ${formatYen(amountDanger)}以上です。`
+        });
+      } else if (totalAmount >= amountWarning) {
+        alerts.push({
+          level: "warning",
+          type: "total_amount",
+          message: `投資予定額が高めです。現在 ${formatYen(totalAmount)} / 注意基準 ${formatYen(amountWarning)}以上です。`
+        });
+      }
+
       const updatedAt = getUpdatedAt(data);
-      const hoursFromNow = getHoursFromNow(updatedAt);
-      const finalStage = isFinalStage(data);
+      if (!updatedAt) {
+        alerts.push({
+          level: "warning",
+          type: "update_unknown",
+          message: "予想データの更新日時を確認できません。"
+        });
+      } else {
+        const updatedDate = new Date(updatedAt);
+        if (!Number.isNaN(updatedDate.getTime())) {
+          const diffMinutes = Math.floor((Date.now() - updatedDate.getTime()) / 60000);
+          const delayWarning = Number(settings.update_delay_warning_minutes ?? 60);
+          const delayDanger = Number(settings.update_delay_danger_minutes ?? 180);
 
-      if (s.check_ticket_count) {
-        if (ticketCount >= Number(s.ticket_count_danger)) {
-          alerts.push({
-            level: "danger",
-            type: "ticket_count",
-            message: `買い目点数が ${ticketCount} 点です。設定上の危険ライン ${s.ticket_count_danger} 点以上です。`
-          });
-        } else if (ticketCount >= Number(s.ticket_count_warning)) {
-          alerts.push({
-            level: "warning",
-            type: "ticket_count",
-            message: `買い目点数が ${ticketCount} 点です。設定上の注意ライン ${s.ticket_count_warning} 点以上です。`
-          });
+          if (diffMinutes >= delayDanger) {
+            alerts.push({
+              level: "danger",
+              type: "update_delay",
+              message: `予想データの更新が ${diffMinutes}分前です。危険基準 ${delayDanger}分以上を超えています。`
+            });
+          } else if (diffMinutes >= delayWarning) {
+            alerts.push({
+              level: "warning",
+              type: "update_delay",
+              message: `予想データの更新が ${diffMinutes}分前です。注意基準 ${delayWarning}分以上を超えています。`
+            });
+          }
         }
       }
 
-      if (s.check_total_amount) {
-        if (totalAmount >= Number(s.total_amount_danger)) {
-          alerts.push({
-            level: "danger",
-            type: "total_amount",
-            message: `予定投資額が ${formatYen(totalAmount)} です。設定上の危険ライン ${formatYen(s.total_amount_danger)} 以上です。`
-          });
-        } else if (totalAmount >= Number(s.total_amount_warning)) {
-          alerts.push({
-            level: "warning",
-            type: "total_amount",
-            message: `予定投資額が ${formatYen(totalAmount)} です。設定上の注意ライン ${formatYen(s.total_amount_warning)} 以上です。`
-          });
-        }
-      }
+      if (settings.require_exhibition_time !== false) {
+        const missing = races.filter((race) => {
+          return !hasNestedAnyField(
+            race,
+            ["exhibition_time", "exhibitionTime", "tenji_time", "tenjiTime"],
+            ["racers", "boats", "entries"],
+            ["exhibition_time", "exhibitionTime", "tenji_time", "tenjiTime"]
+          );
+        }).length;
 
-      if (s.check_update_delay) {
-        if (hoursFromNow === null) {
-          alerts.push({
-            level: "warning",
-            type: "update_unknown",
-            message: "prediction.json の更新日時を確認できません。データ生成状況を確認してください。"
-          });
-        } else if (hoursFromNow >= Number(s.update_delay_danger_hours)) {
-          alerts.push({
-            level: "danger",
-            type: "update_delay",
-            message: `prediction.json の更新日時が ${hoursFromNow.toFixed(1)} 時間前です。危険ライン ${s.update_delay_danger_hours} 時間を超えています。`
-          });
-        } else if (hoursFromNow >= Number(s.update_delay_warning_hours)) {
-          alerts.push({
-            level: "warning",
-            type: "update_delay",
-            message: `prediction.json の更新日時が ${hoursFromNow.toFixed(1)} 時間前です。注意ライン ${s.update_delay_warning_hours} 時間を超えています。`
-          });
-        }
-      }
-
-      if (finalStage && s.check_missing_exhibition_time) {
-        const hasExhibitionTime = hasAnyValueInBoats(data, [
-          "exhibition_time",
-          "tenji_time",
-          "display_time",
-          "ex_time"
-        ]);
-
-        if (!hasExhibitionTime) {
+        if (races.length > 0 && missing > 0) {
           alerts.push({
             level: "warning",
             type: "missing_exhibition_time",
-            message: "最終予想ステージですが、展示タイムが確認できません。展示後データの反映状況を確認してください。"
+            message: `展示タイムが未取得のレースがあります。${missing}件確認してください。`
           });
         }
       }
 
-      if (finalStage && s.check_missing_exhibition_st) {
-        const hasExhibitionSt = hasAnyValueInBoats(data, [
-          "exhibition_st",
-          "tenji_st",
-          "display_st",
-          "st"
-        ]);
+      if (settings.require_exhibition_st !== false) {
+        const missing = races.filter((race) => {
+          return !hasNestedAnyField(
+            race,
+            ["exhibition_st", "exhibitionST", "tenji_st", "start_timing", "startTiming"],
+            ["racers", "boats", "entries"],
+            ["exhibition_st", "exhibitionST", "tenji_st", "start_timing", "startTiming"]
+          );
+        }).length;
 
-        if (!hasExhibitionSt) {
+        if (races.length > 0 && missing > 0) {
           alerts.push({
             level: "warning",
             type: "missing_exhibition_st",
-            message: "最終予想ステージですが、展示STが確認できません。展示情報の取得状況を確認してください。"
+            message: `展示STが未取得のレースがあります。${missing}件確認してください。`
           });
         }
       }
 
-      if (finalStage && s.check_missing_final_odds) {
-        if (!hasFinalOdds(data)) {
+      if (settings.require_final_odds !== false) {
+        const missing = races.filter((race) => {
+          return !hasNestedAnyField(
+            race,
+            ["final_odds", "finalOdds", "odds"],
+            ["recommendations", "tickets", "bets", "buy_tickets", "buyTickets"],
+            ["final_odds", "finalOdds", "odds"]
+          );
+        }).length;
+
+        if (races.length > 0 && missing > 0) {
           alerts.push({
             level: "warning",
             type: "missing_final_odds",
-            message: "最終予想ステージですが、最終オッズが確認できません。オッズ反映前の可能性があります。"
+            message: `最終オッズが未取得のレースがあります。${missing}件確認してください。`
           });
         }
       }
@@ -1309,171 +1284,95 @@
       return alerts;
     }
 
+    function buildAlerts(data, settings) {
+      const explicitAlerts = asArray(data?.alerts || data?.warnings).map(normalizeAlert);
+      if (explicitAlerts.length > 0) return explicitAlerts;
+      return buildRuleAlerts(data, settings || DEFAULT_ALERT_SETTINGS);
+    }
+
     function getFilteredAlerts(alerts, filter) {
-      if (!Array.isArray(alerts)) return [];
-
       if (filter === "warning") {
-        return alerts.filter(alert => alert.level === "warning");
+        return alerts.filter((alert) => normalizeLevel(alert.level) === "warning");
       }
-
       if (filter === "danger") {
-        return alerts.filter(alert => alert.level === "danger");
+        return alerts.filter((alert) => normalizeLevel(alert.level) === "danger");
       }
-
       return alerts;
     }
 
-    function getAlertFilterLabel(filter) {
-      if (filter === "warning") return "注意アラート";
-      if (filter === "danger") return "危険アラート";
-      return "すべてのアラート";
-    }
+    function getVisibleAlerts(alerts) {
+      let filtered = getFilteredAlerts(alerts, currentAlertFilter);
 
-    function getAlertTypeLabel(type) {
-      const labels = {
-        ticket_count: "買い目点数",
-        total_amount: "投資額",
-        update_delay: "更新遅延",
-        update_unknown: "更新日時不明",
-        missing_exhibition_time: "展示タイム",
-        missing_exhibition_st: "展示ST",
-        missing_final_odds: "最終オッズ"
-      };
-
-      return labels[type] || "その他";
-    }
-
-    function getAlertTypeClass(type) {
-      const classes = {
-        ticket_count: "alert-type-ticket",
-        total_amount: "alert-type-amount",
-        update_delay: "alert-type-update",
-        update_unknown: "alert-type-update-unknown",
-        missing_exhibition_time: "alert-type-exhibition-time",
-        missing_exhibition_st: "alert-type-exhibition-st",
-        missing_final_odds: "alert-type-odds"
-      };
-
-      return classes[type] || "alert-type-other";
-    }
-
-    function getAlertTypeOrder() {
-      return [
-        "ticket_count",
-        "total_amount",
-        "update_delay",
-        "update_unknown",
-        "missing_exhibition_time",
-        "missing_exhibition_st",
-        "missing_final_odds"
-      ];
-    }
-
-    function renderQuickSummary(data) {
-      const main = getMainPrediction(data);
-      const stage = getStage(data) || "未判定";
-      const ticketCount = getTicketCount(data);
-      const totalAmount = getTotalAmount(data);
-      const updatedAt = getUpdatedAt(data);
-
-      document.getElementById("summary-main-prediction").textContent = main;
-      document.getElementById("summary-main-sub").textContent =
-        updatedAt ? `更新日時：${updatedAt}` : "更新日時：不明";
-
-      document.getElementById("summary-stage").textContent = stage;
-      document.getElementById("summary-stage-sub").textContent =
-        isFinalStage(data) ? "最終予想として判定されています。" : "途中ステージまたは通常予想です。";
-
-      document.getElementById("summary-ticket-count").textContent = `${ticketCount}点`;
-      document.getElementById("summary-ticket-sub").textContent =
-        `予定投資額：${formatYen(totalAmount)}`;
-    }
-
-    function renderAlertSummary(data, settings) {
-      const alerts = buildAlerts(data, settings);
-      const warningCount = alerts.filter(alert => alert.level === "warning").length;
-      const dangerCount = alerts.filter(alert => alert.level === "danger").length;
-      const primaryAlert = pickPrimaryAlert(alerts);
-
-      const card = document.querySelector(".summary-alert");
-      const status = document.getElementById("summary-alert-status");
-      const sub = document.getElementById("summary-alert-sub");
-
-      if (!card || !status || !sub) return;
-
-      card.classList.remove(
-        "summary-alert-ok",
-        "summary-alert-warning",
-        "summary-alert-danger"
-      );
-
-      if (dangerCount > 0) {
-        card.classList.add("summary-alert-danger");
-        status.textContent = "危険あり";
-        sub.textContent = `危険 ${dangerCount}件 / 注意 ${warningCount}件：${shortenText(primaryAlert?.message || "")}`;
-      } else if (warningCount > 0) {
-        card.classList.add("summary-alert-warning");
-        status.textContent = "注意あり";
-        sub.textContent = `注意 ${warningCount}件：${shortenText(primaryAlert?.message || "")}`;
-      } else {
-        card.classList.add("summary-alert-ok");
-        status.textContent = "正常";
-        sub.textContent = "大きな注意点はありません。";
+      if (currentAlertTypeFilter !== "all") {
+        filtered = filtered.filter((alert) => {
+          const type = alert.type || "other";
+          return type === currentAlertTypeFilter;
+        });
       }
+
+      return filtered;
+    }
+
+    function getAlertFilterLabel(filter) {
+      if (filter === "warning") return "注意";
+      if (filter === "danger") return "危険";
+      return "すべて";
+    }
+
+    function getAlertTypeFilterLabel(type) {
+      if (type === "all") return "すべて";
+      return getAlertTypeLabel(type);
     }
 
     function renderAlertCountSummary(alerts) {
-      const area = document.getElementById("alert-count-summary");
-      if (!area) return;
+      const target = document.getElementById("alert-count-summary");
+      if (!target) return;
 
-      const warningCount = alerts.filter(alert => alert.level === "warning").length;
-      const dangerCount = alerts.filter(alert => alert.level === "danger").length;
-      const totalCount = alerts.length;
+      const warningCount = alerts.filter((alert) => normalizeLevel(alert.level) === "warning").length;
+      const dangerCount = alerts.filter((alert) => normalizeLevel(alert.level) === "danger").length;
 
-      area.className = "alert-count-summary";
-
-      let resultText = "正常";
-
-      if (dangerCount > 0) {
-        resultText = "危険あり";
-        area.classList.add("alert-count-danger");
-      } else if (warningCount > 0) {
-        resultText = "注意あり";
-        area.classList.add("alert-count-warning");
-      } else {
-        area.classList.add("alert-count-ok");
-      }
-
-      area.innerHTML = `
-        <div class="alert-count-title">判定結果：${escapeHtml(resultText)}</div>
-        <div class="alert-count-sub">注意 ${warningCount}件 / 危険 ${dangerCount}件 / 合計 ${totalCount}件</div>
+      target.className = "alert-count-summary";
+      target.innerHTML = `
+        <div class="alert-count-card">
+          <div class="alert-count-label">すべて</div>
+          <div class="alert-count-value">${alerts.length}件</div>
+        </div>
+        <div class="alert-count-card warning">
+          <div class="alert-count-label">注意</div>
+          <div class="alert-count-value">${warningCount}件</div>
+        </div>
+        <div class="alert-count-card danger">
+          <div class="alert-count-label">危険</div>
+          <div class="alert-count-value">${dangerCount}件</div>
+        </div>
       `;
     }
 
     function renderAlertFilters(alerts) {
-      const area = document.getElementById("alert-filter-bar");
-      if (!area) return;
+      const target = document.getElementById("alert-filter-bar");
+      if (!target) return;
 
-      const warningCount = alerts.filter(alert => alert.level === "warning").length;
-      const dangerCount = alerts.filter(alert => alert.level === "danger").length;
-      const totalCount = alerts.length;
+      const warningCount = alerts.filter((alert) => normalizeLevel(alert.level) === "warning").length;
+      const dangerCount = alerts.filter((alert) => normalizeLevel(alert.level) === "danger").length;
 
-      area.innerHTML = `
-        <button class="alert-filter-button ${currentAlertFilter === "all" ? "active" : ""}" data-alert-filter="all">
-          すべて ${totalCount}件
-        </button>
-        <button class="alert-filter-button filter-warning ${currentAlertFilter === "warning" ? "active" : ""}" data-alert-filter="warning">
-          注意 ${warningCount}件
-        </button>
-        <button class="alert-filter-button filter-danger ${currentAlertFilter === "danger" ? "active" : ""}" data-alert-filter="danger">
-          危険 ${dangerCount}件
-        </button>
-      `;
+      const filters = [
+        { key: "all", label: "すべて", count: alerts.length, className: "" },
+        { key: "warning", label: "注意", count: warningCount, className: "filter-warning" },
+        { key: "danger", label: "危険", count: dangerCount, className: "filter-danger" }
+      ];
 
-      area.querySelectorAll("[data-alert-filter]").forEach(button => {
+      target.innerHTML = filters.map((item) => {
+        const active = currentAlertFilter === item.key ? "active" : "";
+        return `
+          <button class="alert-filter-button ${item.className} ${active}" data-alert-filter="${item.key}" type="button">
+            ${item.label} ${item.count}件
+          </button>
+        `;
+      }).join("");
+
+      target.querySelectorAll("[data-alert-filter]").forEach((button) => {
         button.addEventListener("click", () => {
           const nextFilter = button.dataset.alertFilter || "all";
-
           if (!isValidAlertFilter(nextFilter)) return;
 
           currentAlertFilter = nextFilter;
@@ -1481,138 +1380,148 @@
           updateAlertFilterUrl(currentAlertFilter);
 
           const message = document.getElementById("alert-share-message");
-          if (message) {
-            message.textContent = "";
-          }
+          if (message) message.textContent = "";
 
           renderAlertFilters(latestAlerts);
-          renderAlertVisibleSummary(latestAlerts);
           renderAlertTypeSummary(latestAlerts);
+          renderAlertVisibleSummary(latestAlerts);
           renderAlertList(latestAlerts);
         });
       });
     }
 
     function renderAlertVisibleSummary(alerts) {
-      const area = document.getElementById("alert-visible-summary");
-      if (!area) return;
+      const target = document.getElementById("alert-visible-summary");
+      if (!target) return;
 
-      const filteredAlerts = getFilteredAlerts(alerts, currentAlertFilter);
-      const totalCount = Array.isArray(alerts) ? alerts.length : 0;
-      const visibleCount = filteredAlerts.length;
-      const label = getAlertFilterLabel(currentAlertFilter);
+      const visibleAlerts = getVisibleAlerts(alerts);
+      const levelFilteredAlerts = getFilteredAlerts(alerts, currentAlertFilter);
+      const levelLabel = getAlertFilterLabel(currentAlertFilter);
+      const typeLabel = getAlertTypeFilterLabel(currentAlertTypeFilter);
 
-      area.className = "alert-visible-summary";
-
-      if (currentAlertFilter === "warning") {
-        area.classList.add("alert-visible-summary-warning");
-      } else if (currentAlertFilter === "danger") {
-        area.classList.add("alert-visible-summary-danger");
-      } else {
-        area.classList.add("alert-visible-summary-all");
-      }
+      target.className = `alert-visible-summary summary-${currentAlertFilter}`;
 
       if (currentAlertFilter === "all") {
-        area.innerHTML = `
-          現在の表示：<strong>${escapeHtml(label)}</strong> ${visibleCount}件
+        target.innerHTML = `
+          現在の表示：
+          <strong>すべてのアラート ${visibleAlerts.length}件</strong>
+          / 全体 ${alerts.length}件
+          / 分類：<strong>${escapeHtml(typeLabel)}</strong>
         `;
-      } else {
-        area.innerHTML = `
-          現在の表示：<strong>${escapeHtml(label)}</strong> ${visibleCount}件 / 全体 ${totalCount}件
-        `;
+        return;
       }
-    }
 
-    function renderAlertTypeSummary(alerts) {
-      const area = document.getElementById("alert-type-summary");
-      if (!area) return;
-
-      const safeAlerts = Array.isArray(alerts) ? alerts : [];
-      const typeOrder = getAlertTypeOrder();
-
-      const counts = safeAlerts.reduce((acc, alert) => {
-        const type = alert?.type || "other";
-        acc[type] = (acc[type] || 0) + 1;
-        return acc;
-      }, {});
-
-      const knownTypesHtml = typeOrder.map(type => {
-        const label = getAlertTypeLabel(type);
-        const typeClass = getAlertTypeClass(type);
-        const count = counts[type] || 0;
-
-        return `
-          <span class="alert-type-summary-chip alert-type-badge ${typeClass}">
-            ${escapeHtml(label)}
-            <span class="alert-type-summary-count">${count}件</span>
-          </span>
-        `;
-      }).join("");
-
-      const otherCount = Object.keys(counts)
-        .filter(type => !typeOrder.includes(type))
-        .reduce((sum, type) => sum + counts[type], 0);
-
-      const otherHtml = otherCount > 0 ? `
-        <span class="alert-type-summary-chip alert-type-badge alert-type-other">
-          その他
-          <span class="alert-type-summary-count">${otherCount}件</span>
-        </span>
-      ` : "";
-
-      area.className = "alert-type-summary";
-      area.innerHTML = `
-        <div class="alert-type-summary-title">分類別件数</div>
-        <div class="alert-type-summary-grid">
-          ${knownTypesHtml}
-          ${otherHtml}
-        </div>
+      target.innerHTML = `
+        現在の表示：
+        <strong>${escapeHtml(levelLabel)}アラート ${visibleAlerts.length}件</strong>
+        / レベル内 ${levelFilteredAlerts.length}件
+        / 全体 ${alerts.length}件
+        / 分類：<strong>${escapeHtml(typeLabel)}</strong>
       `;
     }
 
+    function renderAlertTypeSummary(alerts) {
+      const target = document.getElementById("alert-type-summary");
+      if (!target) return;
+
+      const levelFilteredAlerts = getFilteredAlerts(alerts, currentAlertFilter);
+
+      const counts = {};
+      getAlertTypeOrder().forEach((item) => {
+        counts[item.type] = 0;
+      });
+
+      levelFilteredAlerts.forEach((alert) => {
+        const type = alert.type || "other";
+        if (counts[type] === undefined) {
+          counts.other = (counts.other || 0) + 1;
+        } else {
+          counts[type] += 1;
+        }
+      });
+
+      const allActive = currentAlertTypeFilter === "all" ? "active" : "";
+
+      const chips = [
+        `
+          <button class="alert-type-summary-chip alert-type-filter-chip ${allActive}" data-alert-type-filter="all" type="button">
+            <span>すべて</span>
+            <strong class="alert-type-summary-count">${levelFilteredAlerts.length}件</strong>
+          </button>
+        `,
+        ...getAlertTypeOrder().map((item) => {
+          const active = currentAlertTypeFilter === item.type ? "active" : "";
+          const typeClass = getAlertTypeClass(item.type);
+          const label = getAlertTypeLabel(item.type);
+          const count = counts[item.type] || 0;
+
+          return `
+            <button class="alert-type-summary-chip alert-type-filter-chip ${typeClass} ${active}" data-alert-type-filter="${item.type}" type="button">
+              <span>${escapeHtml(label)}</span>
+              <strong class="alert-type-summary-count">${count}件</strong>
+            </button>
+          `;
+        })
+      ].join("");
+
+      target.className = "alert-type-summary";
+      target.innerHTML = `
+        <div class="alert-type-summary-title">分類別件数</div>
+        <div class="alert-type-summary-grid">
+          ${chips}
+        </div>
+      `;
+
+      target.querySelectorAll("[data-alert-type-filter]").forEach((button) => {
+        button.addEventListener("click", () => {
+          const nextType = button.dataset.alertTypeFilter || "all";
+          if (!isValidAlertTypeFilter(nextType)) return;
+
+          currentAlertTypeFilter = nextType;
+
+          const message = document.getElementById("alert-share-message");
+          if (message) message.textContent = "";
+
+          renderAlertTypeSummary(latestAlerts);
+          renderAlertVisibleSummary(latestAlerts);
+          renderAlertList(latestAlerts);
+        });
+      });
+    }
+
     function renderAlertList(alerts) {
-      const area = document.getElementById("alert-area");
-      if (!area) return;
+      const target = document.getElementById("alert-area");
+      if (!target) return;
 
-      const filteredAlerts = getFilteredAlerts(alerts, currentAlertFilter);
+      const visibleAlerts = getVisibleAlerts(alerts);
 
-      if (!alerts || alerts.length === 0) {
-        area.className = "alert-ok";
-        area.innerHTML = `
-          <strong>正常</strong><br>
-          現在の設定では、大きな注意点は検出されていません。
-        `;
+      if (alerts.length === 0) {
+        target.className = "empty";
+        target.textContent = "現在、注意アラートはありません。";
         return;
       }
 
-      if (filteredAlerts.length === 0) {
-        area.className = "";
-        area.innerHTML = `
-          <div class="alert-filter-empty">
-            この条件に該当するアラートはありません。
-          </div>
-        `;
+      if (visibleAlerts.length === 0) {
+        target.className = "alert-filter-empty";
+        target.textContent = "現在の条件に一致するアラートはありません。";
         return;
       }
 
-      const hasDanger = filteredAlerts.some(alert => alert.level === "danger");
-      area.className = hasDanger ? "alert-danger" : "alert-warning";
-
-      area.innerHTML = filteredAlerts.map(alert => {
-        const levelLabel = alert.level === "danger" ? "危険" : "注意";
-        const levelClass = alert.level === "danger" ? "alert-level-danger" : "alert-level-warning";
-        const typeLabel = getAlertTypeLabel(alert.type);
-        const typeClass = getAlertTypeClass(alert.type);
+      target.className = "alert-list";
+      target.innerHTML = visibleAlerts.map((alert) => {
+        const level = normalizeLevel(alert.level);
+        const levelLabel = getAlertLevelLabel(level);
+        const type = alert.type || "other";
+        const typeLabel = getAlertTypeLabel(type);
+        const typeClass = getAlertTypeClass(type);
 
         return `
-          <div class="alert-item alert-item-${escapeHtml(alert.level)}">
+          <div class="alert-item ${level}">
             <div class="alert-item-header">
-              <span class="alert-level-badge ${levelClass}">${levelLabel}</span>
+              <span class="alert-level-badge alert-level-${level}">${escapeHtml(levelLabel)}</span>
               <span class="alert-type-badge ${typeClass}">${escapeHtml(typeLabel)}</span>
             </div>
-            <div class="alert-message">
-              ${escapeHtml(alert.message)}
-            </div>
+            <div class="alert-message">${escapeHtml(alert.message)}</div>
           </div>
         `;
       }).join("");
@@ -1624,379 +1533,226 @@
 
       renderAlertCountSummary(alerts);
       renderAlertFilters(alerts);
-      renderAlertVisibleSummary(alerts);
       renderAlertTypeSummary(alerts);
+      renderAlertVisibleSummary(alerts);
       renderAlertList(alerts);
     }
 
-    function renderStage(data) {
-      const area = document.getElementById("stage-area");
-      const stage = getStage(data) || "未判定";
-      const finalStage = isFinalStage(data);
-      const updatedAt = getUpdatedAt(data);
-      const hours = getHoursFromNow(updatedAt);
-
-      area.className = "";
-      area.innerHTML = `
-        <p><span class="stage-badge">${escapeHtml(stage)}</span></p>
-        <div class="data-grid">
-          <div class="data-box">
-            <div class="data-label">最終予想判定</div>
-            <div class="data-value">${finalStage ? "最終予想" : "通常/途中"}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">更新日時</div>
-            <div class="data-value">${escapeHtml(updatedAt || "不明")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">経過時間</div>
-            <div class="data-value">${hours === null ? "不明" : `${hours.toFixed(1)}時間`}</div>
-          </div>
-        </div>
-      `;
+    function getRaceTitle(race, index) {
+      return (
+        race?.title ||
+        race?.race_name ||
+        race?.raceName ||
+        race?.name ||
+        `${race?.venue || race?.place || "レース"} ${race?.race_no || race?.raceNo || index + 1}R`
+      );
     }
 
-    function renderRace(data) {
-      const area = document.getElementById("race-area");
-      const race = data?.race || data?.race_info || {};
+    function getRaceMeta(race) {
+      const parts = [
+        race?.date,
+        race?.venue || race?.place,
+        race?.race_no || race?.raceNo ? `${race?.race_no || race?.raceNo}R` : "",
+        race?.deadline || race?.start_time || race?.startTime
+      ].filter(Boolean);
 
-      const place = firstValue(data?.place, data?.venue, race?.place, race?.venue, race?.stadium);
-      const raceNo = firstValue(data?.race_no, data?.race_number, race?.race_no, race?.race_number);
-      const date = firstValue(data?.date, race?.date, data?.race_date);
-      const deadline = firstValue(data?.deadline, race?.deadline, data?.start_time, race?.start_time);
-
-      area.className = "";
-      area.innerHTML = `
-        <div class="data-grid">
-          <div class="data-box">
-            <div class="data-label">場</div>
-            <div class="data-value">${escapeHtml(place || "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">レース</div>
-            <div class="data-value">${escapeHtml(raceNo ? `${raceNo}R` : "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">日付</div>
-            <div class="data-value">${escapeHtml(date || "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">締切/発走</div>
-            <div class="data-value">${escapeHtml(deadline || "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">グレード</div>
-            <div class="data-value">${escapeHtml(firstValue(data?.grade, race?.grade) || "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">レース名</div>
-            <div class="data-value">${escapeHtml(firstValue(data?.race_name, race?.race_name, race?.name) || "-")}</div>
-          </div>
-        </div>
-      `;
+      return parts.length > 0 ? parts.join(" / ") : "詳細情報なし";
     }
 
-    function renderWeather(data) {
-      const area = document.getElementById("weather-area");
-      const weather = data?.weather || data?.condition || {};
-
-      area.className = "";
-      area.innerHTML = `
-        <div class="data-grid">
-          <div class="data-box">
-            <div class="data-label">天候</div>
-            <div class="data-value">${escapeHtml(firstValue(data?.weather_text, weather?.weather, weather?.text) || "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">風速</div>
-            <div class="data-value">${escapeHtml(firstValue(data?.wind_speed, weather?.wind_speed) || "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">風向</div>
-            <div class="data-value">${escapeHtml(firstValue(data?.wind_direction, weather?.wind_direction) || "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">波高</div>
-            <div class="data-value">${escapeHtml(firstValue(data?.wave_height, weather?.wave_height) || "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">気温</div>
-            <div class="data-value">${escapeHtml(firstValue(data?.temperature, weather?.temperature) || "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">水温</div>
-            <div class="data-value">${escapeHtml(firstValue(data?.water_temperature, weather?.water_temperature) || "-")}</div>
-          </div>
-        </div>
-      `;
-    }
-
-    function renderPrediction(data) {
-      const area = document.getElementById("prediction-area");
-
-      const confidence = firstValue(
-        data?.confidence,
-        data?.score,
-        data?.probability,
-        data?.summary?.confidence
+    function getConfidence(race) {
+      const value = Number(
+        race?.confidence ??
+        race?.score ??
+        race?.probability ??
+        race?.prediction?.confidence ??
+        0
       );
 
-      const comment = firstValue(
-        data?.comment,
-        data?.analysis,
-        data?.reason,
-        data?.summary?.comment,
-        data?.llm_comment
-      );
-
-      area.className = "";
-      area.innerHTML = `
-        <div class="data-grid">
-          <div class="data-box">
-            <div class="data-label">本命予想</div>
-            <div class="data-value">${escapeHtml(getMainPrediction(data))}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">信頼度/スコア</div>
-            <div class="data-value">${escapeHtml(confidence ?? "-")}</div>
-          </div>
-          <div class="data-box">
-            <div class="data-label">ステージ</div>
-            <div class="data-value">${escapeHtml(getStage(data) || "-")}</div>
-          </div>
-        </div>
-        <h3>分析コメント</h3>
-        <div class="loading">${escapeHtml(comment || "コメントはまだありません。")}</div>
-      `;
+      if (!value) return null;
+      if (value <= 1) return Math.round(value * 100);
+      return Math.round(value);
     }
 
-    function renderTickets(data) {
-      const area = document.getElementById("ticket-area");
-      const tickets = getTickets(data);
+    function getConfidenceClass(confidence) {
+      if (confidence === null) return "";
+      if (confidence >= 70) return "";
+      if (confidence >= 45) return "mid";
+      return "low";
+    }
 
-      area.className = "";
+    function getTicketName(ticket) {
+      return (
+        ticket?.ticket ||
+        ticket?.bet ||
+        ticket?.combination ||
+        ticket?.formation ||
+        ticket?.numbers ||
+        ticket?.number ||
+        ticket?.name ||
+        "買い目"
+      );
+    }
 
-      if (!tickets.length) {
-        area.innerHTML = `<div class="loading">買い目候補はありません。</div>`;
+    function renderDashboardSummary(data) {
+      const races = getRaces(data);
+      const tickets = getAllTickets(data);
+      const totalAmount = getAllAmount(data);
+
+      document.getElementById("updated-at").textContent = formatDateTime(getUpdatedAt(data));
+      document.getElementById("race-count").textContent = `${races.length}件`;
+      document.getElementById("ticket-count").textContent = `${tickets.length}点`;
+      document.getElementById("total-amount").textContent = formatYen(totalAmount);
+
+      ["updated-at", "race-count", "ticket-count", "total-amount"].forEach((id) => {
+        document.getElementById(id)?.classList.remove("loading");
+      });
+    }
+
+    function renderRaces(data) {
+      const target = document.getElementById("race-area");
+      if (!target) return;
+
+      const races = getRaces(data);
+
+      if (races.length === 0) {
+        target.className = "empty";
+        target.textContent = "表示できる予想データがありません。";
         return;
       }
 
-      area.innerHTML = `
-        <div class="ticket-list">
-          ${tickets.map((ticket, index) => {
-            const combination = firstValue(
-              ticket?.combination,
-              ticket?.ticket,
-              ticket?.bet,
-              ticket?.formation,
-              ticket?.numbers,
-              ticket?.name
-            ) || `買い目 ${index + 1}`;
+      target.className = "race-grid";
+      target.innerHTML = races.map((race, index) => {
+        const title = getRaceTitle(race, index);
+        const meta = getRaceMeta(race);
+        const confidence = getConfidence(race);
+        const confidenceClass = getConfidenceClass(confidence);
+        const recommendations = getRecommendations(race).slice(0, 6);
 
-            const amount = firstValue(
-              ticket?.amount,
-              ticket?.bet_amount,
-              ticket?.investment,
-              ticket?.stake
-            );
-
-            const odds = firstValue(
-              ticket?.odds,
-              ticket?.final_odds,
-              ticket?.expected_odds
-            );
-
-            const memo = firstValue(
-              ticket?.memo,
-              ticket?.reason,
-              ticket?.comment
-            );
-
-            return `
-              <div class="ticket-item">
-                <div class="ticket-main">${escapeHtml(combination)}</div>
-                <div class="ticket-sub">
-                  金額：${amount !== undefined ? formatYen(amount) : "-"}
-                  / オッズ：${escapeHtml(odds ?? "-")}
-                  ${memo ? `<br>${escapeHtml(memo)}` : ""}
-                </div>
-              </div>
-            `;
-          }).join("")}
-        </div>
-      `;
-    }
-
-    function renderBoats(data) {
-      const area = document.getElementById("boat-area");
-      const boats = getBoats(data);
-
-      area.className = "";
-
-      if (!boats.length) {
-        area.innerHTML = `<div class="loading">艇別評価データはありません。</div>`;
-        return;
-      }
-
-      area.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>艇</th>
-              <th>選手</th>
-              <th>評価</th>
-              <th>展示</th>
-              <th>ST</th>
-              <th>コメント</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${boats.map((boat, index) => {
-              const number = firstValue(
-                boat?.boat_no,
-                boat?.number,
-                boat?.lane,
-                boat?.course
-              ) || index + 1;
-
-              const name = firstValue(
-                boat?.racer_name,
-                boat?.name,
-                boat?.player,
-                boat?.racer
-              ) || "-";
-
-              const score = firstValue(
-                boat?.score,
-                boat?.rating,
-                boat?.rank,
-                boat?.evaluation
-              ) || "-";
-
-              const exhibition = firstValue(
-                boat?.exhibition_time,
-                boat?.tenji_time,
-                boat?.display_time,
-                boat?.ex_time
-              ) || "-";
-
-              const st = firstValue(
-                boat?.exhibition_st,
-                boat?.tenji_st,
-                boat?.display_st,
-                boat?.st
-              ) || "-";
-
-              const comment = firstValue(
-                boat?.comment,
-                boat?.memo,
-                boat?.reason
-              ) || "-";
+        const ticketHtml = recommendations.length > 0
+          ? recommendations.map((ticket) => {
+              const name = getTicketName(ticket);
+              const amount = getTicketAmount(ticket);
+              const odds = ticket?.odds || ticket?.final_odds || ticket?.finalOdds;
+              const memo = ticket?.memo || ticket?.reason || ticket?.comment || "";
+              const sub = [
+                odds ? `オッズ ${odds}` : "",
+                memo
+              ].filter(Boolean).join(" / ");
 
               return `
-                <tr>
-                  <td>${escapeHtml(number)}</td>
-                  <td>${escapeHtml(name)}</td>
-                  <td>${escapeHtml(score)}</td>
-                  <td>${escapeHtml(exhibition)}</td>
-                  <td>${escapeHtml(st)}</td>
-                  <td>${escapeHtml(comment)}</td>
-                </tr>
+                <div class="ticket">
+                  <div>
+                    <div class="ticket-main">${escapeHtml(name)}</div>
+                    <div class="ticket-sub">${escapeHtml(sub || "買い目候補")}</div>
+                  </div>
+                  <div class="ticket-amount">${formatYen(amount)}</div>
+                </div>
               `;
-            }).join("")}
-          </tbody>
-        </table>
-      `;
-    }
+            }).join("")
+          : `<div class="empty">買い目データがありません。</div>`;
 
-    function renderError(message) {
-      const ids = [
-        "summary-main-prediction",
-        "summary-stage",
-        "summary-ticket-count",
-        "summary-alert-status",
-        "alert-count-summary",
-        "alert-visible-summary",
-        "alert-type-summary",
-        "alert-area",
-        "stage-area",
-        "race-area",
-        "weather-area",
-        "prediction-area",
-        "ticket-area",
-        "boat-area"
-      ];
+        const detailUrl = race?.url || race?.detail_url || race?.detailUrl || "";
 
-      ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
+        return `
+          <article class="race-card">
+            <div class="race-card-header">
+              <div>
+                <h3 class="race-title">${escapeHtml(title)}</h3>
+                <div class="race-meta">${escapeHtml(meta)}</div>
+              </div>
+              ${
+                confidence === null
+                  ? ""
+                  : `<div class="confidence ${confidenceClass}">信頼度 ${confidence}%</div>`
+              }
+            </div>
 
-        if (id.startsWith("summary-")) {
-          el.textContent = "読込失敗";
-        } else {
-          el.className = "loading";
-          el.innerHTML = escapeHtml(message);
-        }
-      });
+            <div class="ticket-list">
+              ${ticketHtml}
+            </div>
 
-      const alertSub = document.getElementById("summary-alert-sub");
-      if (alertSub) {
-        alertSub.textContent = "アラート状況を取得できませんでした。";
-      }
-
-      const filter = document.getElementById("alert-filter-bar");
-      if (filter) {
-        filter.innerHTML = `
-          <button class="alert-filter-button ${currentAlertFilter === "all" ? "active" : ""}" data-alert-filter="all">すべて</button>
-          <button class="alert-filter-button ${currentAlertFilter === "warning" ? "active" : ""}" data-alert-filter="warning">注意</button>
-          <button class="alert-filter-button ${currentAlertFilter === "danger" ? "active" : ""}" data-alert-filter="danger">危険</button>
+            ${
+              detailUrl
+                ? `<a class="detail-link" href="${escapeHtml(detailUrl)}" target="_blank" rel="noopener">タップして詳細確認 →</a>`
+                : `<span class="detail-link">タップして詳細確認 →</span>`
+            }
+          </article>
         `;
-      }
-
-      const shareMessage = document.getElementById("alert-share-message");
-      if (shareMessage) {
-        shareMessage.textContent = "";
-      }
+      }).join("");
     }
 
-    async function fetchJsonIfExists(url, fallback = null) {
-      try {
-        const res = await fetch(url, { cache: "no-store" });
-        if (!res.ok) return fallback;
-        return await res.json();
-      } catch (error) {
-        return fallback;
+    async function fetchJsonCandidates(candidates, fallback = null) {
+      let lastError = null;
+
+      for (const url of candidates) {
+        try {
+          const response = await fetch(`${url}${url.includes("?") ? "&" : "?"}_=${Date.now()}`, {
+            cache: "no-store"
+          });
+
+          if (!response.ok) {
+            lastError = new Error(`${url}: ${response.status}`);
+            continue;
+          }
+
+          return await response.json();
+        } catch (e) {
+          lastError = e;
+        }
       }
+
+      if (fallback !== null) return fallback;
+      throw lastError || new Error("JSONを取得できませんでした。");
     }
 
     async function loadPrediction() {
       try {
-        const [predictionData, alertSettings] = await Promise.all([
-          fetchJsonIfExists("./prediction.json", null),
-          fetchJsonIfExists("./alert_settings.json", DEFAULT_ALERT_SETTINGS)
+        const [data, settings] = await Promise.all([
+          fetchJsonCandidates([
+            "./prediction.json",
+            "./predictions.json",
+            "./latest_prediction.json",
+            "./data/prediction.json",
+            "./data/latest.json"
+          ]),
+          fetchJsonCandidates([
+            "./alert_settings.json"
+          ], DEFAULT_ALERT_SETTINGS)
         ]);
 
-        if (!predictionData) {
-          throw new Error("prediction.json を読み込めませんでした。ファイルの存在とJSON形式を確認してください。");
-        }
-
-        const settings = normalizeSettings(alertSettings);
+        latestData = data;
+        latestSettings = { ...DEFAULT_ALERT_SETTINGS, ...(settings || {}) };
 
         updateAlertFilterUrl(currentAlertFilter);
-
-        renderQuickSummary(predictionData);
-        renderAlertSummary(predictionData, settings);
-        renderAlerts(predictionData, settings);
-        renderStage(predictionData);
-        renderRace(predictionData);
-        renderWeather(predictionData);
-        renderPrediction(predictionData);
-        renderTickets(predictionData);
-        renderBoats(predictionData);
-      } catch (error) {
-        console.error(error);
-        renderError(error.message || "データの読み込みに失敗しました。");
+        renderDashboardSummary(data);
+        renderAlerts(data, latestSettings);
+        renderRaces(data);
+      } catch (e) {
+        console.error(e);
+        renderError("予想データの読み込みに失敗しました。JSONファイルの配置と形式を確認してください。");
       }
+    }
+
+    function renderError(message) {
+      [
+        "alert-count-summary",
+        "alert-visible-summary",
+        "alert-type-summary",
+        "alert-area",
+        "race-area"
+      ].forEach((id) => {
+        const target = document.getElementById(id);
+        if (!target) return;
+        target.className = "error";
+        target.textContent = message;
+      });
+
+      ["updated-at", "race-count", "ticket-count", "total-amount"].forEach((id) => {
+        const target = document.getElementById(id);
+        if (!target) return;
+        target.classList.remove("loading");
+        target.textContent = "-";
+      });
     }
 
     setupAlertShareButton();
