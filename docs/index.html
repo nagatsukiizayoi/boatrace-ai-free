@@ -52,6 +52,66 @@
       font-size: 20px;
     }
 
+    .quick-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .quick-summary-box {
+      border-radius: 16px;
+      padding: 14px;
+      color: white;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+      min-height: 92px;
+      box-sizing: border-box;
+    }
+
+    .quick-summary-label {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-bottom: 6px;
+    }
+
+    .quick-summary-value {
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .quick-summary-sub {
+      font-size: 12px;
+      opacity: 0.9;
+      margin-top: 4px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .summary-stage {
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+    }
+
+    .summary-main {
+      background: linear-gradient(135deg, #dc2626, #fb7185);
+    }
+
+    .summary-top {
+      background: linear-gradient(135deg, #2563eb, #60a5fa);
+    }
+
+    .summary-tickets {
+      background: linear-gradient(135deg, #ea580c, #fb923c);
+    }
+
+    .summary-amount {
+      background: linear-gradient(135deg, #7c3aed, #a78bfa);
+    }
+
+    .summary-updated {
+      background: linear-gradient(135deg, #475569, #94a3b8);
+    }
+
     .menu-section {
       margin-bottom: 22px;
     }
@@ -479,6 +539,10 @@
         grid-template-columns: 1fr;
       }
 
+      .quick-summary-grid {
+        grid-template-columns: 1fr;
+      }
+
       .race-grid,
       .weather-grid,
       .stage-grid {
@@ -507,6 +571,48 @@
   </header>
 
   <main>
+    <section class="card">
+      <h2>現在の状況サマリー</h2>
+
+      <div class="quick-summary-grid">
+        <div class="quick-summary-box summary-stage">
+          <div class="quick-summary-label">現在のステージ</div>
+          <div class="quick-summary-value" id="summary-stage">読み込み中...</div>
+          <div class="quick-summary-sub" id="summary-stage-label">-</div>
+        </div>
+
+        <div class="quick-summary-box summary-main">
+          <div class="quick-summary-label">本命艇</div>
+          <div class="quick-summary-value" id="summary-main-boat">読み込み中...</div>
+          <div class="quick-summary-sub" id="summary-main-driver">-</div>
+        </div>
+
+        <div class="quick-summary-box summary-top">
+          <div class="quick-summary-label">総合1位</div>
+          <div class="quick-summary-value" id="summary-top-boat">読み込み中...</div>
+          <div class="quick-summary-sub" id="summary-top-score">-</div>
+        </div>
+
+        <div class="quick-summary-box summary-tickets">
+          <div class="quick-summary-label">買い目点数</div>
+          <div class="quick-summary-value" id="summary-ticket-count">読み込み中...</div>
+          <div class="quick-summary-sub">候補として表示中の買い目数</div>
+        </div>
+
+        <div class="quick-summary-box summary-amount">
+          <div class="quick-summary-label">予定投資額</div>
+          <div class="quick-summary-value" id="summary-total-amount">読み込み中...</div>
+          <div class="quick-summary-sub">買い目金額の合計</div>
+        </div>
+
+        <div class="quick-summary-box summary-updated">
+          <div class="quick-summary-label">更新日時</div>
+          <div class="quick-summary-value" id="summary-updated-at">読み込み中...</div>
+          <div class="quick-summary-sub" id="summary-race-info">-</div>
+        </div>
+      </div>
+    </section>
+
     <section class="card">
       <h2>メニュー</h2>
 
@@ -861,6 +967,141 @@
       };
     }
 
+    function getTicketCount(data) {
+      const ticketGroups = data.ticket_groups || [];
+      const simpleTickets = data.tickets || [];
+
+      if (ticketGroups.length > 0) {
+        return ticketGroups.reduce((total, group) => {
+          return total + ((group.tickets || []).length);
+        }, 0);
+      }
+
+      return simpleTickets.length;
+    }
+
+    function getTotalAmount(data) {
+      if (data.total_amount !== undefined && data.total_amount !== null) {
+        return Number(data.total_amount || 0);
+      }
+
+      if (data.total_stake !== undefined && data.total_stake !== null) {
+        return Number(data.total_stake || 0);
+      }
+
+      const ticketGroups = data.ticket_groups || [];
+      const simpleTickets = data.tickets || [];
+
+      if (ticketGroups.length > 0) {
+        return ticketGroups.reduce((groupTotal, group) => {
+          return groupTotal + (group.tickets || []).reduce((ticketTotal, ticket) => {
+            if (typeof ticket === "object" && ticket !== null) {
+              return ticketTotal + Number(ticket.amount || 100);
+            }
+
+            return ticketTotal + 100;
+          }, 0);
+        }, 0);
+      }
+
+      if (simpleTickets.length > 0) {
+        return simpleTickets.reduce((total, ticket) => {
+          if (typeof ticket === "object" && ticket !== null) {
+            return total + Number(ticket.amount || 100);
+          }
+
+          return total + 100;
+        }, 0);
+      }
+
+      return 0;
+    }
+
+    function pickMainPrediction(predictions) {
+      if (!predictions || predictions.length === 0) {
+        return null;
+      }
+
+      const honmei = predictions.find(item => {
+        const mark = String(item.mark || "");
+        const markName = String(item.mark_name || "");
+        const label = String(item.label || "");
+
+        return mark.includes("◎") || markName.includes("本命") || label.includes("本命");
+      });
+
+      return honmei || predictions[0];
+    }
+
+    function pickTopPrediction(predictions) {
+      if (!predictions || predictions.length === 0) {
+        return null;
+      }
+
+      const sorted = [...predictions].sort((a, b) => {
+        const rankA = Number(a.rank || 999);
+        const rankB = Number(b.rank || 999);
+
+        if (rankA !== rankB) {
+          return rankA - rankB;
+        }
+
+        return Number(b.score || 0) - Number(a.score || 0);
+      });
+
+      return sorted[0];
+    }
+
+    function renderQuickSummary(data) {
+      const predictions = data.predictions || [];
+      const race = data.race || {};
+      const stage = data.stage || "PRE_NIGHT";
+      const stageData = stageInfo(stage);
+
+      const mainPrediction = pickMainPrediction(predictions);
+      const topPrediction = pickTopPrediction(predictions);
+
+      const ticketCount = getTicketCount(data);
+      const totalAmount = getTotalAmount(data);
+
+      document.getElementById("summary-stage").textContent = stage;
+      document.getElementById("summary-stage-label").textContent = stageData.label;
+
+      if (mainPrediction) {
+        document.getElementById("summary-main-boat").textContent =
+          `${mainPrediction.boat}号艇`;
+
+        document.getElementById("summary-main-driver").textContent =
+          `${mainPrediction.driver || mainPrediction.name || ""} ${mainPrediction.mark || ""}`;
+      } else {
+        document.getElementById("summary-main-boat").textContent = "-";
+        document.getElementById("summary-main-driver").textContent = "予想データなし";
+      }
+
+      if (topPrediction) {
+        document.getElementById("summary-top-boat").textContent =
+          `${topPrediction.boat}号艇`;
+
+        document.getElementById("summary-top-score").textContent =
+          `スコア ${topPrediction.score || "-"} / ${topPrediction.driver || topPrediction.name || ""}`;
+      } else {
+        document.getElementById("summary-top-boat").textContent = "-";
+        document.getElementById("summary-top-score").textContent = "予想データなし";
+      }
+
+      document.getElementById("summary-ticket-count").textContent =
+        `${ticketCount}点`;
+
+      document.getElementById("summary-total-amount").textContent =
+        yen(totalAmount);
+
+      document.getElementById("summary-updated-at").textContent =
+        data.updated_at || data.generated_at || "-";
+
+      document.getElementById("summary-race-info").textContent =
+        `${race.date || "-"} / ${getPlace(race)} / ${race.race_no || race.race || "-"}`;
+    }
+
     async function loadPrediction() {
       try {
         const response = await fetch("./prediction.json?cache=" + Date.now());
@@ -871,6 +1112,7 @@
 
         const data = await response.json();
 
+        renderQuickSummary(data);
         renderStage(data);
         renderRace(data);
         renderWeather(data.weather || {});
@@ -880,6 +1122,17 @@
         renderNotice(data.notice || "このページは学習用のサンプルです。実際の投票は自己責任で行ってください。");
       } catch (error) {
         console.error(error);
+
+        document.getElementById("summary-stage").textContent = "読込失敗";
+        document.getElementById("summary-stage-label").textContent = "prediction.jsonを確認してください";
+        document.getElementById("summary-main-boat").textContent = "-";
+        document.getElementById("summary-main-driver").textContent = "データなし";
+        document.getElementById("summary-top-boat").textContent = "-";
+        document.getElementById("summary-top-score").textContent = "データなし";
+        document.getElementById("summary-ticket-count").textContent = "-";
+        document.getElementById("summary-total-amount").textContent = "-";
+        document.getElementById("summary-updated-at").textContent = "-";
+        document.getElementById("summary-race-info").textContent = "読込エラー";
 
         document.getElementById("predictions").innerHTML =
           `<div class="error">
@@ -1049,7 +1302,7 @@
       const simpleTickets = data.tickets || [];
 
       if (ticketGroups.length > 0) {
-        const totalAmount = Number(data.total_amount || data.total_stake || 0);
+        const totalAmount = Number(data.total_amount || data.total_stake || getTotalAmount(data));
 
         summary.textContent =
           `合計予定金額：${yen(totalAmount)} / 分類数：${ticketGroups.length}`;
@@ -1061,12 +1314,17 @@
           let ticketHtml = "";
 
           (group.tickets || []).forEach(ticket => {
+            const ticketText = typeof ticket === "object" && ticket !== null ? ticket.ticket : ticket;
+            const amount = typeof ticket === "object" && ticket !== null ? ticket.amount || 100 : 100;
+            const probability = typeof ticket === "object" && ticket !== null ? ticket.probability : undefined;
+            const reason = typeof ticket === "object" && ticket !== null ? ticket.reason || "" : "";
+
             ticketHtml += `
               <div class="ticket-item">
-                <div class="ticket-number">${escapeHtml(ticket.ticket || ticket)}</div>
-                <div class="ticket-amount">${yen(ticket.amount || 100)}</div>
-                <div class="ticket-prob">確率 ${ticket.probability !== undefined ? percentFromProb(ticket.probability) : "-"}</div>
-                <div class="ticket-reason">${escapeHtml(ticket.reason || "")}</div>
+                <div class="ticket-number">${escapeHtml(ticketText)}</div>
+                <div class="ticket-amount">${yen(amount)}</div>
+                <div class="ticket-prob">確率 ${probability !== undefined ? percentFromProb(probability) : "-"}</div>
+                <div class="ticket-reason">${escapeHtml(reason)}</div>
               </div>
             `;
           });
