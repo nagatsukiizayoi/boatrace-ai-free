@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>ステージ別成績グラフ</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+    }
+
+    header {
+      background: linear-gradient(135deg, #9333ea, #d946ef);
+      color: white;
+      padding: 20px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 1150px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      overflow-x: auto;
+    }
+
+    .best-box {
+      background: #faf5ff;
+      border: 1px solid #d946ef;
+      color: #581c87;
+      border-radius: 14px;
+      padding: 14px;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .info-box {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .info-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 20px;
+      font-weight: 900;
+    }
+
+    .chart-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .chart-scroll {
+      overflow-x: auto;
+    }
+
+    .line-chart {
+      width: 100%;
+      min-width: 820px;
+      height: auto;
+      display: block;
+    }
+
+    .chart-bg {
+      fill: #ffffff;
+    }
+
+    .axis-line {
+      stroke: #9ca3af;
+      stroke-width: 1.5;
+    }
+
+    .zero-line {
+      stroke: #6b7280;
+      stroke-width: 1.5;
+      stroke-dasharray: 6 6;
+    }
+
+    .axis-label {
+      fill: #6b7280;
+      font-size: 12px;
+    }
+
+    .x-label {
+      fill: #6b7280;
+      font-size: 11px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #374151;
+    }
+
+    .legend-color {
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      display: inline-block;
+    }
+
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .bar-label {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #374151;
+    }
+
+    .bar-area {
+      background: #f3f4f6;
+      border-radius: 999px;
+      min-height: 32px;
+      overflow: hidden;
+    }
+
+    .bar {
+      min-width: 55px;
+      height: 32px;
+      color: white;
+      font-weight: 900;
+      font-size: 13px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0 10px;
+      border-radius: 999px;
+      box-sizing: border-box;
+    }
+
+    .improve-bar {
+      background: linear-gradient(135deg, #16a34a, #4ade80);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+      min-width: 850px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #e5e7eb;
+      padding: 10px 6px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    th {
+      background: #f9fafb;
+      color: #374151;
+    }
+
+    .plus {
+      color: #dc2626;
+      font-weight: 900;
+    }
+
+    .minus {
+      color: #2563eb;
+      font-weight: 900;
+    }
+
+    .zero {
+      color: #111827;
+      font-weight: 900;
+    }
+
+    .links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .link-button {
+      display: inline-block;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #9333ea;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .notice {
+      color: #6b7280;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .empty-chart {
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 12px;
+      color: #6b7280;
+    }
+
+    @media (max-width: 700px) {
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .bar-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>ステージ別成績グラフ</h1>
+    <p>前日夜・展示後・最終予想の推移をグラフで確認します</p>
+  </header>
+
+  <main>
+    <section class="card">
+      <h2>全体サマリー</h2>
+
+      <div class="summary-grid">
+        <div class="info-box">
+          <div class="info-label">評価レース数</div>
+          <div class="info-value">1R</div>
+        </div>
+
+        <div class="info-box">
+          <div class="info-label">最終更新</div>
+          <div class="info-value">2026-05-15 12:25:30</div>
+        </div>
+      </div>
+
+      <br>
+
+      
+        <div class="best-box">
+          通算で最も成績が良いステージ：
+          <strong>前日夜予想</strong><br>
+          利益：
+          <strong class="plus">+2,350円</strong>
+          / 回収率：
+          <strong>267.86%</strong>
+          / 評価R数：
+          <strong>1R</strong>
+        </div>
+        
+    </section>
+
+    <section class="card">
+      
+    <div class="chart-title">ステージ別 累計利益の推移</div>
+
+    <div class="legend">
+      
+        <span class="legend-item">
+          <span class="legend-color" style="background:#475569;"></span>
+          前日夜
+        </span>
+        
+        <span class="legend-item">
+          <span class="legend-color" style="background:#2563eb;"></span>
+          当日朝
+        </span>
+        
+        <span class="legend-item">
+          <span class="legend-color" style="background:#0f766e;"></span>
+          展示前
+        </span>
+        
+        <span class="legend-item">
+          <span class="legend-color" style="background:#ea580c;"></span>
+          展示後
+        </span>
+        
+        <span class="legend-item">
+          <span class="legend-color" style="background:#be123c;"></span>
+          最終
+        </span>
+        
+    </div>
+
+    <div class="chart-scroll">
+      <svg viewBox="0 0 860 360" class="line-chart" role="img" aria-label="ステージ別 累計利益の推移">
+        <rect x="0" y="0" width="860" height="360" class="chart-bg" />
+
+        <text x="10" y="44.00" class="axis-label">2350.0円</text>
+        <text x="10" y="304.00" class="axis-label">0.0円</text>
+
+        
+        <line x1="70" y1="300.00" x2="820" y2="300.00" class="zero-line" />
+        <text x="10" y="304.00" class="axis-label">0円</text>
+        
+
+        <line x1="70" y1="40" x2="70" y2="300" class="axis-line" />
+        <line x1="70" y1="300" x2="820" y2="300" class="axis-line" />
+
+        
+        <polyline
+          fill="none"
+          stroke="#475569"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="445.00,40.00"
+        />
+        
+        <polyline
+          fill="none"
+          stroke="#2563eb"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="445.00,300.00"
+        />
+        
+        <polyline
+          fill="none"
+          stroke="#0f766e"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="445.00,300.00"
+        />
+        
+        <polyline
+          fill="none"
+          stroke="#ea580c"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="445.00,40.00"
+        />
+        
+        <polyline
+          fill="none"
+          stroke="#be123c"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="445.00,40.00"
+        />
+        
+        
+            <circle cx="445.00" cy="40.00" r="4" fill="#475569" stroke="white" stroke-width="2">
+              <title>前日夜 / 2026-05-14 サンプル競艇場 12R：2350.0円</title>
+            </circle>
+            
+            <circle cx="445.00" cy="300.00" r="4" fill="#2563eb" stroke="white" stroke-width="2">
+              <title>当日朝 / 2026-05-14 サンプル競艇場 12R：0.0円</title>
+            </circle>
+            
+            <circle cx="445.00" cy="300.00" r="4" fill="#0f766e" stroke="white" stroke-width="2">
+              <title>展示前 / 2026-05-14 サンプル競艇場 12R：0.0円</title>
+            </circle>
+            
+            <circle cx="445.00" cy="40.00" r="4" fill="#ea580c" stroke="white" stroke-width="2">
+              <title>展示後 / 2026-05-14 サンプル競艇場 12R：2350.0円</title>
+            </circle>
+            
+            <circle cx="445.00" cy="40.00" r="4" fill="#be123c" stroke="white" stroke-width="2">
+              <title>最終 / 2026-05-14 サンプル競艇場 12R：2350.0円</title>
+            </circle>
+            
+
+        <text x="70" y="340" class="x-label">2026-05-14 サンプル競艇場 12R</text>
+        <text x="820" y="340" text-anchor="end" class="x-label">2026-05-14 サンプル競艇場 12R</text>
+      </svg>
+    </div>
+    
+    </section>
+
+    <section class="card">
+      
+    <div class="chart-title">ステージ別 累計回収率の推移</div>
+
+    <div class="legend">
+      
+        <span class="legend-item">
+          <span class="legend-color" style="background:#475569;"></span>
+          前日夜
+        </span>
+        
+        <span class="legend-item">
+          <span class="legend-color" style="background:#2563eb;"></span>
+          当日朝
+        </span>
+        
+        <span class="legend-item">
+          <span class="legend-color" style="background:#0f766e;"></span>
+          展示前
+        </span>
+        
+        <span class="legend-item">
+          <span class="legend-color" style="background:#ea580c;"></span>
+          展示後
+        </span>
+        
+        <span class="legend-item">
+          <span class="legend-color" style="background:#be123c;"></span>
+          最終
+        </span>
+        
+    </div>
+
+    <div class="chart-scroll">
+      <svg viewBox="0 0 860 360" class="line-chart" role="img" aria-label="ステージ別 累計回収率の推移">
+        <rect x="0" y="0" width="860" height="360" class="chart-bg" />
+
+        <text x="10" y="44.00" class="axis-label">267.86%</text>
+        <text x="10" y="304.00" class="axis-label">0.0%</text>
+
+        
+        <line x1="70" y1="300.00" x2="820" y2="300.00" class="zero-line" />
+        <text x="10" y="304.00" class="axis-label">0%</text>
+        
+
+        <line x1="70" y1="40" x2="70" y2="300" class="axis-line" />
+        <line x1="70" y1="300" x2="820" y2="300" class="axis-line" />
+
+        
+        <polyline
+          fill="none"
+          stroke="#475569"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="445.00,40.00"
+        />
+        
+        <polyline
+          fill="none"
+          stroke="#2563eb"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="445.00,300.00"
+        />
+        
+        <polyline
+          fill="none"
+          stroke="#0f766e"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="445.00,300.00"
+        />
+        
+        <polyline
+          fill="none"
+          stroke="#ea580c"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="445.00,40.00"
+        />
+        
+        <polyline
+          fill="none"
+          stroke="#be123c"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          points="445.00,40.00"
+        />
+        
+        
+            <circle cx="445.00" cy="40.00" r="4" fill="#475569" stroke="white" stroke-width="2">
+              <title>前日夜 / 2026-05-14 サンプル競艇場 12R：267.86%</title>
+            </circle>
+            
+            <circle cx="445.00" cy="300.00" r="4" fill="#2563eb" stroke="white" stroke-width="2">
+              <title>当日朝 / 2026-05-14 サンプル競艇場 12R：0.0%</title>
+            </circle>
+            
+            <circle cx="445.00" cy="300.00" r="4" fill="#0f766e" stroke="white" stroke-width="2">
+              <title>展示前 / 2026-05-14 サンプル競艇場 12R：0.0%</title>
+            </circle>
+            
+            <circle cx="445.00" cy="40.00" r="4" fill="#ea580c" stroke="white" stroke-width="2">
+              <title>展示後 / 2026-05-14 サンプル競艇場 12R：267.86%</title>
+            </circle>
+            
+            <circle cx="445.00" cy="40.00" r="4" fill="#be123c" stroke="white" stroke-width="2">
+              <title>最終 / 2026-05-14 サンプル競艇場 12R：267.86%</title>
+            </circle>
+            
+
+        <text x="70" y="340" class="x-label">2026-05-14 サンプル競艇場 12R</text>
+        <text x="820" y="340" text-anchor="end" class="x-label">2026-05-14 サンプル競艇場 12R</text>
+      </svg>
+    </div>
+    
+    </section>
+
+    <section class="card">
+      
+    <div class="chart-title">ステージ別 回収率比較</div>
+    <div class="bar-chart">
+      
+        <div class="bar-row">
+          <div class="bar-label">
+            <strong>前日夜予想</strong><br>
+            <span>1R / 投資 1,400円 / 払戻 3,750円 / 利益 <span class="plus">+2,350円</span></span>
+          </div>
+
+          <div class="bar-area">
+            <div class="bar" style="width:100%; background:#475569;">
+              267.86%
+            </div>
+          </div>
+        </div>
+        
+        <div class="bar-row">
+          <div class="bar-label">
+            <strong>当日朝予想</strong><br>
+            <span>0R / 投資 0円 / 払戻 0円 / 利益 <span class="zero">0円</span></span>
+          </div>
+
+          <div class="bar-area">
+            <div class="bar" style="width:0.0%; background:#2563eb;">
+              0.0%
+            </div>
+          </div>
+        </div>
+        
+        <div class="bar-row">
+          <div class="bar-label">
+            <strong>展示前予想</strong><br>
+            <span>0R / 投資 0円 / 払戻 0円 / 利益 <span class="zero">0円</span></span>
+          </div>
+
+          <div class="bar-area">
+            <div class="bar" style="width:0.0%; background:#0f766e;">
+              0.0%
+            </div>
+          </div>
+        </div>
+        
+        <div class="bar-row">
+          <div class="bar-label">
+            <strong>展示後予想</strong><br>
+            <span>1R / 投資 1,400円 / 払戻 3,750円 / 利益 <span class="plus">+2,350円</span></span>
+          </div>
+
+          <div class="bar-area">
+            <div class="bar" style="width:100%; background:#ea580c;">
+              267.86%
+            </div>
+          </div>
+        </div>
+        
+        <div class="bar-row">
+          <div class="bar-label">
+            <strong>最終予想</strong><br>
+            <span>1R / 投資 1,400円 / 払戻 3,750円 / 利益 <span class="plus">+2,350円</span></span>
+          </div>
+
+          <div class="bar-area">
+            <div class="bar" style="width:100%; background:#be123c;">
+              267.86%
+            </div>
+          </div>
+        </div>
+        
+    </div>
+    
+    </section>
+
+    <section class="card">
+      
+    <div class="chart-title">ステージ間 改善率</div>
+    <div class="bar-chart">
+      
+        <div class="bar-row">
+          <div class="bar-label">
+            <strong>前日夜 → 展示後</strong><br>
+            <span>
+              比較 1R /
+              改善 0R /
+              悪化 0R /
+              変化なし 1R /
+              利益差 <span class="zero">0円</span>
+            </span>
+          </div>
+
+          <div class="bar-area">
+            <div class="bar improve-bar" style="width:0.0%;">
+              0.0%
+            </div>
+          </div>
+        </div>
+        
+        <div class="bar-row">
+          <div class="bar-label">
+            <strong>前日夜 → 最終</strong><br>
+            <span>
+              比較 1R /
+              改善 0R /
+              悪化 0R /
+              変化なし 1R /
+              利益差 <span class="zero">0円</span>
+            </span>
+          </div>
+
+          <div class="bar-area">
+            <div class="bar improve-bar" style="width:0.0%;">
+              0.0%
+            </div>
+          </div>
+        </div>
+        
+        <div class="bar-row">
+          <div class="bar-label">
+            <strong>展示後 → 最終</strong><br>
+            <span>
+              比較 1R /
+              改善 0R /
+              悪化 0R /
+              変化なし 1R /
+              利益差 <span class="zero">0円</span>
+            </span>
+          </div>
+
+          <div class="bar-area">
+            <div class="bar improve-bar" style="width:0.0%;">
+              0.0%
+            </div>
+          </div>
+        </div>
+        
+    </div>
+    
+    </section>
+
+    <section class="card">
+      <h2>直近レースのステージ別利益</h2>
+      
+    <table>
+      <thead>
+        <tr>
+          <th>日付</th>
+          <th>場</th>
+          <th>R</th>
+          <th>結果</th>
+          <th>前日夜利益</th>
+          <th>展示後利益</th>
+          <th>最終利益</th>
+          <th>最良ステージ</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+        <tr>
+          <td>2026-05-14</td>
+          <td>サンプル競艇場</td>
+          <td>12R</td>
+          <td>1-2-3</td>
+          <td class="plus">+2,350円</td>
+          <td class="plus">+2,350円</td>
+          <td class="plus">+2,350円</td>
+          <td>前日夜予想</td>
+        </tr>
+        
+      </tbody>
+    </table>
+    
+    </section>
+
+    <section class="card">
+      <h2>ページ移動</h2>
+
+      <div class="links">
+        <a class="link-button" href="./index.html">予想ページへ</a>
+        <a class="link-button" href="./stage_history.html">ステージ別過去成績へ</a>
+        <a class="link-button" href="./stage_evaluation.html">直近ステージ評価へ</a>
+        <a class="link-button" href="./compare.html">予想比較へ</a>
+        <a class="link-button" href="./stage_evaluation_history.json">履歴JSON</a>
+      </div>
+    </section>
+
+    <section class="card notice">
+      このページは学習用・分析練習用です。実際の購入や利益を保証するものではありません。
+      グラフを見ることで、前日夜予想・展示後予想・最終予想のどの段階が有効かを検証できます。
+    </section>
+  </main>
+</body>
+</html>
