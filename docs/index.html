@@ -454,6 +454,54 @@
       border: 1px solid rgba(148, 163, 184, 0.45);
     }
 
+    .alert-type-ticket {
+      background: #dbeafe;
+      color: #1d4ed8;
+      border-color: #93c5fd;
+    }
+
+    .alert-type-amount {
+      background: #ffedd5;
+      color: #c2410c;
+      border-color: #fdba74;
+    }
+
+    .alert-type-update {
+      background: #ede9fe;
+      color: #6d28d9;
+      border-color: #c4b5fd;
+    }
+
+    .alert-type-update-unknown {
+      background: #f3f4f6;
+      color: #4b5563;
+      border-color: #d1d5db;
+    }
+
+    .alert-type-exhibition-time {
+      background: #dcfce7;
+      color: #15803d;
+      border-color: #86efac;
+    }
+
+    .alert-type-exhibition-st {
+      background: #cffafe;
+      color: #0e7490;
+      border-color: #67e8f9;
+    }
+
+    .alert-type-odds {
+      background: #fce7f3;
+      color: #be185d;
+      border-color: #f9a8d4;
+    }
+
+    .alert-type-other {
+      background: #f8fafc;
+      color: #475569;
+      border-color: #cbd5e1;
+    }
+
     .alert-message {
       font-size: 14px;
       font-weight: 700;
@@ -1242,6 +1290,20 @@
       return labels[type] || "その他";
     }
 
+    function getAlertTypeClass(type) {
+      const classes = {
+        ticket_count: "alert-type-ticket",
+        total_amount: "alert-type-amount",
+        update_delay: "alert-type-update",
+        update_unknown: "alert-type-update-unknown",
+        missing_exhibition_time: "alert-type-exhibition-time",
+        missing_exhibition_st: "alert-type-exhibition-st",
+        missing_final_odds: "alert-type-odds"
+      };
+
+      return classes[type] || "alert-type-other";
+    }
+
     function renderQuickSummary(data) {
       const main = getMainPrediction(data);
       const stage = getStage(data) || "未判定";
@@ -1427,12 +1489,13 @@
         const levelLabel = alert.level === "danger" ? "危険" : "注意";
         const levelClass = alert.level === "danger" ? "alert-level-danger" : "alert-level-warning";
         const typeLabel = getAlertTypeLabel(alert.type);
+        const typeClass = getAlertTypeClass(alert.type);
 
         return `
           <div class="alert-item alert-item-${escapeHtml(alert.level)}">
             <div class="alert-item-header">
               <span class="alert-level-badge ${levelClass}">${levelLabel}</span>
-              <span class="alert-type-badge">${escapeHtml(typeLabel)}</span>
+              <span class="alert-type-badge ${typeClass}">${escapeHtml(typeLabel)}</span>
             </div>
             <div class="alert-message">
               ${escapeHtml(alert.message)}
