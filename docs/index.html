@@ -5,9 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>競艇AI予想ダッシュボード</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -65,11 +63,6 @@
       margin: 16px 0 8px;
       font-size: 16px;
       font-weight: 900;
-    }
-
-    .muted {
-      color: #6b7280;
-      font-size: 13px;
     }
 
     .loading {
@@ -143,33 +136,13 @@
       line-height: 1.45;
     }
 
-    .summary-main {
-      background: linear-gradient(135deg, #2563eb, #60a5fa);
-    }
-
-    .summary-stage {
-      background: linear-gradient(135deg, #7c3aed, #a78bfa);
-    }
-
-    .summary-ticket {
-      background: linear-gradient(135deg, #ea580c, #fb923c);
-    }
-
-    .summary-alert {
-      background: linear-gradient(135deg, #111827, #6b7280);
-    }
-
-    .summary-alert-ok {
-      background: linear-gradient(135deg, #16a34a, #4ade80);
-    }
-
-    .summary-alert-warning {
-      background: linear-gradient(135deg, #ca8a04, #facc15);
-    }
-
-    .summary-alert-danger {
-      background: linear-gradient(135deg, #dc2626, #f87171);
-    }
+    .summary-main { background: linear-gradient(135deg, #2563eb, #60a5fa); }
+    .summary-stage { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+    .summary-ticket { background: linear-gradient(135deg, #ea580c, #fb923c); }
+    .summary-alert { background: linear-gradient(135deg, #111827, #6b7280); }
+    .summary-alert-ok { background: linear-gradient(135deg, #16a34a, #4ade80); }
+    .summary-alert-warning { background: linear-gradient(135deg, #ca8a04, #facc15); }
+    .summary-alert-danger { background: linear-gradient(135deg, #dc2626, #f87171); }
 
     .summary-link-card {
       text-decoration: none;
@@ -201,9 +174,7 @@
       padding: 4px 9px;
     }
 
-    #alert-section {
-      scroll-margin-top: 16px;
-    }
+    #alert-section { scroll-margin-top: 16px; }
 
     .alert-link-grid {
       display: grid;
@@ -229,17 +200,9 @@
       opacity: 0.95;
     }
 
-    .alert-link-settings {
-      background: linear-gradient(135deg, #2563eb, #60a5fa);
-    }
-
-    .alert-link-json {
-      background: linear-gradient(135deg, #7c3aed, #a78bfa);
-    }
-
-    .alert-link-prediction {
-      background: linear-gradient(135deg, #059669, #34d399);
-    }
+    .alert-link-settings { background: linear-gradient(135deg, #2563eb, #60a5fa); }
+    .alert-link-json { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+    .alert-link-prediction { background: linear-gradient(135deg, #059669, #34d399); }
 
     .alert-count-summary {
       border-radius: 14px;
@@ -363,17 +326,9 @@
       border: 1px solid rgba(0, 0, 0, 0.06);
     }
 
-    .alert-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .alert-item-warning {
-      border-left: 6px solid #ca8a04;
-    }
-
-    .alert-item-danger {
-      border-left: 6px solid #dc2626;
-    }
+    .alert-item:last-child { margin-bottom: 0; }
+    .alert-item-warning { border-left: 6px solid #ca8a04; }
+    .alert-item-danger { border-left: 6px solid #dc2626; }
 
     .stage-badge {
       display: inline-block;
@@ -436,9 +391,7 @@
       font-weight: 900;
     }
 
-    tr:last-child td {
-      border-bottom: none;
-    }
+    tr:last-child td { border-bottom: none; }
 
     .ticket-list {
       display: grid;
@@ -484,9 +437,7 @@
     }
 
     @media (max-width: 700px) {
-      header h1 {
-        font-size: 23px;
-      }
+      header h1 { font-size: 23px; }
 
       main {
         width: min(100% - 18px, 1100px);
@@ -504,9 +455,7 @@
         border-radius: 16px;
       }
 
-      table {
-        font-size: 13px;
-      }
+      table { font-size: 13px; }
 
       th,
       td {
@@ -672,6 +621,18 @@
       }
     }
 
+    function updateAlertFilterUrl(filter) {
+      if (!isValidAlertFilter(filter)) return;
+
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set("alert_filter", filter);
+        window.history.replaceState({}, "", url.toString());
+      } catch (error) {
+        console.warn("alert_filter のURL更新に失敗しました。", error);
+      }
+    }
+
     let currentAlertFilter = getInitialAlertFilter();
     let latestAlerts = [];
 
@@ -682,12 +643,6 @@
         .replaceAll(">", "&gt;")
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
-    }
-
-    function formatNumber(value) {
-      const num = Number(value);
-      if (!Number.isFinite(num)) return "-";
-      return num.toLocaleString("ja-JP");
     }
 
     function formatYen(value) {
@@ -762,8 +717,7 @@
 
       if (Number.isFinite(Number(direct))) return Number(direct);
 
-      const tickets = getTickets(data);
-      return tickets.length;
+      return getTickets(data).length;
     }
 
     function getTotalAmount(data) {
@@ -789,6 +743,7 @@
           ticket?.money,
           ticket?.stake
         );
+
         return acc + (Number.isFinite(Number(amount)) ? Number(amount) : 0);
       }, 0);
 
@@ -814,8 +769,7 @@
       const date = new Date(dateText);
       if (Number.isNaN(date.getTime())) return null;
 
-      const diffMs = Date.now() - date.getTime();
-      return diffMs / 1000 / 60 / 60;
+      return (Date.now() - date.getTime()) / 1000 / 60 / 60;
     }
 
     function getStage(data) {
@@ -873,7 +827,12 @@
 
       const tickets = getTickets(data);
       return tickets.some(ticket => {
-        const odds = firstValue(ticket?.odds, ticket?.final_odds, ticket?.expected_odds);
+        const odds = firstValue(
+          ticket?.odds,
+          ticket?.final_odds,
+          ticket?.expected_odds
+        );
+
         return odds !== undefined;
       });
     }
@@ -913,6 +872,7 @@
 
     function pickPrimaryAlert(alerts) {
       if (!Array.isArray(alerts) || alerts.length === 0) return null;
+
       return alerts.find(alert => alert.level === "danger") ||
              alerts.find(alert => alert.level === "warning") ||
              null;
@@ -1075,7 +1035,11 @@
 
       if (!card || !status || !sub) return;
 
-      card.classList.remove("summary-alert-ok", "summary-alert-warning", "summary-alert-danger");
+      card.classList.remove(
+        "summary-alert-ok",
+        "summary-alert-warning",
+        "summary-alert-danger"
+      );
 
       if (dangerCount > 0) {
         card.classList.add("summary-alert-danger");
@@ -1148,6 +1112,7 @@
 
           currentAlertFilter = nextFilter;
           saveAlertFilter(currentAlertFilter);
+          updateAlertFilterUrl(currentAlertFilter);
 
           renderAlertFilters(latestAlerts);
           renderAlertList(latestAlerts);
@@ -1185,6 +1150,7 @@
 
       area.innerHTML = filteredAlerts.map(alert => {
         const label = alert.level === "danger" ? "危険" : "注意";
+
         return `
           <div class="alert-item alert-item-${escapeHtml(alert.level)}">
             <strong>${label}</strong><br>
@@ -1367,9 +1333,24 @@
               ticket?.name
             ) || `買い目 ${index + 1}`;
 
-            const amount = firstValue(ticket?.amount, ticket?.bet_amount, ticket?.investment, ticket?.stake);
-            const odds = firstValue(ticket?.odds, ticket?.final_odds, ticket?.expected_odds);
-            const memo = firstValue(ticket?.memo, ticket?.reason, ticket?.comment);
+            const amount = firstValue(
+              ticket?.amount,
+              ticket?.bet_amount,
+              ticket?.investment,
+              ticket?.stake
+            );
+
+            const odds = firstValue(
+              ticket?.odds,
+              ticket?.final_odds,
+              ticket?.expected_odds
+            );
+
+            const memo = firstValue(
+              ticket?.memo,
+              ticket?.reason,
+              ticket?.comment
+            );
 
             return `
               <div class="ticket-item">
@@ -1411,12 +1392,46 @@
           </thead>
           <tbody>
             ${boats.map((boat, index) => {
-              const number = firstValue(boat?.boat_no, boat?.number, boat?.lane, boat?.course) || index + 1;
-              const name = firstValue(boat?.racer_name, boat?.name, boat?.player, boat?.racer) || "-";
-              const score = firstValue(boat?.score, boat?.rating, boat?.rank, boat?.evaluation) || "-";
-              const exhibition = firstValue(boat?.exhibition_time, boat?.tenji_time, boat?.display_time, boat?.ex_time) || "-";
-              const st = firstValue(boat?.exhibition_st, boat?.tenji_st, boat?.display_st, boat?.st) || "-";
-              const comment = firstValue(boat?.comment, boat?.memo, boat?.reason) || "-";
+              const number = firstValue(
+                boat?.boat_no,
+                boat?.number,
+                boat?.lane,
+                boat?.course
+              ) || index + 1;
+
+              const name = firstValue(
+                boat?.racer_name,
+                boat?.name,
+                boat?.player,
+                boat?.racer
+              ) || "-";
+
+              const score = firstValue(
+                boat?.score,
+                boat?.rating,
+                boat?.rank,
+                boat?.evaluation
+              ) || "-";
+
+              const exhibition = firstValue(
+                boat?.exhibition_time,
+                boat?.tenji_time,
+                boat?.display_time,
+                boat?.ex_time
+              ) || "-";
+
+              const st = firstValue(
+                boat?.exhibition_st,
+                boat?.tenji_st,
+                boat?.display_st,
+                boat?.st
+              ) || "-";
+
+              const comment = firstValue(
+                boat?.comment,
+                boat?.memo,
+                boat?.reason
+              ) || "-";
 
               return `
                 <tr>
@@ -1500,6 +1515,8 @@
 
         const settings = normalizeSettings(alertSettings);
 
+        updateAlertFilterUrl(currentAlertFilter);
+
         renderQuickSummary(predictionData);
         renderAlertSummary(predictionData, settings);
         renderAlerts(predictionData, settings);
@@ -1519,3 +1536,4 @@
   </script>
 </body>
 </html>
+
