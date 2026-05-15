@@ -638,7 +638,41 @@
       check_missing_final_odds: true
     };
 
-    let currentAlertFilter = "all";
+    function isValidAlertFilter(filter) {
+      return ["all", "warning", "danger"].includes(filter);
+    }
+
+    function getInitialAlertFilter() {
+      const params = new URLSearchParams(window.location.search);
+      const urlFilter = params.get("alert_filter");
+
+      if (isValidAlertFilter(urlFilter)) {
+        return urlFilter;
+      }
+
+      try {
+        const savedFilter = localStorage.getItem("alert_filter");
+        if (isValidAlertFilter(savedFilter)) {
+          return savedFilter;
+        }
+      } catch (error) {
+        console.warn("alert_filter の読み込みに失敗しました。", error);
+      }
+
+      return "all";
+    }
+
+    function saveAlertFilter(filter) {
+      if (!isValidAlertFilter(filter)) return;
+
+      try {
+        localStorage.setItem("alert_filter", filter);
+      } catch (error) {
+        console.warn("alert_filter の保存に失敗しました。", error);
+      }
+    }
+
+    let currentAlertFilter = getInitialAlertFilter();
     let latestAlerts = [];
 
     function escapeHtml(value) {
@@ -1108,7 +1142,13 @@
 
       area.querySelectorAll("[data-alert-filter]").forEach(button => {
         button.addEventListener("click", () => {
-          currentAlertFilter = button.dataset.alertFilter || "all";
+          const nextFilter = button.dataset.alertFilter || "all";
+
+          if (!isValidAlertFilter(nextFilter)) return;
+
+          currentAlertFilter = nextFilter;
+          saveAlertFilter(currentAlertFilter);
+
           renderAlertFilters(latestAlerts);
           renderAlertList(latestAlerts);
         });
@@ -1168,6 +1208,7 @@
       const stage = getStage(data) || "未判定";
       const finalStage = isFinalStage(data);
       const updatedAt = getUpdatedAt(data);
+      const hours = getHoursFromNow(updatedAt);
 
       area.className = "";
       area.innerHTML = `
@@ -1183,7 +1224,7 @@
           </div>
           <div class="data-box">
             <div class="data-label">経過時間</div>
-            <div class="data-value">${getHoursFromNow(updatedAt) === null ? "不明" : `${getHoursFromNow(updatedAt).toFixed(1)}時間`}</div>
+            <div class="data-value">${hours === null ? "不明" : `${hours.toFixed(1)}時間`}</div>
           </div>
         </div>
       `;
@@ -1429,9 +1470,9 @@
       const filter = document.getElementById("alert-filter-bar");
       if (filter) {
         filter.innerHTML = `
-          <button class="alert-filter-button active" data-alert-filter="all">すべて</button>
-          <button class="alert-filter-button" data-alert-filter="warning">注意</button>
-          <button class="alert-filter-button" data-alert-filter="danger">危険</button>
+          <button class="alert-filter-button ${currentAlertFilter === "all" ? "active" : ""}" data-alert-filter="all">すべて</button>
+          <button class="alert-filter-button ${currentAlertFilter === "warning" ? "active" : ""}" data-alert-filter="warning">注意</button>
+          <button class="alert-filter-button ${currentAlertFilter === "danger" ? "active" : ""}" data-alert-filter="danger">危険</button>
         `;
       }
     }
@@ -1478,4 +1519,3 @@
   </script>
 </body>
 </html>
-
