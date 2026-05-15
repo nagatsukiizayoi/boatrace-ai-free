@@ -419,6 +419,47 @@
     .alert-item-warning { border-left: 6px solid #ca8a04; }
     .alert-item-danger { border-left: 6px solid #dc2626; }
 
+    .alert-item-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .alert-level-badge,
+    .alert-type-badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 900;
+      line-height: 1.4;
+    }
+
+    .alert-level-warning {
+      background: #facc15;
+      color: #78350f;
+    }
+
+    .alert-level-danger {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    .alert-type-badge {
+      background: rgba(255, 255, 255, 0.75);
+      color: #374151;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+    }
+
+    .alert-message {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
     .stage-badge {
       display: inline-block;
       border-radius: 999px;
@@ -1187,6 +1228,20 @@
       return "すべてのアラート";
     }
 
+    function getAlertTypeLabel(type) {
+      const labels = {
+        ticket_count: "買い目点数",
+        total_amount: "投資額",
+        update_delay: "更新遅延",
+        update_unknown: "更新日時不明",
+        missing_exhibition_time: "展示タイム",
+        missing_exhibition_st: "展示ST",
+        missing_final_odds: "最終オッズ"
+      };
+
+      return labels[type] || "その他";
+    }
+
     function renderQuickSummary(data) {
       const main = getMainPrediction(data);
       const stage = getStage(data) || "未判定";
@@ -1369,12 +1424,19 @@
       area.className = hasDanger ? "alert-danger" : "alert-warning";
 
       area.innerHTML = filteredAlerts.map(alert => {
-        const label = alert.level === "danger" ? "危険" : "注意";
+        const levelLabel = alert.level === "danger" ? "危険" : "注意";
+        const levelClass = alert.level === "danger" ? "alert-level-danger" : "alert-level-warning";
+        const typeLabel = getAlertTypeLabel(alert.type);
 
         return `
           <div class="alert-item alert-item-${escapeHtml(alert.level)}">
-            <strong>${label}</strong><br>
-            ${escapeHtml(alert.message)}
+            <div class="alert-item-header">
+              <span class="alert-level-badge ${levelClass}">${levelLabel}</span>
+              <span class="alert-type-badge">${escapeHtml(typeLabel)}</span>
+            </div>
+            <div class="alert-message">
+              ${escapeHtml(alert.message)}
+            </div>
           </div>
         `;
       }).join("");
@@ -1765,3 +1827,4 @@
   </script>
 </body>
 </html>
+
