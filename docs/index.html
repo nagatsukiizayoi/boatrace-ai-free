@@ -281,6 +281,41 @@
       border-color: #dc2626;
     }
 
+    .alert-share-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: -2px 0 14px;
+    }
+
+    .alert-share-button {
+      border: none;
+      background: linear-gradient(135deg, #0f172a, #334155);
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 8px 13px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .alert-share-button:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .alert-share-button:active {
+      transform: translateY(0);
+    }
+
+    .alert-share-message {
+      font-size: 12px;
+      font-weight: 800;
+      color: #4b5563;
+    }
+
     .alert-filter-empty {
       border: 1px dashed #d1d5db;
       background: #f9fafb;
@@ -530,6 +565,13 @@
         <button class="alert-filter-button" data-alert-filter="danger">危険</button>
       </div>
 
+      <div class="alert-share-row">
+        <button id="copy-alert-filter-url" class="alert-share-button" type="button">
+          現在のフィルターURLをコピー
+        </button>
+        <span id="alert-share-message" class="alert-share-message"></span>
+      </div>
+
       <div id="alert-area" class="loading">注意アラートを読み込み中です...</div>
     </section>
 
@@ -631,6 +673,51 @@
       } catch (error) {
         console.warn("alert_filter のURL更新に失敗しました。", error);
       }
+    }
+
+    function getCurrentAlertFilterUrl() {
+      const url = new URL(window.location.href);
+      url.searchParams.set("alert_filter", currentAlertFilter);
+      return url.toString();
+    }
+
+    async function copyAlertFilterUrl() {
+      const message = document.getElementById("alert-share-message");
+      const url = getCurrentAlertFilterUrl();
+
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(url);
+        } else {
+          const textarea = document.createElement("textarea");
+          textarea.value = url;
+          textarea.style.position = "fixed";
+          textarea.style.left = "-9999px";
+          textarea.style.top = "0";
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(textarea);
+        }
+
+        if (message) {
+          message.textContent = "現在のフィルターURLをコピーしました。";
+        }
+      } catch (error) {
+        console.warn("URLコピーに失敗しました。", error);
+
+        if (message) {
+          message.textContent = "URLコピーに失敗しました。ブラウザのアドレスバーからコピーしてください。";
+        }
+      }
+    }
+
+    function setupAlertShareButton() {
+      const button = document.getElementById("copy-alert-filter-url");
+      if (!button) return;
+
+      button.addEventListener("click", copyAlertFilterUrl);
     }
 
     let currentAlertFilter = getInitialAlertFilter();
@@ -1114,6 +1201,11 @@
           saveAlertFilter(currentAlertFilter);
           updateAlertFilterUrl(currentAlertFilter);
 
+          const message = document.getElementById("alert-share-message");
+          if (message) {
+            message.textContent = "";
+          }
+
           renderAlertFilters(latestAlerts);
           renderAlertList(latestAlerts);
         });
@@ -1490,6 +1582,11 @@
           <button class="alert-filter-button ${currentAlertFilter === "danger" ? "active" : ""}" data-alert-filter="danger">危険</button>
         `;
       }
+
+      const shareMessage = document.getElementById("alert-share-message");
+      if (shareMessage) {
+        shareMessage.textContent = "";
+      }
     }
 
     async function fetchJsonIfExists(url, fallback = null) {
@@ -1532,6 +1629,7 @@
       }
     }
 
+    setupAlertShareButton();
     loadPrediction();
   </script>
 </body>
