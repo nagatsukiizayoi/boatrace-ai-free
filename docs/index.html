@@ -118,6 +118,22 @@
       background: linear-gradient(135deg, #334155, #94a3b8);
     }
 
+    .summary-alert {
+      background: linear-gradient(135deg, #111827, #6b7280);
+    }
+
+    .summary-alert-ok {
+      background: linear-gradient(135deg, #16a34a, #4ade80);
+    }
+
+    .summary-alert-warning {
+      background: linear-gradient(135deg, #ca8a04, #facc15);
+    }
+
+    .summary-alert-danger {
+      background: linear-gradient(135deg, #dc2626, #f87171);
+    }
+
     .alert-link-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -661,6 +677,12 @@
           <div id="summary-updated-at" class="quick-summary-value">読込中</div>
           <div id="summary-updated-sub" class="quick-summary-sub">最終更新を表示します。</div>
         </div>
+
+        <div class="quick-summary-box summary-alert">
+          <div class="quick-summary-label">アラート状況</div>
+          <div id="summary-alert-status" class="quick-summary-value">読込中</div>
+          <div id="summary-alert-sub" class="quick-summary-sub">注意アラートを確認中です。</div>
+        </div>
       </div>
     </section>
 
@@ -884,10 +906,6 @@
     function valueOrDash(value) {
       if (value === undefined || value === null || value === "") return "-";
       return escapeHtml(value);
-    }
-
-    function asArray(value) {
-      return Array.isArray(value) ? value : [];
     }
 
     function firstValue(...values) {
@@ -1267,49 +1285,7 @@
       });
     }
 
-    function renderQuickSummary(data) {
-      const stage = getStage(data);
-      const main = pickMainPrediction(data);
-      const top = pickTopPrediction(data);
-      const ticketCount = getTicketCount(data);
-      const totalAmount = getTotalAmount(data);
-      const updatedAt = getUpdatedAt(data);
-
-      document.getElementById("summary-stage").textContent = stage;
-      document.getElementById("summary-stage-sub").textContent = getStageDescription(stage);
-
-      if (main) {
-        document.getElementById("summary-main-boat").textContent = `${getBoatNumber(main)}号艇`;
-        document.getElementById("summary-main-sub").textContent = getBoatName(main) || "本命候補";
-      } else {
-        document.getElementById("summary-main-boat").textContent = "-";
-        document.getElementById("summary-main-sub").textContent = "本命艇を取得できませんでした。";
-      }
-
-      if (top) {
-        document.getElementById("summary-top-boat").textContent = `${getBoatNumber(top)}号艇`;
-        document.getElementById("summary-top-sub").textContent = getBoatName(top) || `score ${getScore(top)}`;
-      } else {
-        document.getElementById("summary-top-boat").textContent = "-";
-        document.getElementById("summary-top-sub").textContent = "総合1位を取得できませんでした。";
-      }
-
-      document.getElementById("summary-ticket-count").textContent = `${ticketCount}点`;
-      document.getElementById("summary-ticket-sub").textContent = "推奨買い目の点数です。";
-
-      document.getElementById("summary-total-amount").textContent = yen(totalAmount);
-      document.getElementById("summary-amount-sub").textContent = "予定投資額の合計です。";
-
-      document.getElementById("summary-updated-at").textContent = updatedAt || "不明";
-      const hours = getHoursFromNow(updatedAt);
-      document.getElementById("summary-updated-sub").textContent =
-        hours !== null ? `現在から約 ${hours.toFixed(1)} 時間前` : "更新日時を取得できませんでした。";
-    }
-
-    function renderAlerts(data, settings) {
-      const el = document.getElementById("alert-area");
-      if (!el) return;
-
+    function buildAlerts(data, settings) {
       const alerts = [];
       const ticketCount = getTicketCount(data);
       const totalAmount = getTotalAmount(data);
@@ -1395,6 +1371,82 @@
           message: "最終予想ですが、買い目のオッズが未入力、または不足している可能性があります。"
         });
       }
+
+      return alerts;
+    }
+
+    function renderAlertSummary(data, settings) {
+      const alerts = buildAlerts(data, settings);
+      const warningCount = alerts.filter(alert => alert.level === "warning").length;
+      const dangerCount = alerts.filter(alert => alert.level === "danger").length;
+
+      const box = document.querySelector(".summary-alert");
+      const statusEl = document.getElementById("summary-alert-status");
+      const subEl = document.getElementById("summary-alert-sub");
+
+      if (!box || !statusEl || !subEl) return;
+
+      box.classList.remove("summary-alert-ok", "summary-alert-warning", "summary-alert-danger");
+
+      if (dangerCount > 0) {
+        box.classList.add("summary-alert-danger");
+        statusEl.textContent = "危険あり";
+        subEl.textContent = `注意 ${warningCount}件 / 危険 ${dangerCount}件`;
+      } else if (warningCount > 0) {
+        box.classList.add("summary-alert-warning");
+        statusEl.textContent = "注意あり";
+        subEl.textContent = `注意 ${warningCount}件 / 危険 ${dangerCount}件`;
+      } else {
+        box.classList.add("summary-alert-ok");
+        statusEl.textContent = "正常";
+        subEl.textContent = "大きな注意点はありません。";
+      }
+    }
+
+    function renderQuickSummary(data) {
+      const stage = getStage(data);
+      const main = pickMainPrediction(data);
+      const top = pickTopPrediction(data);
+      const ticketCount = getTicketCount(data);
+      const totalAmount = getTotalAmount(data);
+      const updatedAt = getUpdatedAt(data);
+
+      document.getElementById("summary-stage").textContent = stage;
+      document.getElementById("summary-stage-sub").textContent = getStageDescription(stage);
+
+      if (main) {
+        document.getElementById("summary-main-boat").textContent = `${getBoatNumber(main)}号艇`;
+        document.getElementById("summary-main-sub").textContent = getBoatName(main) || "本命候補";
+      } else {
+        document.getElementById("summary-main-boat").textContent = "-";
+        document.getElementById("summary-main-sub").textContent = "本命艇を取得できませんでした。";
+      }
+
+      if (top) {
+        document.getElementById("summary-top-boat").textContent = `${getBoatNumber(top)}号艇`;
+        document.getElementById("summary-top-sub").textContent = getBoatName(top) || `score ${getScore(top)}`;
+      } else {
+        document.getElementById("summary-top-boat").textContent = "-";
+        document.getElementById("summary-top-sub").textContent = "総合1位を取得できませんでした。";
+      }
+
+      document.getElementById("summary-ticket-count").textContent = `${ticketCount}点`;
+      document.getElementById("summary-ticket-sub").textContent = "推奨買い目の点数です。";
+
+      document.getElementById("summary-total-amount").textContent = yen(totalAmount);
+      document.getElementById("summary-amount-sub").textContent = "予定投資額の合計です。";
+
+      document.getElementById("summary-updated-at").textContent = updatedAt || "不明";
+      const hours = getHoursFromNow(updatedAt);
+      document.getElementById("summary-updated-sub").textContent =
+        hours !== null ? `現在から約 ${hours.toFixed(1)} 時間前` : "更新日時を取得できませんでした。";
+    }
+
+    function renderAlerts(data, settings) {
+      const el = document.getElementById("alert-area");
+      if (!el) return;
+
+      const alerts = buildAlerts(data, settings);
 
       if (!alerts.length) {
         el.className = "alert-list";
@@ -1719,13 +1771,25 @@
         "summary-top-boat",
         "summary-ticket-count",
         "summary-total-amount",
-        "summary-updated-at"
+        "summary-updated-at",
+        "summary-alert-status"
       ];
 
       summaryIds.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.textContent = "読込失敗";
       });
+
+      const alertSub = document.getElementById("summary-alert-sub");
+      if (alertSub) {
+        alertSub.textContent = "アラート状況を取得できませんでした。";
+      }
+
+      const alertBox = document.querySelector(".summary-alert");
+      if (alertBox) {
+        alertBox.classList.remove("summary-alert-ok", "summary-alert-warning", "summary-alert-danger");
+        alertBox.classList.add("summary-alert-danger");
+      }
     }
 
     async function loadPrediction() {
@@ -1733,6 +1797,7 @@
         const predictionData = await loadJson("./prediction.json");
 
         let settings = DEFAULT_ALERT_SETTINGS;
+
         try {
           const alertSettings = await loadJson("./alert_settings.json");
           settings = mergeSettings(alertSettings);
@@ -1741,6 +1806,7 @@
         }
 
         renderQuickSummary(predictionData);
+        renderAlertSummary(predictionData, settings);
         renderAlerts(predictionData, settings);
         renderStage(predictionData);
         renderRace(predictionData);
