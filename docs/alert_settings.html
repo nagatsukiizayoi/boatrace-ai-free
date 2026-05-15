@@ -206,6 +206,55 @@
       line-height: 1.6;
     }
 
+    .debug-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .debug-box {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .debug-box.ok {
+      background: #ecfdf5;
+      border-color: #86efac;
+    }
+
+    .debug-box.warning {
+      background: #fffbeb;
+      border-color: #facc15;
+    }
+
+    .debug-box.danger {
+      background: #fee2e2;
+      border-color: #f87171;
+    }
+
+    .debug-label {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .debug-value {
+      font-size: 17px;
+      font-weight: 900;
+      color: #111827;
+      line-height: 1.4;
+    }
+
+    .debug-sub {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -391,6 +440,7 @@
     @media (max-width: 760px) {
       .summary-grid,
       .switch-grid,
+      .debug-grid,
       .template-grid,
       .link-grid {
         grid-template-columns: 1fr;
@@ -410,7 +460,7 @@
 <body>
   <header>
     <h1>アラート設定ページ</h1>
-    <p>注意アラートの条件を日本語で確認し、現在の予想データに対する判定もプレビューできます。</p>
+    <p>注意アラートの条件を日本語で確認し、現在の予想データに対する判定根拠も確認できます。</p>
   </header>
 
   <main>
@@ -431,6 +481,14 @@
         実際にどのアラートが出るかを確認します。
       </p>
       <div id="alert-preview-area" class="loading">アラート判定を読み込み中です...</div>
+    </section>
+
+    <section class="card">
+      <h2>判定に使ったデータ確認</h2>
+      <p>
+        <code>prediction.json</code> から取得した値と、アラート判定に使った内容を確認できます。
+      </p>
+      <div id="alert-debug-area" class="loading">判定データを読み込み中です...</div>
     </section>
 
     <section class="card">
@@ -455,7 +513,7 @@
         その後、GitHub上の <code>docs/alert_settings.json</code> の中身を置き換えてコミットします。
       </p>
       <p>
-        変更後はトップページを開き、URLの末尾に <code>?v=36</code> のような値を付けて再読み込みすると、
+        変更後はトップページを開き、URLの末尾に <code>?v=37</code> のような値を付けて再読み込みすると、
         ブラウザキャッシュの影響を避けやすくなります。
       </p>
     </section>
@@ -672,6 +730,14 @@
 
     function boolClass(value) {
       return value ? "status-on" : "status-off";
+    }
+
+    function yesNo(value) {
+      return value ? "あり" : "なし";
+    }
+
+    function yesNoPlain(value) {
+      return value ? "はい" : "いいえ";
     }
 
     function mergeSettings(settings) {
@@ -979,13 +1045,35 @@
       return diffMs / 1000 / 60 / 60;
     }
 
-    function hasMissingExhibitionTime(data) {
-      const boats =
-        asArray(data?.boats).length ? asArray(data?.boats) :
-        asArray(data?.all_boats).length ? asArray(data?.all_boats) :
-        asArray(data?.entries).length ? asArray(data?.entries) :
-        asArray(data?.players);
+    function getBoatsFromPrediction(data) {
+      const candidates = [
+        data?.boats,
+        data?.all_boats,
+        data?.entries,
+        data?.players,
+        data?.racers
+      ];
 
+      for (const candidate of candidates) {
+        const arr = asArray(candidate);
+        if (arr.length) return arr;
+      }
+
+      if (data?.prediction && typeof data.prediction === "object") {
+        const nested = getBoatsFromPrediction(data.prediction);
+        if (nested.length) return nested;
+      }
+
+      if (data?.race && typeof data.race === "object") {
+        const nested = getBoatsFromPrediction(data.race);
+        if (nested.length) return nested;
+      }
+
+      return [];
+    }
+
+    function hasMissingExhibitionTime(data) {
+      const boats = getBoatsFromPrediction(data);
       if (!boats.length) return false;
 
       return boats.some(boat => {
@@ -994,19 +1082,14 @@
           boat.ex_time ??
           boat.display_time ??
           boat.tenji_time ??
-          boat展示タイム;
+          boat["展示タイム"];
 
         return value === undefined || value === null || value === "" || Number(value) === 0;
       });
     }
 
     function hasMissingExhibitionSt(data) {
-      const boats =
-        asArray(data?.boats).length ? asArray(data?.boats) :
-        asArray(data?.all_boats).length ? asArray(data?.all_boats) :
-        asArray(data?.entries).length ? asArray(data?.entries) :
-        asArray(data?.players);
-
+      const boats = getBoatsFromPrediction(data);
       if (!boats.length) return false;
 
       return boats.some(boat => {
@@ -1015,7 +1098,7 @@
           boat.ex_st ??
           boat.display_st ??
           boat.tenji_st ??
-          boat展示ST;
+          boat["展示ST"];
 
         return value === undefined || value === null || value === "";
       });
@@ -1057,6 +1140,10 @@
       });
     }
 
+    function getDebugClass(value) {
+      return value ? "warning" : "ok";
+    }
+
     function buildAlertPreview(settings, predictionData) {
       const alerts = [];
 
@@ -1064,6 +1151,10 @@
       const totalAmount = getTotalAmountFromPrediction(predictionData);
       const updatedAt = getUpdatedAtFromPrediction(predictionData);
       const hoursFromNow = getHoursFromNow(updatedAt);
+      const finalStage = isFinalStage(predictionData);
+      const missingExhibitionTime = hasMissingExhibitionTime(predictionData);
+      const missingExhibitionSt = hasMissingExhibitionSt(predictionData);
+      const missingFinalOdds = hasMissingFinalOdds(predictionData);
 
       if (settings.check_ticket_count) {
         if (ticketCount >= Number(settings.ticket_count_danger)) {
@@ -1121,7 +1212,7 @@
         }
       }
 
-      if (settings.check_exhibition_time && hasMissingExhibitionTime(predictionData)) {
+      if (settings.check_exhibition_time && missingExhibitionTime) {
         alerts.push({
           level: "warning",
           title: "注意",
@@ -1129,7 +1220,7 @@
         });
       }
 
-      if (settings.check_exhibition_st && hasMissingExhibitionSt(predictionData)) {
+      if (settings.check_exhibition_st && missingExhibitionSt) {
         alerts.push({
           level: "warning",
           title: "注意",
@@ -1137,7 +1228,7 @@
         });
       }
 
-      if (settings.check_final_odds && hasMissingFinalOdds(predictionData)) {
+      if (settings.check_final_odds && missingFinalOdds) {
         alerts.push({
           level: "warning",
           title: "注意",
@@ -1150,7 +1241,16 @@
         totalAmount,
         updatedAt,
         hoursFromNow,
-        finalStage: isFinalStage(predictionData)
+        finalStage,
+        missingExhibitionTime,
+        missingExhibitionSt,
+        missingFinalOdds,
+        ticketWarning: Number(settings.ticket_count_warning),
+        ticketDanger: Number(settings.ticket_count_danger),
+        amountWarning: Number(settings.total_amount_warning),
+        amountDanger: Number(settings.total_amount_danger),
+        updatedWarning: Number(settings.updated_hours_warning),
+        updatedDanger: Number(settings.updated_hours_danger)
       };
 
       return { alerts, meta };
@@ -1199,6 +1299,74 @@
       el.innerHTML = html;
     }
 
+    function renderAlertDebug(meta) {
+      const el = document.getElementById("alert-debug-area");
+      if (!el) return;
+
+      const ticketClass =
+        meta.ticketCount >= meta.ticketDanger ? "danger" :
+        meta.ticketCount >= meta.ticketWarning ? "warning" :
+        "ok";
+
+      const amountClass =
+        meta.totalAmount >= meta.amountDanger ? "danger" :
+        meta.totalAmount >= meta.amountWarning ? "warning" :
+        "ok";
+
+      const updatedClass =
+        meta.hoursFromNow === null ? "warning" :
+        meta.hoursFromNow >= meta.updatedDanger ? "danger" :
+        meta.hoursFromNow >= meta.updatedWarning ? "warning" :
+        "ok";
+
+      el.className = "debug-grid";
+      el.innerHTML = `
+        <div class="debug-box ${ticketClass}">
+          <div class="debug-label">買い目点数</div>
+          <div class="debug-value">${meta.ticketCount}点</div>
+          <div class="debug-sub">注意 ${meta.ticketWarning}点〜 / 危険 ${meta.ticketDanger}点〜</div>
+        </div>
+
+        <div class="debug-box ${amountClass}">
+          <div class="debug-label">予定投資額</div>
+          <div class="debug-value">${yen(meta.totalAmount)}</div>
+          <div class="debug-sub">注意 ${yen(meta.amountWarning)}〜 / 危険 ${yen(meta.amountDanger)}〜</div>
+        </div>
+
+        <div class="debug-box ${updatedClass}">
+          <div class="debug-label">更新日時</div>
+          <div class="debug-value">${meta.updatedAt ? escapeHtml(meta.updatedAt) : "不明"}</div>
+          <div class="debug-sub">
+            ${meta.hoursFromNow !== null ? `現在から約 ${meta.hoursFromNow.toFixed(1)} 時間前` : "経過時間を計算できません"}
+          </div>
+        </div>
+
+        <div class="debug-box ${meta.finalStage ? "warning" : "ok"}">
+          <div class="debug-label">最終予想判定</div>
+          <div class="debug-value">${yesNoPlain(meta.finalStage)}</div>
+          <div class="debug-sub">stage / prediction_stage / run_stage / mode を確認</div>
+        </div>
+
+        <div class="debug-box ${getDebugClass(meta.missingExhibitionTime)}">
+          <div class="debug-label">展示タイム不足</div>
+          <div class="debug-value">${yesNo(meta.missingExhibitionTime)}</div>
+          <div class="debug-sub">boats / all_boats / entries / players を確認</div>
+        </div>
+
+        <div class="debug-box ${getDebugClass(meta.missingExhibitionSt)}">
+          <div class="debug-label">展示ST不足</div>
+          <div class="debug-value">${yesNo(meta.missingExhibitionSt)}</div>
+          <div class="debug-sub">exhibition_st / ex_st / display_st などを確認</div>
+        </div>
+
+        <div class="debug-box ${getDebugClass(meta.missingFinalOdds)}">
+          <div class="debug-label">最終オッズ不足</div>
+          <div class="debug-value">${yesNo(meta.missingFinalOdds)}</div>
+          <div class="debug-sub">最終予想の場合のみ、買い目の odds / final_odds などを確認</div>
+        </div>
+      `;
+    }
+
     function renderAlertPreviewError(message) {
       const el = document.getElementById("alert-preview-area");
       if (!el) return;
@@ -1206,6 +1374,17 @@
       el.className = "error";
       el.innerHTML = `
         アラート判定プレビューの読み込みに失敗しました。<br>
+        原因：${escapeHtml(message)}
+      `;
+    }
+
+    function renderAlertDebugError(message) {
+      const el = document.getElementById("alert-debug-area");
+      if (!el) return;
+
+      el.className = "error";
+      el.innerHTML = `
+        判定に使ったデータ確認の読み込みに失敗しました。<br>
         原因：${escapeHtml(message)}
       `;
     }
@@ -1333,8 +1512,10 @@
         const predictionData = await loadJson("./prediction.json");
         const result = buildAlertPreview(settings, predictionData);
         renderAlertPreview(result.alerts, result.meta);
+        renderAlertDebug(result.meta);
       } catch (error) {
         renderAlertPreviewError(error.message);
+        renderAlertDebugError(error.message);
       }
     }
 
