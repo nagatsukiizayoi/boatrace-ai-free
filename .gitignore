@@ -1,0 +1,17 @@
+# SQLite database files
+db/*.sqlite3
+db/*.sqlite
+db/*.db
+
+# SQLite temporary files
+db/*.sqlite3-journal
+db/*.sqlite3-wal
+db/*.sqlite3-shm
+db/*.db-journal
+db/*.db-wal
+db/*.db-shm
+
+# Python cache
+__pycache__/
+*.py[cod]
+
