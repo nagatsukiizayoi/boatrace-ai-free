@@ -1,0 +1,81 @@
+name: Check database schema
+
+on:
+  push:
+    paths:
+      - "db/schema.sql"
+      - ".github/workflows/check-db-schema.yml"
+  pull_request:
+    paths:
+      - "db/schema.sql"
+      - ".github/workflows/check-db-schema.yml"
+  workflow_dispatch:
+
+jobs:
+  check-schema:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install sqlite3
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sqlite3
+
+      - name: Show sqlite3 version
+        run: |
+          sqlite3 --version
+
+      - name: Create SQLite database from schema
+        run: |
+          mkdir -p db
+          rm -f db/check_boatrace.sqlite3
+          sqlite3 db/check_boatrace.sqlite3 < db/schema.sql
+
+      - name: Show tables and views
+        run: |
+          sqlite3 db/check_boatrace.sqlite3 "
+          SELECT name, type
+          FROM sqlite_master
+          WHERE type IN ('table', 'view')
+          ORDER BY type, name;
+          "
+
+      - name: Check required tables and views
+        run: |
+          sqlite3 db/check_boatrace.sqlite3 <<'SQL'
+          SELECT
+            CASE
+              WHEN COUNT(*) = 14 THEN 'OK: required objects exist'
+              ELSE RAISE(FAIL, 'NG: missing required tables or views')
+            END
+          FROM sqlite_master
+          WHERE name IN (
+            'venues',
+            'races',
+            'racers',
+            'race_entries',
+            'odds_snapshots',
+            'prediction_runs',
+            'predictions',
+            'prediction_tickets',
+            'race_results',
+            'alert_events',
+            'export_logs',
+            'v_race_overview',
+            'v_prediction_ticket_results',
+            'v_prediction_run_summary'
+          );
+          SQL
+
+      - name: Foreign key check
+        run: |
+          RESULT=$(sqlite3 db/check_boatrace.sqlite3 "PRAGMA foreign_key_check;")
+          if [ -n "$RESULT" ]; then
+            echo "$RESULT"
+            exit 1
+          fi
+          echo "OK: foreign key check passed"
+
