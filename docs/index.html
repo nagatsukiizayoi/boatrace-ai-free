@@ -488,6 +488,41 @@
       opacity: 0.75;
     }
 
+    .alert-sort-control {
+      margin: 0 0 12px;
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .alert-sort-label {
+      font-size: 12px;
+      font-weight: 950;
+      color: #475569;
+    }
+
+    .alert-sort-select {
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .alert-sort-note {
+      font-size: 12px;
+      font-weight: 800;
+      color: #64748b;
+    }
+
     .alert-type-summary {
       margin: 0 0 14px;
       border-radius: 16px;
@@ -816,7 +851,8 @@
       .alert-share-row,
       .alert-filter-bar,
       .alert-type-summary-grid,
-      .alert-active-filter-chips {
+      .alert-active-filter-chips,
+      .alert-sort-control {
         gap: 7px;
       }
 
@@ -824,7 +860,8 @@
       .alert-share-button,
       .alert-reset-button,
       .alert-type-summary-chip,
-      .alert-active-chip {
+      .alert-active-chip,
+      .alert-sort-select {
         font-size: 12px;
       }
 
@@ -844,7 +881,7 @@
           <h1>競艇AI予想ダッシュボード</h1>
           <p>自動生成された買い目・投資額・更新状況を確認します。</p>
         </div>
-        <div class="hero-badge">STEP 55</div>
+        <div class="hero-badge">STEP 56</div>
       </div>
 
       <div class="nav-row">
@@ -911,6 +948,7 @@
 
       <div id="alert-visible-summary" class="alert-visible-summary loading">表示条件を確認中です...</div>
       <div id="alert-active-filter-chips" class="alert-active-filter-chips loading">適用中条件を確認中です...</div>
+      <div id="alert-sort-control" class="alert-sort-control loading">並び替え条件を確認中です...</div>
       <div id="alert-type-summary" class="alert-type-summary loading">分類別件数を確認中です...</div>
       <div id="alert-area" class="loading">注意アラートを読み込み中です...</div>
     </section>
@@ -946,6 +984,7 @@
 
     let currentAlertFilter = getInitialAlertFilter();
     let currentAlertTypeFilter = getInitialAlertTypeFilter();
+    let currentAlertSort = getInitialAlertSort();
     let latestAlerts = [];
     let latestData = null;
     let latestSettings = DEFAULT_ALERT_SETTINGS;
@@ -1032,6 +1071,10 @@
       return getAlertTypeOrder().some((item) => item.type === type);
     }
 
+    function isValidAlertSort(sort) {
+      return ["default", "level", "type", "level_type"].includes(sort);
+    }
+
     function getInitialAlertFilter() {
       try {
         const params = new URLSearchParams(window.location.search);
@@ -1062,6 +1105,21 @@
       return "all";
     }
 
+    function getInitialAlertSort() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const urlSort = params.get("alert_sort");
+        if (isValidAlertSort(urlSort)) return urlSort;
+
+        const savedSort = localStorage.getItem("alert_sort");
+        if (isValidAlertSort(savedSort)) return savedSort;
+      } catch (e) {
+        console.warn("alert_sort の初期化に失敗しました。", e);
+      }
+
+      return "default";
+    }
+
     function saveAlertFilter(filter) {
       if (!isValidAlertFilter(filter)) return;
 
@@ -1082,6 +1140,16 @@
       }
     }
 
+    function saveAlertSort(sort) {
+      if (!isValidAlertSort(sort)) return;
+
+      try {
+        localStorage.setItem("alert_sort", sort);
+      } catch (e) {
+        console.warn("alert_sort の保存に失敗しました。", e);
+      }
+    }
+
     function clearSavedAlertFilter() {
       try {
         localStorage.removeItem("alert_filter");
@@ -1095,6 +1163,14 @@
         localStorage.removeItem("alert_type");
       } catch (e) {
         console.warn("alert_type の削除に失敗しました。", e);
+      }
+    }
+
+    function clearSavedAlertSort() {
+      try {
+        localStorage.removeItem("alert_sort");
+      } catch (e) {
+        console.warn("alert_sort の削除に失敗しました。", e);
       }
     }
 
@@ -1122,10 +1198,23 @@
       }
     }
 
+    function updateAlertSortUrl(sort) {
+      if (!isValidAlertSort(sort)) return;
+
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set("alert_sort", sort);
+        window.history.replaceState({}, "", url.toString());
+      } catch (e) {
+        console.warn("alert_sort のURL更新に失敗しました。", e);
+      }
+    }
+
     function getCurrentAlertFilterUrl() {
       const url = new URL(window.location.href);
       url.searchParams.set("alert_filter", currentAlertFilter);
       url.searchParams.set("alert_type", currentAlertTypeFilter);
+      url.searchParams.set("alert_sort", currentAlertSort);
       return url.toString();
     }
 
@@ -1177,6 +1266,7 @@
 
       updateAlertFilterUrl(currentAlertFilter);
       updateAlertTypeFilterUrl(currentAlertTypeFilter);
+      updateAlertSortUrl(currentAlertSort);
 
       const message = document.getElementById("alert-share-message");
       if (message) message.textContent = "フィルターをリセットしました。";
@@ -1185,6 +1275,7 @@
       renderAlertTypeSummary(latestAlerts);
       renderAlertVisibleSummary(latestAlerts);
       renderActiveAlertFilterChips();
+      renderAlertSortControl();
       renderAlertList(latestAlerts);
     }
 
@@ -1455,6 +1546,59 @@
       return getAlertTypeLabel(type);
     }
 
+    function getAlertSortLabel(sort) {
+      const labels = {
+        default: "標準順",
+        level: "危険を上に表示",
+        type: "分類順",
+        level_type: "危険優先＋分類順"
+      };
+
+      return labels[sort] || "標準順";
+    }
+
+    function getAlertTypeRank(type) {
+      const order = getAlertTypeOrder().map((item) => item.type);
+      const index = order.indexOf(type || "other");
+      return index === -1 ? order.length : index;
+    }
+
+    function getAlertLevelRank(level) {
+      return normalizeLevel(level) === "danger" ? 0 : 1;
+    }
+
+    function getSortedAlerts(alerts) {
+      const indexedAlerts = alerts.map((alert, index) => ({ alert, index }));
+
+      indexedAlerts.sort((a, b) => {
+        if (currentAlertSort === "level") {
+          const levelDiff = getAlertLevelRank(a.alert.level) - getAlertLevelRank(b.alert.level);
+          if (levelDiff !== 0) return levelDiff;
+          return a.index - b.index;
+        }
+
+        if (currentAlertSort === "type") {
+          const typeDiff = getAlertTypeRank(a.alert.type) - getAlertTypeRank(b.alert.type);
+          if (typeDiff !== 0) return typeDiff;
+          return a.index - b.index;
+        }
+
+        if (currentAlertSort === "level_type") {
+          const levelDiff = getAlertLevelRank(a.alert.level) - getAlertLevelRank(b.alert.level);
+          if (levelDiff !== 0) return levelDiff;
+
+          const typeDiff = getAlertTypeRank(a.alert.type) - getAlertTypeRank(b.alert.type);
+          if (typeDiff !== 0) return typeDiff;
+
+          return a.index - b.index;
+        }
+
+        return a.index - b.index;
+      });
+
+      return indexedAlerts.map((item) => item.alert);
+    }
+
     function renderAlertCountSummary(alerts) {
       const target = document.getElementById("alert-count-summary");
       if (!target) return;
@@ -1511,6 +1655,7 @@
           saveAlertFilter(currentAlertFilter);
           updateAlertFilterUrl(currentAlertFilter);
           updateAlertTypeFilterUrl(currentAlertTypeFilter);
+          updateAlertSortUrl(currentAlertSort);
 
           const message = document.getElementById("alert-share-message");
           if (message) message.textContent = "";
@@ -1519,6 +1664,7 @@
           renderAlertTypeSummary(latestAlerts);
           renderAlertVisibleSummary(latestAlerts);
           renderActiveAlertFilterChips();
+          renderAlertSortControl();
           renderAlertList(latestAlerts);
         });
       });
@@ -1610,15 +1756,11 @@
           if (clearTarget === "level") {
             currentAlertFilter = "all";
             clearSavedAlertFilter();
-            updateAlertFilterUrl(currentAlertFilter);
-            updateAlertTypeFilterUrl(currentAlertTypeFilter);
           }
 
           if (clearTarget === "type") {
             currentAlertTypeFilter = "all";
             clearSavedAlertTypeFilter();
-            updateAlertFilterUrl(currentAlertFilter);
-            updateAlertTypeFilterUrl(currentAlertTypeFilter);
           }
 
           if (clearTarget === "all") {
@@ -1627,10 +1769,11 @@
 
             clearSavedAlertFilter();
             clearSavedAlertTypeFilter();
-
-            updateAlertFilterUrl(currentAlertFilter);
-            updateAlertTypeFilterUrl(currentAlertTypeFilter);
           }
+
+          updateAlertFilterUrl(currentAlertFilter);
+          updateAlertTypeFilterUrl(currentAlertTypeFilter);
+          updateAlertSortUrl(currentAlertSort);
 
           const message = document.getElementById("alert-share-message");
           if (message) message.textContent = "フィルター条件を解除しました。";
@@ -1639,8 +1782,55 @@
           renderAlertTypeSummary(latestAlerts);
           renderAlertVisibleSummary(latestAlerts);
           renderActiveAlertFilterChips();
+          renderAlertSortControl();
           renderAlertList(latestAlerts);
         });
+      });
+    }
+
+    function renderAlertSortControl() {
+      const target = document.getElementById("alert-sort-control");
+      if (!target) return;
+
+      const options = [
+        { value: "default", label: "標準順" },
+        { value: "level", label: "危険を上に表示" },
+        { value: "type", label: "分類順" },
+        { value: "level_type", label: "危険優先＋分類順" }
+      ];
+
+      target.className = "alert-sort-control";
+      target.innerHTML = `
+        <label class="alert-sort-label" for="alert-sort-select">並び替え</label>
+        <select id="alert-sort-select" class="alert-sort-select">
+          ${options.map((option) => `
+            <option value="${option.value}" ${currentAlertSort === option.value ? "selected" : ""}>
+              ${escapeHtml(option.label)}
+            </option>
+          `).join("")}
+        </select>
+        <span class="alert-sort-note">現在：${escapeHtml(getAlertSortLabel(currentAlertSort))}</span>
+      `;
+
+      const select = document.getElementById("alert-sort-select");
+      if (!select) return;
+
+      select.addEventListener("change", () => {
+        const nextSort = select.value || "default";
+        if (!isValidAlertSort(nextSort)) return;
+
+        currentAlertSort = nextSort;
+
+        saveAlertSort(currentAlertSort);
+        updateAlertFilterUrl(currentAlertFilter);
+        updateAlertTypeFilterUrl(currentAlertTypeFilter);
+        updateAlertSortUrl(currentAlertSort);
+
+        const message = document.getElementById("alert-share-message");
+        if (message) message.textContent = "";
+
+        renderAlertSortControl();
+        renderAlertList(latestAlerts);
       });
     }
 
@@ -1706,6 +1896,7 @@
           saveAlertTypeFilter(currentAlertTypeFilter);
           updateAlertFilterUrl(currentAlertFilter);
           updateAlertTypeFilterUrl(currentAlertTypeFilter);
+          updateAlertSortUrl(currentAlertSort);
 
           const message = document.getElementById("alert-share-message");
           if (message) message.textContent = "";
@@ -1713,6 +1904,7 @@
           renderAlertTypeSummary(latestAlerts);
           renderAlertVisibleSummary(latestAlerts);
           renderActiveAlertFilterChips();
+          renderAlertSortControl();
           renderAlertList(latestAlerts);
         });
       });
@@ -1722,7 +1914,7 @@
       const target = document.getElementById("alert-area");
       if (!target) return;
 
-      const visibleAlerts = getVisibleAlerts(alerts);
+      const visibleAlerts = getSortedAlerts(getVisibleAlerts(alerts));
 
       if (alerts.length === 0) {
         target.className = "empty";
@@ -1765,6 +1957,7 @@
       renderAlertTypeSummary(alerts);
       renderAlertVisibleSummary(alerts);
       renderActiveAlertFilterChips();
+      renderAlertSortControl();
       renderAlertList(alerts);
     }
 
@@ -1955,6 +2148,7 @@
 
         updateAlertFilterUrl(currentAlertFilter);
         updateAlertTypeFilterUrl(currentAlertTypeFilter);
+        updateAlertSortUrl(currentAlertSort);
 
         renderDashboardSummary(data);
         renderAlerts(data, latestSettings);
@@ -1970,6 +2164,7 @@
         "alert-count-summary",
         "alert-visible-summary",
         "alert-active-filter-chips",
+        "alert-sort-control",
         "alert-type-summary",
         "alert-area",
         "race-area"
