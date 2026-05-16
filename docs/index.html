@@ -767,7 +767,7 @@
           <h1>競艇AI予想ダッシュボード</h1>
           <p>自動生成された買い目・投資額・更新状況を確認します。</p>
         </div>
-        <div class="hero-badge">STEP 53</div>
+        <div class="hero-badge">STEP 54</div>
       </div>
 
       <div class="nav-row">
@@ -867,7 +867,7 @@
     };
 
     let currentAlertFilter = getInitialAlertFilter();
-    let currentAlertTypeFilter = "all";
+    let currentAlertTypeFilter = getInitialAlertTypeFilter();
     let latestAlerts = [];
     let latestData = null;
     let latestSettings = DEFAULT_ALERT_SETTINGS;
@@ -965,15 +965,42 @@
       } catch (e) {
         console.warn("alert_filter の初期化に失敗しました。", e);
       }
+
+      return "all";
+    }
+
+    function getInitialAlertTypeFilter() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const urlType = params.get("alert_type");
+        if (isValidAlertTypeFilter(urlType)) return urlType;
+
+        const savedType = localStorage.getItem("alert_type");
+        if (isValidAlertTypeFilter(savedType)) return savedType;
+      } catch (e) {
+        console.warn("alert_type の初期化に失敗しました。", e);
+      }
+
       return "all";
     }
 
     function saveAlertFilter(filter) {
       if (!isValidAlertFilter(filter)) return;
+
       try {
         localStorage.setItem("alert_filter", filter);
       } catch (e) {
         console.warn("alert_filter の保存に失敗しました。", e);
+      }
+    }
+
+    function saveAlertTypeFilter(type) {
+      if (!isValidAlertTypeFilter(type)) return;
+
+      try {
+        localStorage.setItem("alert_type", type);
+      } catch (e) {
+        console.warn("alert_type の保存に失敗しました。", e);
       }
     }
 
@@ -985,8 +1012,17 @@
       }
     }
 
+    function clearSavedAlertTypeFilter() {
+      try {
+        localStorage.removeItem("alert_type");
+      } catch (e) {
+        console.warn("alert_type の削除に失敗しました。", e);
+      }
+    }
+
     function updateAlertFilterUrl(filter) {
       if (!isValidAlertFilter(filter)) return;
+
       try {
         const url = new URL(window.location.href);
         url.searchParams.set("alert_filter", filter);
@@ -996,9 +1032,22 @@
       }
     }
 
+    function updateAlertTypeFilterUrl(type) {
+      if (!isValidAlertTypeFilter(type)) return;
+
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set("alert_type", type);
+        window.history.replaceState({}, "", url.toString());
+      } catch (e) {
+        console.warn("alert_type のURL更新に失敗しました。", e);
+      }
+    }
+
     function getCurrentAlertFilterUrl() {
       const url = new URL(window.location.href);
       url.searchParams.set("alert_filter", currentAlertFilter);
+      url.searchParams.set("alert_type", currentAlertTypeFilter);
       return url.toString();
     }
 
@@ -1046,7 +1095,10 @@
       currentAlertTypeFilter = "all";
 
       clearSavedAlertFilter();
+      clearSavedAlertTypeFilter();
+
       updateAlertFilterUrl(currentAlertFilter);
+      updateAlertTypeFilterUrl(currentAlertTypeFilter);
 
       const message = document.getElementById("alert-share-message");
       if (message) message.textContent = "フィルターをリセットしました。";
@@ -1376,8 +1428,10 @@
           if (!isValidAlertFilter(nextFilter)) return;
 
           currentAlertFilter = nextFilter;
+
           saveAlertFilter(currentAlertFilter);
           updateAlertFilterUrl(currentAlertFilter);
+          updateAlertTypeFilterUrl(currentAlertTypeFilter);
 
           const message = document.getElementById("alert-share-message");
           if (message) message.textContent = "";
@@ -1478,6 +1532,10 @@
           if (!isValidAlertTypeFilter(nextType)) return;
 
           currentAlertTypeFilter = nextType;
+
+          saveAlertTypeFilter(currentAlertTypeFilter);
+          updateAlertFilterUrl(currentAlertFilter);
+          updateAlertTypeFilterUrl(currentAlertTypeFilter);
 
           const message = document.getElementById("alert-share-message");
           if (message) message.textContent = "";
@@ -1724,6 +1782,8 @@
         latestSettings = { ...DEFAULT_ALERT_SETTINGS, ...(settings || {}) };
 
         updateAlertFilterUrl(currentAlertFilter);
+        updateAlertTypeFilterUrl(currentAlertTypeFilter);
+
         renderDashboardSummary(data);
         renderAlerts(data, latestSettings);
         renderRaces(data);
