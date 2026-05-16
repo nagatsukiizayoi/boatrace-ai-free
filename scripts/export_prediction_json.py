@@ -2,6 +2,7 @@
 """
 Export docs/prediction.json from SQLite database.
 
+<<<<<<< HEAD
 STEP 64
 
 This script:
@@ -28,6 +29,9 @@ Use another output path:
 
 Use a specific prediction run:
     python scripts/export_prediction_json.py --run-key sample-run-20260516-001
+=======
+STEP 64 compact version.
+>>>>>>> 9a1194f (Add prediction JSON export script)
 """
 
 from __future__ import annotations
@@ -41,12 +45,16 @@ from typing import Any
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9a1194f (Add prediction JSON export script)
 DEFAULT_DB_PATH = PROJECT_ROOT / "db" / "boatrace.sqlite3"
 DEFAULT_OUTPUT_PATH = PROJECT_ROOT / "docs" / "prediction.json"
 
 
 def parse_args() -> argparse.Namespace:
+<<<<<<< HEAD
     parser = argparse.ArgumentParser(
         description="Export dashboard prediction JSON from SQLite database."
     )
@@ -79,16 +87,29 @@ def parse_args() -> argparse.Namespace:
         help="Pretty-print JSON output. Enabled by default.",
     )
 
+=======
+    parser = argparse.ArgumentParser(description="Export prediction.json from SQLite DB.")
+    parser.add_argument("--db", type=Path, default=DEFAULT_DB_PATH)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT_PATH)
+    parser.add_argument("--run-key", type=str, default=None)
+>>>>>>> 9a1194f (Add prediction JSON export script)
     return parser.parse_args()
 
 
 def connect(db_path: Path) -> sqlite3.Connection:
+<<<<<<< HEAD
     db_path = db_path.resolve()
 
     if not db_path.exists():
         raise FileNotFoundError(
             f"Database file not found: {db_path}\n"
             "Run this first:\n"
+=======
+    if not db_path.exists():
+        raise FileNotFoundError(
+            f"Database file not found: {db_path}\n"
+            "Run first:\n"
+>>>>>>> 9a1194f (Add prediction JSON export script)
             "  python scripts/init_db.py --reset\n"
             "  python scripts/seed_sample_data.py"
         )
@@ -99,6 +120,7 @@ def connect(db_path: Path) -> sqlite3.Connection:
     return conn
 
 
+<<<<<<< HEAD
 def path_for_display(path: Path) -> str:
     path = path.resolve()
     try:
@@ -130,12 +152,18 @@ def format_time(value: str | None) -> str:
     return dt.strftime("%H:%M")
 
 
+=======
+>>>>>>> 9a1194f (Add prediction JSON export script)
 def as_int(value: Any, default: int = 0) -> int:
     if value is None:
         return default
     try:
         return int(round(float(value)))
+<<<<<<< HEAD
     except (TypeError, ValueError):
+=======
+    except Exception:
+>>>>>>> 9a1194f (Add prediction JSON export script)
         return default
 
 
@@ -144,6 +172,7 @@ def as_float(value: Any, default: float | None = None) -> float | None:
         return default
     try:
         return float(value)
+<<<<<<< HEAD
     except (TypeError, ValueError):
         return default
 
@@ -164,6 +193,33 @@ def get_prediction_run(
               model_version,
               status,
               memo
+=======
+    except Exception:
+        return default
+
+
+def format_time(value: str | None) -> str:
+    if not value:
+        return ""
+    text = str(value)
+    if "T" in text:
+        return text.split("T", 1)[1][:5]
+    return text[:5]
+
+
+def display_path(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(PROJECT_ROOT))
+    except Exception:
+        return str(path)
+
+
+def get_latest_run(conn: sqlite3.Connection, run_key: str | None) -> sqlite3.Row:
+    if run_key:
+        row = conn.execute(
+            """
+            SELECT *
+>>>>>>> 9a1194f (Add prediction JSON export script)
             FROM prediction_runs
             WHERE run_key = ?
             """,
@@ -172,6 +228,7 @@ def get_prediction_run(
     else:
         row = conn.execute(
             """
+<<<<<<< HEAD
             SELECT
               id,
               run_key,
@@ -181,6 +238,9 @@ def get_prediction_run(
               model_version,
               status,
               memo
+=======
+            SELECT *
+>>>>>>> 9a1194f (Add prediction JSON export script)
             FROM prediction_runs
             WHERE status = 'completed'
             ORDER BY executed_at DESC, id DESC
@@ -189,6 +249,7 @@ def get_prediction_run(
         ).fetchone()
 
     if row is None:
+<<<<<<< HEAD
         if run_key:
             raise RuntimeError(f"Prediction run not found: {run_key}")
         raise RuntimeError("No completed prediction run found.")
@@ -209,6 +270,17 @@ def get_prediction_summary(
           executed_at,
           model_name,
           model_version,
+=======
+        raise RuntimeError("Prediction run not found.")
+
+    return row
+
+
+def get_summary(conn: sqlite3.Connection, prediction_run_id: int) -> dict[str, Any]:
+    row = conn.execute(
+        """
+        SELECT
+>>>>>>> 9a1194f (Add prediction JSON export script)
           race_count,
           ticket_count,
           total_amount,
@@ -244,6 +316,7 @@ def get_prediction_summary(
     }
 
 
+<<<<<<< HEAD
 def get_prediction_rows(
     conn: sqlite3.Connection,
     prediction_run_id: int,
@@ -298,6 +371,74 @@ def get_ticket_rows(
         """
         SELECT
           id,
+=======
+def get_latest_odds(conn: sqlite3.Connection, race_id: int, bet_type: str, combination: str) -> float | None:
+    row = conn.execute(
+        """
+        SELECT odds
+        FROM odds_snapshots
+        WHERE race_id = ?
+          AND bet_type = ?
+          AND combination = ?
+        ORDER BY captured_at DESC, id DESC
+        LIMIT 1
+        """,
+        (race_id, bet_type, combination),
+    ).fetchone()
+
+    if row is None:
+        return None
+
+    return as_float(row["odds"])
+
+
+def get_entries(conn: sqlite3.Connection, race_id: int) -> list[dict[str, Any]]:
+    rows = conn.execute(
+        """
+        SELECT
+          e.frame_no,
+          e.boat_no,
+          e.exhibition_time,
+          e.exhibition_st,
+          e.entry_course,
+          e.motor_no,
+          e.boat_number,
+          r.racer_registration_no,
+          r.racer_name,
+          r.branch,
+          r.class_name
+        FROM race_entries e
+        JOIN racers r
+          ON r.id = e.racer_id
+        WHERE e.race_id = ?
+        ORDER BY e.frame_no
+        """,
+        (race_id,),
+    ).fetchall()
+
+    return [
+        {
+            "frame_no": as_int(row["frame_no"]),
+            "boat_no": as_int(row["boat_no"]),
+            "racer_registration_no": row["racer_registration_no"],
+            "racer_name": row["racer_name"],
+            "branch": row["branch"],
+            "class_name": row["class_name"],
+            "motor_no": row["motor_no"],
+            "boat_number": row["boat_number"],
+            "exhibition_time": as_float(row["exhibition_time"]),
+            "exhibition_st": as_float(row["exhibition_st"]),
+            "entry_course": as_int(row["entry_course"]) if row["entry_course"] is not None else None,
+        }
+        for row in rows
+    ]
+
+
+def get_tickets(conn: sqlite3.Connection, prediction_id: int, race_id: int) -> list[dict[str, Any]]:
+    rows = conn.execute(
+        """
+        SELECT
+>>>>>>> 9a1194f (Add prediction JSON export script)
           bet_type,
           combination,
           amount,
@@ -313,12 +454,18 @@ def get_ticket_rows(
         FROM prediction_tickets
         WHERE prediction_id = ?
         ORDER BY
+<<<<<<< HEAD
           CASE WHEN rank_no IS NULL THEN 999 ELSE rank_no END ASC,
           id ASC
+=======
+          CASE WHEN rank_no IS NULL THEN 999 ELSE rank_no END,
+          id
+>>>>>>> 9a1194f (Add prediction JSON export script)
         """,
         (prediction_id,),
     ).fetchall()
 
+<<<<<<< HEAD
 
 def get_race_entries(
     conn: sqlite3.Connection,
@@ -460,6 +607,31 @@ def build_recommendations(
                 "odds": display_odds,
                 "final_odds": display_odds,
                 "expected_odds": expected_odds,
+=======
+    tickets = []
+
+    for row in rows:
+        latest_odds = get_latest_odds(
+            conn,
+            race_id,
+            row["bet_type"],
+            row["combination"],
+        )
+
+        odds = latest_odds
+        if odds is None:
+            odds = as_float(row["expected_odds"])
+
+        tickets.append(
+            {
+                "ticket": row["combination"],
+                "combination": row["combination"],
+                "bet_type": row["bet_type"],
+                "amount": as_int(row["amount"]),
+                "odds": odds,
+                "final_odds": odds,
+                "expected_odds": as_float(row["expected_odds"]),
+>>>>>>> 9a1194f (Add prediction JSON export script)
                 "estimated_probability": as_float(row["estimated_probability"]),
                 "expected_value": as_float(row["expected_value"]),
                 "rank": as_int(row["rank_no"]) if row["rank_no"] is not None else None,
@@ -472,6 +644,7 @@ def build_recommendations(
             }
         )
 
+<<<<<<< HEAD
     return recommendations
 
 
@@ -494,6 +667,65 @@ def build_races(
             total_amount = sum(as_int(item.get("amount")) for item in recommendations)
 
         race_title = f"{row['venue_name']} {row['race_no']}R {row['race_name'] or ''}".strip()
+=======
+    return tickets
+
+
+def get_races(conn: sqlite3.Connection, prediction_run_id: int) -> list[dict[str, Any]]:
+    rows = conn.execute(
+        """
+        SELECT
+          p.id AS prediction_id,
+          p.race_id,
+          p.favorite_boat_no,
+          p.rival_boat_no,
+          p.darkhorse_boat_no,
+          p.confidence,
+          p.expected_value,
+          p.recommended_total_amount,
+          p.prediction_summary,
+          ra.race_date,
+          ra.race_no,
+          ra.race_name,
+          ra.grade,
+          ra.distance_m,
+          ra.deadline_at,
+          ra.start_at,
+          ra.weather,
+          ra.wind_direction,
+          ra.wind_speed_m,
+          ra.wave_height_cm,
+          ra.temperature_c,
+          ra.water_temperature_c,
+          ra.status,
+          ra.source_url,
+          v.venue_code,
+          v.venue_name
+        FROM predictions p
+        JOIN races ra
+          ON ra.id = p.race_id
+        JOIN venues v
+          ON v.id = ra.venue_id
+        WHERE p.prediction_run_id = ?
+        ORDER BY ra.race_date, v.venue_code, ra.race_no
+        """,
+        (prediction_run_id,),
+    ).fetchall()
+
+    races = []
+
+    for row in rows:
+        prediction_id = as_int(row["prediction_id"])
+        race_id = as_int(row["race_id"])
+        recommendations = get_tickets(conn, prediction_id, race_id)
+        entries = get_entries(conn, race_id)
+
+        total_amount = as_int(row["recommended_total_amount"])
+        if total_amount == 0:
+            total_amount = sum(as_int(ticket.get("amount")) for ticket in recommendations)
+
+        title = f"{row['venue_name']} {row['race_no']}R {row['race_name'] or ''}".strip()
+>>>>>>> 9a1194f (Add prediction JSON export script)
 
         races.append(
             {
@@ -504,9 +736,15 @@ def build_races(
                 "venue": row["venue_name"],
                 "place": row["venue_name"],
                 "race_no": as_int(row["race_no"]),
+<<<<<<< HEAD
                 "raceName": row["race_name"],
                 "race_name": row["race_name"],
                 "title": race_title,
+=======
+                "race_name": row["race_name"],
+                "raceName": row["race_name"],
+                "title": title,
+>>>>>>> 9a1194f (Add prediction JSON export script)
                 "grade": row["grade"],
                 "distance_m": as_int(row["distance_m"], 1800),
                 "deadline": format_time(row["deadline_at"]),
@@ -519,7 +757,11 @@ def build_races(
                 "wave_height_cm": as_float(row["wave_height_cm"]),
                 "temperature_c": as_float(row["temperature_c"]),
                 "water_temperature_c": as_float(row["water_temperature_c"]),
+<<<<<<< HEAD
                 "status": row["race_status"],
+=======
+                "status": row["status"],
+>>>>>>> 9a1194f (Add prediction JSON export script)
                 "url": row["source_url"] or "",
                 "detail_url": row["source_url"] or "",
                 "favorite_boat_no": as_int(row["favorite_boat_no"]) if row["favorite_boat_no"] is not None else None,
@@ -541,15 +783,22 @@ def build_races(
     return races
 
 
+<<<<<<< HEAD
 def build_alerts(
     conn: sqlite3.Connection,
     prediction_run_id: int,
 ) -> list[dict[str, Any]]:
+=======
+def get_alerts(conn: sqlite3.Connection, prediction_run_id: int) -> list[dict[str, Any]]:
+>>>>>>> 9a1194f (Add prediction JSON export script)
     rows = conn.execute(
         """
         SELECT
           id,
+<<<<<<< HEAD
           prediction_run_id,
+=======
+>>>>>>> 9a1194f (Add prediction JSON export script)
           race_id,
           level,
           alert_type,
@@ -559,6 +808,7 @@ def build_alerts(
           resolved_at
         FROM alert_events
         WHERE prediction_run_id = ?
+<<<<<<< HEAD
         ORDER BY
           CASE level
             WHEN 'danger' THEN 1
@@ -568,10 +818,14 @@ def build_alerts(
           END ASC,
           occurred_at ASC,
           id ASC
+=======
+        ORDER BY id
+>>>>>>> 9a1194f (Add prediction JSON export script)
         """,
         (prediction_run_id,),
     ).fetchall()
 
+<<<<<<< HEAD
     alerts: list[dict[str, Any]] = []
 
     for row in rows:
@@ -581,11 +835,22 @@ def build_alerts(
             try:
                 details = json.loads(row["details_json"])
             except json.JSONDecodeError:
+=======
+    alerts = []
+
+    for row in rows:
+        details = None
+        if row["details_json"]:
+            try:
+                details = json.loads(row["details_json"])
+            except Exception:
+>>>>>>> 9a1194f (Add prediction JSON export script)
                 details = {"raw": row["details_json"]}
 
         alerts.append(
             {
                 "id": as_int(row["id"]),
+<<<<<<< HEAD
                 "level": row["level"],
                 "type": row["alert_type"],
                 "message": row["message"],
@@ -593,12 +858,22 @@ def build_alerts(
                 "occurred_at": row["occurred_at"],
                 "resolved_at": row["resolved_at"],
                 "details": details,
+=======
+                "race_id": row["race_id"],
+                "level": row["level"],
+                "type": row["alert_type"],
+                "message": row["message"],
+                "details": details,
+                "occurred_at": row["occurred_at"],
+                "resolved_at": row["resolved_at"],
+>>>>>>> 9a1194f (Add prediction JSON export script)
             }
         )
 
     return alerts
 
 
+<<<<<<< HEAD
 def build_export_payload(
     conn: sqlite3.Connection,
     run_key: str | None,
@@ -628,10 +903,35 @@ def build_export_payload(
         "race_count": race_count,
         "ticket_count": ticket_count,
         "total_amount": total_amount,
+=======
+def build_payload(conn: sqlite3.Connection, run_key: str | None) -> tuple[dict[str, Any], int]:
+    run = get_latest_run(conn, run_key)
+    prediction_run_id = as_int(run["id"])
+
+    summary = get_summary(conn, prediction_run_id)
+    races = get_races(conn, prediction_run_id)
+    alerts = get_alerts(conn, prediction_run_id)
+
+    payload = {
+        "updated_at": run["executed_at"],
+        "generated_at": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "run_key": run["run_key"],
+        "prediction_run_id": prediction_run_id,
+        "target_date": run["target_date"],
+        "model_name": run["model_name"],
+        "model_version": run["model_version"],
+        "status": run["status"],
+        "memo": run["memo"],
+        "summary": summary,
+        "race_count": summary["race_count"],
+        "ticket_count": summary["ticket_count"],
+        "total_amount": summary["total_amount"],
+>>>>>>> 9a1194f (Add prediction JSON export script)
         "races": races,
         "alerts": alerts,
     }
 
+<<<<<<< HEAD
     return payload, prediction_run
 
 
@@ -639,6 +939,29 @@ def write_json(output_path: Path, payload: dict[str, Any]) -> None:
     output_path = output_path.resolve()
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
+=======
+    return payload, prediction_run_id
+
+
+def validate_payload(payload: dict[str, Any]) -> None:
+    for key in ["updated_at", "run_key", "summary", "races", "alerts"]:
+        if key not in payload:
+            raise RuntimeError(f"Missing key: {key}")
+
+    if not isinstance(payload["races"], list):
+        raise RuntimeError("races must be list")
+
+    if not isinstance(payload["alerts"], list):
+        raise RuntimeError("alerts must be list")
+
+    for race in payload["races"]:
+        if "recommendations" not in race:
+            raise RuntimeError("race recommendations missing")
+
+
+def write_json(output_path: Path, payload: dict[str, Any]) -> None:
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+>>>>>>> 9a1194f (Add prediction JSON export script)
     output_path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
@@ -666,7 +989,11 @@ def record_export_log(
         """,
         (
             prediction_run_id,
+<<<<<<< HEAD
             path_for_display(output_path),
+=======
+            display_path(output_path),
+>>>>>>> 9a1194f (Add prediction JSON export script)
             status,
             message,
         ),
@@ -674,6 +1001,7 @@ def record_export_log(
     conn.commit()
 
 
+<<<<<<< HEAD
 def validate_payload(payload: dict[str, Any]) -> None:
     required_top_keys = ["updated_at", "races", "alerts", "summary", "run_key"]
 
@@ -711,6 +1039,25 @@ def print_export_summary(payload: dict[str, Any], output_path: Path) -> None:
     print(f"  return_rate_percent: {summary.get('return_rate_percent')}")
     print(f"  hit_rate_percent: {summary.get('hit_rate_percent')}")
     print(f"  alerts: {len(payload.get('alerts', []))}")
+=======
+def print_summary(payload: dict[str, Any], output_path: Path) -> None:
+    summary = payload["summary"]
+
+    print("\nExport summary:")
+    print(f"  output: {display_path(output_path)}")
+    print(f"  run_key: {payload['run_key']}")
+    print(f"  target_date: {payload['target_date']}")
+    print(f"  model_name: {payload['model_name']}")
+    print(f"  model_version: {payload['model_version']}")
+    print(f"  race_count: {summary['race_count']}")
+    print(f"  ticket_count: {summary['ticket_count']}")
+    print(f"  total_amount: {summary['total_amount']}")
+    print(f"  total_payout: {summary['total_payout']}")
+    print(f"  total_profit: {summary['total_profit']}")
+    print(f"  return_rate_percent: {summary['return_rate_percent']}")
+    print(f"  hit_rate_percent: {summary['hit_rate_percent']}")
+    print(f"  alerts: {len(payload['alerts'])}")
+>>>>>>> 9a1194f (Add prediction JSON export script)
 
 
 def main() -> None:
@@ -719,6 +1066,7 @@ def main() -> None:
     db_path = args.db.resolve()
     output_path = args.output.resolve()
 
+<<<<<<< HEAD
     print(f"Database file: {path_for_display(db_path)}")
     print(f"Output file: {path_for_display(output_path)}")
 
@@ -730,10 +1078,21 @@ def main() -> None:
         payload, prediction_run = build_export_payload(conn, args.run_key)
         prediction_run_id = as_int(prediction_run["id"])
 
+=======
+    print(f"Database file: {display_path(db_path)}")
+    print(f"Output file: {display_path(output_path)}")
+
+    conn = connect(db_path)
+    prediction_run_id = None
+
+    try:
+        payload, prediction_run_id = build_payload(conn, args.run_key)
+>>>>>>> 9a1194f (Add prediction JSON export script)
         validate_payload(payload)
         write_json(output_path, payload)
 
         record_export_log(
+<<<<<<< HEAD
             conn=conn,
             prediction_run_id=prediction_run_id,
             output_path=output_path,
@@ -742,11 +1101,22 @@ def main() -> None:
         )
 
         print_export_summary(payload, output_path)
+=======
+            conn,
+            prediction_run_id,
+            output_path,
+            "completed",
+            "prediction.json exported successfully",
+        )
+
+        print_summary(payload, output_path)
+>>>>>>> 9a1194f (Add prediction JSON export script)
 
     except Exception as e:
         if prediction_run_id is not None:
             try:
                 record_export_log(
+<<<<<<< HEAD
                     conn=conn,
                     prediction_run_id=prediction_run_id,
                     output_path=output_path,
@@ -756,6 +1126,16 @@ def main() -> None:
             except Exception:
                 pass
 
+=======
+                    conn,
+                    prediction_run_id,
+                    output_path,
+                    "failed",
+                    str(e),
+                )
+            except Exception:
+                pass
+>>>>>>> 9a1194f (Add prediction JSON export script)
         raise
 
     finally:
@@ -766,4 +1146,7 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9a1194f (Add prediction JSON export script)
