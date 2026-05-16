@@ -12,17 +12,12 @@
       --muted: #64748b;
       --border: #e2e8f0;
       --primary: #2563eb;
-      --primary-dark: #1d4ed8;
       --danger: #ef4444;
-      --warning: #f59e0b;
-      --success: #16a34a;
       --shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
       --radius: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -35,9 +30,7 @@
       line-height: 1.6;
     }
 
-    a {
-      color: inherit;
-    }
+    a { color: inherit; }
 
     .page {
       width: min(1120px, calc(100% - 28px));
@@ -148,9 +141,7 @@
       backdrop-filter: blur(10px);
     }
 
-    .status-card {
-      padding: 16px;
-    }
+    .status-card { padding: 16px; }
 
     .status-label {
       color: var(--muted);
@@ -272,18 +263,14 @@
       border-color: #fde68a;
     }
 
-    .alert-count-card.warning .alert-count-value {
-      color: #92400e;
-    }
+    .alert-count-card.warning .alert-count-value { color: #92400e; }
 
     .alert-count-card.danger {
       background: #fee2e2;
       border-color: #fecaca;
     }
 
-    .alert-count-card.danger .alert-count-value {
-      color: #b91c1c;
-    }
+    .alert-count-card.danger .alert-count-value { color: #b91c1c; }
 
     .alert-filter-bar {
       display: flex;
@@ -352,9 +339,7 @@
       opacity: 0.95;
     }
 
-    .alert-share-button:active {
-      transform: translateY(0);
-    }
+    .alert-share-button:active { transform: translateY(0); }
 
     .alert-reset-button {
       border: 1px solid #cbd5e1;
@@ -391,9 +376,7 @@
       font-weight: 800;
     }
 
-    .alert-visible-summary strong {
-      font-weight: 950;
-    }
+    .alert-visible-summary strong { font-weight: 950; }
 
     .alert-visible-summary.summary-all {
       background: #eff6ff;
@@ -477,6 +460,18 @@
       border-color: #bfdbfe;
     }
 
+    .alert-active-chip.sort-chip {
+      background: #f5f3ff;
+      color: #6d28d9;
+      border-color: #ddd6fe;
+    }
+
+    .alert-active-chip.query-chip {
+      background: #ecfeff;
+      color: #0e7490;
+      border-color: #a5f3fc;
+    }
+
     .alert-active-chip.clear-all {
       background: #0f172a;
       color: #ffffff;
@@ -488,7 +483,8 @@
       opacity: 0.75;
     }
 
-    .alert-sort-control {
+    .alert-sort-control,
+    .alert-search-control {
       margin: 0 0 12px;
       border-radius: 14px;
       padding: 10px 12px;
@@ -500,7 +496,8 @@
       gap: 8px;
     }
 
-    .alert-sort-label {
+    .alert-sort-label,
+    .alert-search-label {
       font-size: 12px;
       font-weight: 950;
       color: #475569;
@@ -521,6 +518,43 @@
       font-size: 12px;
       font-weight: 800;
       color: #64748b;
+    }
+
+    .alert-search-input {
+      min-width: 220px;
+      flex: 1;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      background: #f8fafc;
+      color: #0f172a;
+      padding: 8px 13px;
+      font-size: 13px;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .alert-search-input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+      background: #ffffff;
+    }
+
+    .alert-search-clear {
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #475569;
+      border-radius: 999px;
+      padding: 7px 11px;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .alert-search-clear:hover {
+      transform: translateY(-1px);
+      background: #f8fafc;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
     }
 
     .alert-type-summary {
@@ -557,9 +591,7 @@
       color: #334155;
     }
 
-    .alert-type-summary-count {
-      font-weight: 950;
-    }
+    .alert-type-summary-count { font-weight: 950; }
 
     .alert-type-filter-chip {
       cursor: pointer;
@@ -577,9 +609,7 @@
     }
 
     .alert-type-filter-chip.active span,
-    .alert-type-filter-chip.active strong {
-      font-weight: 950;
-    }
+    .alert-type-filter-chip.active strong { font-weight: 950; }
 
     .alert-type-filter-chip[data-alert-type-filter="all"] {
       background: #0f172a;
@@ -713,9 +743,7 @@
       gap: 14px;
     }
 
-    .race-card {
-      padding: 16px;
-    }
+    .race-card { padding: 16px; }
 
     .race-card-header {
       display: flex;
@@ -816,13 +844,8 @@
     }
 
     @media (max-width: 860px) {
-      .status-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .race-grid {
-        grid-template-columns: 1fr;
-      }
+      .status-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .race-grid { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 560px) {
@@ -836,23 +859,16 @@
         padding: 20px;
       }
 
-      .section-card {
-        padding: 16px;
-      }
-
-      .status-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .alert-count-summary {
-        grid-template-columns: 1fr;
-      }
+      .section-card { padding: 16px; }
+      .status-grid { grid-template-columns: 1fr; }
+      .alert-count-summary { grid-template-columns: 1fr; }
 
       .alert-share-row,
       .alert-filter-bar,
       .alert-type-summary-grid,
       .alert-active-filter-chips,
-      .alert-sort-control {
+      .alert-sort-control,
+      .alert-search-control {
         gap: 7px;
       }
 
@@ -861,8 +877,14 @@
       .alert-reset-button,
       .alert-type-summary-chip,
       .alert-active-chip,
-      .alert-sort-select {
+      .alert-sort-select,
+      .alert-search-input,
+      .alert-search-clear {
         font-size: 12px;
+      }
+
+      .alert-search-input {
+        min-width: 100%;
       }
 
       .ticket {
@@ -881,7 +903,7 @@
           <h1>競艇AI予想ダッシュボード</h1>
           <p>自動生成された買い目・投資額・更新状況を確認します。</p>
         </div>
-        <div class="hero-badge">STEP 56</div>
+        <div class="hero-badge">STEP 58</div>
       </div>
 
       <div class="nav-row">
@@ -949,6 +971,7 @@
       <div id="alert-visible-summary" class="alert-visible-summary loading">表示条件を確認中です...</div>
       <div id="alert-active-filter-chips" class="alert-active-filter-chips loading">適用中条件を確認中です...</div>
       <div id="alert-sort-control" class="alert-sort-control loading">並び替え条件を確認中です...</div>
+      <div id="alert-search-control" class="alert-search-control loading">検索条件を確認中です...</div>
       <div id="alert-type-summary" class="alert-type-summary loading">分類別件数を確認中です...</div>
       <div id="alert-area" class="loading">注意アラートを読み込み中です...</div>
     </section>
@@ -964,9 +987,7 @@
       <div id="race-area" class="loading">予想データを読み込み中です...</div>
     </section>
 
-    <div class="footer">
-      boatrace-ai-free dashboard
-    </div>
+    <div class="footer">boatrace-ai-free dashboard</div>
   </main>
 
   <script>
@@ -985,6 +1006,7 @@
     let currentAlertFilter = getInitialAlertFilter();
     let currentAlertTypeFilter = getInitialAlertTypeFilter();
     let currentAlertSort = getInitialAlertSort();
+    let currentAlertQuery = getInitialAlertQuery();
     let latestAlerts = [];
     let latestData = null;
     let latestSettings = DEFAULT_ALERT_SETTINGS;
@@ -999,8 +1021,7 @@
     }
 
     function formatNumber(value) {
-      const number = Number(value || 0);
-      return number.toLocaleString("ja-JP");
+      return Number(value || 0).toLocaleString("ja-JP");
     }
 
     function formatYen(value) {
@@ -1009,6 +1030,10 @@
 
     function asArray(value) {
       return Array.isArray(value) ? value : [];
+    }
+
+    function normalizeAlertQuery(query) {
+      return String(query || "").trim();
     }
 
     function normalizeLevel(level) {
@@ -1086,7 +1111,6 @@
       } catch (e) {
         console.warn("alert_filter の初期化に失敗しました。", e);
       }
-
       return "all";
     }
 
@@ -1101,7 +1125,6 @@
       } catch (e) {
         console.warn("alert_type の初期化に失敗しました。", e);
       }
-
       return "all";
     }
 
@@ -1116,13 +1139,25 @@
       } catch (e) {
         console.warn("alert_sort の初期化に失敗しました。", e);
       }
-
       return "default";
+    }
+
+    function getInitialAlertQuery() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const urlQuery = normalizeAlertQuery(params.get("alert_query"));
+        if (urlQuery) return urlQuery;
+
+        const savedQuery = normalizeAlertQuery(localStorage.getItem("alert_query"));
+        if (savedQuery) return savedQuery;
+      } catch (e) {
+        console.warn("alert_query の初期化に失敗しました。", e);
+      }
+      return "";
     }
 
     function saveAlertFilter(filter) {
       if (!isValidAlertFilter(filter)) return;
-
       try {
         localStorage.setItem("alert_filter", filter);
       } catch (e) {
@@ -1132,7 +1167,6 @@
 
     function saveAlertTypeFilter(type) {
       if (!isValidAlertTypeFilter(type)) return;
-
       try {
         localStorage.setItem("alert_type", type);
       } catch (e) {
@@ -1142,11 +1176,23 @@
 
     function saveAlertSort(sort) {
       if (!isValidAlertSort(sort)) return;
-
       try {
         localStorage.setItem("alert_sort", sort);
       } catch (e) {
         console.warn("alert_sort の保存に失敗しました。", e);
+      }
+    }
+
+    function saveAlertQuery(query) {
+      const normalized = normalizeAlertQuery(query);
+      try {
+        if (normalized) {
+          localStorage.setItem("alert_query", normalized);
+        } else {
+          localStorage.removeItem("alert_query");
+        }
+      } catch (e) {
+        console.warn("alert_query の保存に失敗しました。", e);
       }
     }
 
@@ -1174,9 +1220,16 @@
       }
     }
 
+    function clearSavedAlertQuery() {
+      try {
+        localStorage.removeItem("alert_query");
+      } catch (e) {
+        console.warn("alert_query の削除に失敗しました。", e);
+      }
+    }
+
     function updateAlertFilterUrl(filter) {
       if (!isValidAlertFilter(filter)) return;
-
       try {
         const url = new URL(window.location.href);
         url.searchParams.set("alert_filter", filter);
@@ -1188,7 +1241,6 @@
 
     function updateAlertTypeFilterUrl(type) {
       if (!isValidAlertTypeFilter(type)) return;
-
       try {
         const url = new URL(window.location.href);
         url.searchParams.set("alert_type", type);
@@ -1200,7 +1252,6 @@
 
     function updateAlertSortUrl(sort) {
       if (!isValidAlertSort(sort)) return;
-
       try {
         const url = new URL(window.location.href);
         url.searchParams.set("alert_sort", sort);
@@ -1210,11 +1261,23 @@
       }
     }
 
+    function updateAlertQueryUrl(query) {
+      try {
+        const url = new URL(window.location.href);
+        const normalized = normalizeAlertQuery(query);
+        url.searchParams.set("alert_query", normalized);
+        window.history.replaceState({}, "", url.toString());
+      } catch (e) {
+        console.warn("alert_query のURL更新に失敗しました。", e);
+      }
+    }
+
     function getCurrentAlertFilterUrl() {
       const url = new URL(window.location.href);
       url.searchParams.set("alert_filter", currentAlertFilter);
       url.searchParams.set("alert_type", currentAlertTypeFilter);
       url.searchParams.set("alert_sort", currentAlertSort);
+      url.searchParams.set("alert_query", currentAlertQuery);
       return url.toString();
     }
 
@@ -1260,22 +1323,26 @@
     function resetAlertFilter() {
       currentAlertFilter = "all";
       currentAlertTypeFilter = "all";
+      currentAlertQuery = "";
 
       clearSavedAlertFilter();
       clearSavedAlertTypeFilter();
+      clearSavedAlertQuery();
 
       updateAlertFilterUrl(currentAlertFilter);
       updateAlertTypeFilterUrl(currentAlertTypeFilter);
       updateAlertSortUrl(currentAlertSort);
+      updateAlertQueryUrl(currentAlertQuery);
 
       const message = document.getElementById("alert-share-message");
-      if (message) message.textContent = "フィルターをリセットしました。";
+      if (message) message.textContent = "フィルターと検索条件をリセットしました。";
 
       renderAlertFilters(latestAlerts);
       renderAlertTypeSummary(latestAlerts);
       renderAlertVisibleSummary(latestAlerts);
       renderActiveAlertFilterChips();
       renderAlertSortControl();
+      renderAlertSearchControl();
       renderAlertList(latestAlerts);
     }
 
@@ -1370,7 +1437,6 @@
 
     function hasNestedAnyField(race, directKeys, arrayKeys, nestedKeys) {
       if (hasAnyField(race, directKeys)) return true;
-
       return arrayKeys.some((arrayKey) => {
         return asArray(race?.[arrayKey]).some((item) => hasAnyField(item, nestedKeys));
       });
@@ -1522,6 +1588,24 @@
       return alerts;
     }
 
+    function alertMatchesQuery(alert, query) {
+      const normalizedQuery = normalizeAlertQuery(query).toLowerCase();
+      if (!normalizedQuery) return true;
+
+      const levelLabel = getAlertLevelLabel(alert.level);
+      const typeLabel = getAlertTypeLabel(alert.type || "other");
+
+      const haystack = [
+        alert.message,
+        alert.type,
+        typeLabel,
+        alert.level,
+        levelLabel
+      ].join(" ").toLowerCase();
+
+      return haystack.includes(normalizedQuery);
+    }
+
     function getVisibleAlerts(alerts) {
       let filtered = getFilteredAlerts(alerts, currentAlertFilter);
 
@@ -1530,6 +1614,10 @@
           const type = alert.type || "other";
           return type === currentAlertTypeFilter;
         });
+      }
+
+      if (normalizeAlertQuery(currentAlertQuery)) {
+        filtered = filtered.filter((alert) => alertMatchesQuery(alert, currentAlertQuery));
       }
 
       return filtered;
@@ -1553,7 +1641,6 @@
         type: "分類順",
         level_type: "危険優先＋分類順"
       };
-
       return labels[sort] || "標準順";
     }
 
@@ -1656,6 +1743,7 @@
           updateAlertFilterUrl(currentAlertFilter);
           updateAlertTypeFilterUrl(currentAlertTypeFilter);
           updateAlertSortUrl(currentAlertSort);
+          updateAlertQueryUrl(currentAlertQuery);
 
           const message = document.getElementById("alert-share-message");
           if (message) message.textContent = "";
@@ -1665,6 +1753,7 @@
           renderAlertVisibleSummary(latestAlerts);
           renderActiveAlertFilterChips();
           renderAlertSortControl();
+          renderAlertSearchControl();
           renderAlertList(latestAlerts);
         });
       });
@@ -1706,6 +1795,8 @@
 
       const hasLevelFilter = currentAlertFilter !== "all";
       const hasTypeFilter = currentAlertTypeFilter !== "all";
+      const hasSortFilter = currentAlertSort !== "default";
+      const hasQueryFilter = normalizeAlertQuery(currentAlertQuery) !== "";
       const chips = [];
 
       if (hasLevelFilter) {
@@ -1731,7 +1822,27 @@
         `);
       }
 
-      if (hasLevelFilter || hasTypeFilter) {
+      if (hasSortFilter) {
+        const sortLabel = getAlertSortLabel(currentAlertSort);
+
+        chips.push(`
+          <button class="alert-active-chip sort-chip" data-clear-active-filter="sort" type="button">
+            並び替え：${escapeHtml(sortLabel)}
+            <span class="alert-active-chip-remove">×</span>
+          </button>
+        `);
+      }
+
+      if (hasQueryFilter) {
+        chips.push(`
+          <button class="alert-active-chip query-chip" data-clear-active-filter="query" type="button">
+            検索：${escapeHtml(currentAlertQuery)}
+            <span class="alert-active-chip-remove">×</span>
+          </button>
+        `);
+      }
+
+      if (hasLevelFilter || hasTypeFilter || hasSortFilter || hasQueryFilter) {
         chips.push(`
           <button class="alert-active-chip clear-all" data-clear-active-filter="all" type="button">
             すべて解除
@@ -1763,17 +1874,32 @@
             clearSavedAlertTypeFilter();
           }
 
+          if (clearTarget === "sort") {
+            currentAlertSort = "default";
+            clearSavedAlertSort();
+          }
+
+          if (clearTarget === "query") {
+            currentAlertQuery = "";
+            clearSavedAlertQuery();
+          }
+
           if (clearTarget === "all") {
             currentAlertFilter = "all";
             currentAlertTypeFilter = "all";
+            currentAlertSort = "default";
+            currentAlertQuery = "";
 
             clearSavedAlertFilter();
             clearSavedAlertTypeFilter();
+            clearSavedAlertSort();
+            clearSavedAlertQuery();
           }
 
           updateAlertFilterUrl(currentAlertFilter);
           updateAlertTypeFilterUrl(currentAlertTypeFilter);
           updateAlertSortUrl(currentAlertSort);
+          updateAlertQueryUrl(currentAlertQuery);
 
           const message = document.getElementById("alert-share-message");
           if (message) message.textContent = "フィルター条件を解除しました。";
@@ -1783,6 +1909,7 @@
           renderAlertVisibleSummary(latestAlerts);
           renderActiveAlertFilterChips();
           renderAlertSortControl();
+          renderAlertSearchControl();
           renderAlertList(latestAlerts);
         });
       });
@@ -1825,13 +1952,79 @@
         updateAlertFilterUrl(currentAlertFilter);
         updateAlertTypeFilterUrl(currentAlertTypeFilter);
         updateAlertSortUrl(currentAlertSort);
+        updateAlertQueryUrl(currentAlertQuery);
 
         const message = document.getElementById("alert-share-message");
         if (message) message.textContent = "";
 
+        renderActiveAlertFilterChips();
         renderAlertSortControl();
+        renderAlertSearchControl();
         renderAlertList(latestAlerts);
       });
+    }
+
+    function renderAlertSearchControl() {
+      const target = document.getElementById("alert-search-control");
+      if (!target) return;
+
+      target.className = "alert-search-control";
+      target.innerHTML = `
+        <label class="alert-search-label" for="alert-search-input">検索</label>
+        <input
+          id="alert-search-input"
+          class="alert-search-input"
+          type="search"
+          value="${escapeHtml(currentAlertQuery)}"
+          placeholder="例：投資、展示、更新、オッズ"
+          autocomplete="off"
+        />
+        <button id="alert-search-clear" class="alert-search-clear" type="button">
+          検索クリア
+        </button>
+      `;
+
+      const input = document.getElementById("alert-search-input");
+      const clearButton = document.getElementById("alert-search-clear");
+
+      if (input) {
+        input.addEventListener("input", () => {
+          currentAlertQuery = normalizeAlertQuery(input.value);
+
+          saveAlertQuery(currentAlertQuery);
+          updateAlertFilterUrl(currentAlertFilter);
+          updateAlertTypeFilterUrl(currentAlertTypeFilter);
+          updateAlertSortUrl(currentAlertSort);
+          updateAlertQueryUrl(currentAlertQuery);
+
+          const message = document.getElementById("alert-share-message");
+          if (message) message.textContent = "";
+
+          renderAlertVisibleSummary(latestAlerts);
+          renderActiveAlertFilterChips();
+          renderAlertList(latestAlerts);
+        });
+      }
+
+      if (clearButton) {
+        clearButton.addEventListener("click", () => {
+          currentAlertQuery = "";
+          clearSavedAlertQuery();
+
+          updateAlertFilterUrl(currentAlertFilter);
+          updateAlertTypeFilterUrl(currentAlertTypeFilter);
+          updateAlertSortUrl(currentAlertSort);
+          updateAlertQueryUrl(currentAlertQuery);
+
+          const message = document.getElementById("alert-share-message");
+          if (message) message.textContent = "検索条件をクリアしました。";
+
+          renderAlertSearchControl();
+          renderAlertVisibleSummary(latestAlerts);
+          renderActiveAlertFilterChips();
+          renderAlertList(latestAlerts);
+        });
+      }
     }
 
     function renderAlertTypeSummary(alerts) {
@@ -1839,8 +2032,8 @@
       if (!target) return;
 
       const levelFilteredAlerts = getFilteredAlerts(alerts, currentAlertFilter);
-
       const counts = {};
+
       getAlertTypeOrder().forEach((item) => {
         counts[item.type] = 0;
       });
@@ -1897,6 +2090,7 @@
           updateAlertFilterUrl(currentAlertFilter);
           updateAlertTypeFilterUrl(currentAlertTypeFilter);
           updateAlertSortUrl(currentAlertSort);
+          updateAlertQueryUrl(currentAlertQuery);
 
           const message = document.getElementById("alert-share-message");
           if (message) message.textContent = "";
@@ -1905,6 +2099,7 @@
           renderAlertVisibleSummary(latestAlerts);
           renderActiveAlertFilterChips();
           renderAlertSortControl();
+          renderAlertSearchControl();
           renderAlertList(latestAlerts);
         });
       });
@@ -1958,6 +2153,7 @@
       renderAlertVisibleSummary(alerts);
       renderActiveAlertFilterChips();
       renderAlertSortControl();
+      renderAlertSearchControl();
       renderAlertList(alerts);
     }
 
@@ -1982,7 +2178,7 @@
       return parts.length > 0 ? parts.join(" / ") : "詳細情報なし";
     }
 
-    function getConfidence(race) {
+        function getConfidence(race) {
       const value = Number(
         race?.confidence ??
         race?.score ??
@@ -2149,6 +2345,7 @@
         updateAlertFilterUrl(currentAlertFilter);
         updateAlertTypeFilterUrl(currentAlertTypeFilter);
         updateAlertSortUrl(currentAlertSort);
+        updateAlertQueryUrl(currentAlertQuery);
 
         renderDashboardSummary(data);
         renderAlerts(data, latestSettings);
@@ -2165,6 +2362,7 @@
         "alert-visible-summary",
         "alert-active-filter-chips",
         "alert-sort-control",
+        "alert-search-control",
         "alert-type-summary",
         "alert-area",
         "race-area"
