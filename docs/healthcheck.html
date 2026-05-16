@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Prediction JSON Health Check</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #f6f7fb;
+      color: #222;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .note {
+      color: #666;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .status {
+      padding: 14px 16px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-weight: 700;
+    }
+
+    .status.loading {
+      background: #fff7d6;
+      color: #7a5600;
+      border: 1px solid #f0d36a;
+    }
+
+    .status.ok {
+      background: #e7f8ed;
+      color: #146c2e;
+      border: 1px solid #8fd19e;
+    }
+
+    .status.ng {
+      background: #fdeaea;
+      color: #a31818;
+      border: 1px solid #f0a0a0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 14px;
+      border: 1px solid #e3e5ec;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .label {
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+
+    .value {
+      font-size: 20px;
+      font-weight: 700;
+      word-break: break-all;
+    }
+
+    .small-value {
+      font-size: 14px;
+      font-weight: 600;
+      word-break: break-all;
+    }
+
+    pre {
+      background: #111827;
+      color: #e5e7eb;
+      padding: 14px;
+      border-radius: 10px;
+      overflow: auto;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 700;
+      background: #2563eb;
+      color: #fff;
+      cursor: pointer;
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+
+    button.secondary {
+      background: #475569;
+    }
+
+    a {
+      color: #2563eb;
+      word-break: break-all;
+    }
+
+    .links {
+      margin: 12px 0 18px;
+      font-size: 14px;
+    }
+
+    .error-detail {
+      white-space: pre-wrap;
+      background: #fff;
+      border: 1px solid #f0a0a0;
+      color: #a31818;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 12px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Prediction JSON Health Check</h1>
+    <div class="note">
+      GitHub Pages 上で <code>prediction.json</code> が正しく読み込めるか確認するページです。
+    </div>
+
+    <div class="links">
+      <div>JSON URL: <a id="jsonLink" href="./prediction.json" target="_blank">./prediction.json</a></div>
+      <div>Dashboard: <a href="./index.html" target="_blank">./index.html</a></div>
+    </div>
+
+    <div>
+      <button onclick="loadJson()">再読み込み</button>
+      <button class="secondary" onclick="openJson()">JSONを直接開く</button>
+      <button class="secondary" onclick="openDashboard()">ダッシュボードを開く</button>
+    </div>
+
+    <div id="status" class="status loading">読み込み中...</div>
+    <div id="error"></div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">updated_at</div>
+        <div id="updatedAt" class="small-value">-</div>
+      </div>
+      <div class="card">
+        <div class="label">run_key</div>
+        <div id="runKey" class="small-value">-</div>
+      </div>
+      <div class="card">
+        <div class="label">target_date</div>
+        <div id="targetDate" class="value">-</div>
+      </div>
+      <div class="card">
+        <div class="label">model</div>
+        <div id="modelName" class="small-value">-</div>
+      </div>
+      <div class="card">
+        <div class="label">races</div>
+        <div id="raceCount" class="value">-</div>
+      </div>
+      <div class="card">
+        <div class="label">tickets</div>
+        <div id="ticketCount" class="value">-</div>
+      </div>
+      <div class="card">
+        <div class="label">alerts</div>
+        <div id="alertCount" class="value">-</div>
+      </div>
+      <div class="card">
+        <div class="label">total_amount</div>
+        <div id="totalAmount" class="value">-</div>
+      </div>
+    </div>
+
+    <h2>JSON Preview</h2>
+    <pre id="preview">Loading...</pre>
+  </div>
+
+  <script>
+    const jsonUrl = "./prediction.json?v=" + Date.now();
+
+    document.getElementById("jsonLink").href = jsonUrl;
+    document.getElementById("jsonLink").textContent = jsonUrl;
+
+    function setStatus(type, text) {
+      const el = document.getElementById("status");
+      el.className = "status " + type;
+      el.textContent = text;
+    }
+
+    function setText(id, value) {
+      document.getElementById(id).textContent =
+        value === undefined || value === null || value === "" ? "-" : String(value);
+    }
+
+    function countTickets(races) {
+      if (!Array.isArray(races)) return 0;
+      return races.reduce((sum, race) => {
+        const recs = Array.isArray(race.recommendations) ? race.recommendations : [];
+        return sum + recs.length;
+      }, 0);
+    }
+
+    function validateData(data) {
+      const required = [
+        "updated_at",
+        "run_key",
+        "model_name",
+        "model_version",
+        "target_date",
+        "summary",
+        "races",
+        "alerts"
+      ];
+
+      const missing = required.filter(key => !(key in data));
+      if (missing.length > 0) {
+        throw new Error("Missing keys: " + missing.join(", "));
+      }
+
+      if (!Array.isArray(data.races)) {
+        throw new Error("races must be an array");
+      }
+
+      if (!Array.isArray(data.alerts)) {
+        throw new Error("alerts must be an array");
+      }
+
+      if (data.races.length === 0) {
+        throw new Error("races is empty");
+      }
+
+      const tickets = countTickets(data.races);
+      if (tickets === 0) {
+        throw new Error("recommendations are empty");
+      }
+
+      return true;
+    }
+
+    async function loadJson() {
+      setStatus("loading", "prediction.json を読み込み中...");
+      document.getElementById("error").innerHTML = "";
+      document.getElementById("preview").textContent = "Loading...";
+
+      try {
+        const response = await fetch(jsonUrl, { cache: "no-store" });
+
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status + " " + response.statusText);
+        }
+
+        const data = await response.json();
+
+        validateData(data);
+
+        const races = Array.isArray(data.races) ? data.races : [];
+        const alerts = Array.isArray(data.alerts) ? data.alerts : [];
+        const tickets = countTickets(races);
+
+        setText("updatedAt", data.updated_at);
+        setText("runKey", data.run_key);
+        setText("targetDate", data.target_date);
+        setText("modelName", data.model_name + " / " + data.model_version);
+        setText("raceCount", races.length);
+        setText("ticketCount", tickets);
+        setText("alertCount", alerts.length);
+        setText("totalAmount", data.summary && data.summary.total_amount);
+
+        document.getElementById("preview").textContent =
+          JSON.stringify(data, null, 2).slice(0, 5000);
+
+        setStatus("ok", "OK: prediction.json を正常に読み込みました");
+      } catch (error) {
+        setStatus("ng", "NG: prediction.json の読み込みまたは検証に失敗しました");
+        document.getElementById("error").innerHTML =
+          '<div class="error-detail">' + String(error.stack || error.message || error) + '</div>';
+        document.getElementById("preview").textContent = "-";
+      }
+    }
+
+    function openJson() {
+      window.open(jsonUrl, "_blank");
+    }
+
+    function openDashboard() {
+      window.open("./index.html?v=" + Date.now(), "_blank");
+    }
+
+    loadJson();
+  </script>
+</body>
+</html>
