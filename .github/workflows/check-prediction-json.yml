@@ -1,0 +1,116 @@
+name: Check Prediction JSON
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check-prediction-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la db || true
+          ls -la scripts || true
+          ls -la docs || true
+
+      - name: Initialize SQLite database
+        run: |
+          python scripts/init_db.py --reset
+
+      - name: Seed sample data
+        run: |
+          python scripts/seed_sample_data.py
+
+      - name: Export prediction JSON
+        run: |
+          python scripts/export_prediction_json.py
+
+      - name: Validate prediction JSON syntax
+        run: |
+          python -m json.tool docs/prediction.json > /dev/null
+
+      - name: Validate prediction JSON structure
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("docs/prediction.json")
+
+          if not path.exists():
+              raise SystemExit("docs/prediction.json does not exist")
+
+          data = json.loads(path.read_text(encoding="utf-8"))
+
+          required_top_keys = [
+              "updated_at",
+              "run_key",
+              "model_name",
+              "model_version",
+              "target_date",
+              "summary",
+              "races",
+              "alerts",
+          ]
+
+          missing = [key for key in required_top_keys if key not in data]
+          if missing:
+              raise SystemExit(f"Missing top-level keys: {missing}")
+
+          if not isinstance(data["races"], list):
+              raise SystemExit("races must be a list")
+
+          if len(data["races"]) == 0:
+              raise SystemExit("races must not be empty")
+
+          if not isinstance(data["alerts"], list):
+              raise SystemExit("alerts must be a list")
+
+          ticket_count = 0
+          for race in data["races"]:
+              if "recommendations" not in race:
+                  raise SystemExit("Each race must have recommendations")
+              if not isinstance(race["recommendations"], list):
+                  raise SystemExit("recommendations must be a list")
+              ticket_count += len(race["recommendations"])
+
+          if ticket_count == 0:
+              raise SystemExit("No recommendation tickets found")
+
+          print("Prediction JSON structure: OK")
+          print(f"races: {len(data['races'])}")
+          print(f"alerts: {len(data['alerts'])}")
+          print(f"tickets: {ticket_count}")
+          PY
+
+      - name: Show prediction JSON preview
+        run: |
+          python -m json.tool docs/prediction.json | head -120
+
+      - name: STEP 65 check
+        run: |
+          echo "STEP 65 CHECK: OK"
