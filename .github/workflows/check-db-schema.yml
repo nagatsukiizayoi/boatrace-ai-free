@@ -4,12 +4,17 @@ on:
   push:
     paths:
       - "db/schema.sql"
+      - "docs/database_design.md"
       - ".github/workflows/check-db-schema.yml"
   pull_request:
     paths:
       - "db/schema.sql"
+      - "docs/database_design.md"
       - ".github/workflows/check-db-schema.yml"
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   check-schema:
@@ -17,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Install sqlite3
         run: |
@@ -28,11 +33,18 @@ jobs:
         run: |
           sqlite3 --version
 
+      - name: Check required files
+        run: |
+          test -f db/schema.sql
+          test -f docs/database_design.md
+          echo "OK: required files exist"
+
       - name: Create SQLite database from schema
         run: |
           mkdir -p db
           rm -f db/check_boatrace.sqlite3
           sqlite3 db/check_boatrace.sqlite3 < db/schema.sql
+          echo "OK: schema.sql executed successfully"
 
       - name: Show tables and views
         run: |
@@ -43,39 +55,58 @@ jobs:
           ORDER BY type, name;
           "
 
-      - name: Check required tables and views
+      - name: Check required tables
         run: |
-          sqlite3 db/check_boatrace.sqlite3 <<'SQL'
-          SELECT
-            CASE
-              WHEN COUNT(*) = 14 THEN 'OK: required objects exist'
-              ELSE RAISE(FAIL, 'NG: missing required tables or views')
-            END
-          FROM sqlite_master
-          WHERE name IN (
-            'venues',
-            'races',
-            'racers',
-            'race_entries',
-            'odds_snapshots',
-            'prediction_runs',
-            'predictions',
-            'prediction_tickets',
-            'race_results',
-            'alert_events',
-            'export_logs',
-            'v_race_overview',
-            'v_prediction_ticket_results',
-            'v_prediction_run_summary'
-          );
-          SQL
+          REQUIRED_TABLES="
+          venues
+          races
+          racers
+          race_entries
+          odds_snapshots
+          prediction_runs
+          predictions
+          prediction_tickets
+          race_results
+          alert_events
+          export_logs
+          "
+
+          for TABLE in $REQUIRED_TABLES; do
+            COUNT=$(sqlite3 db/check_boatrace.sqlite3 "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='$TABLE';")
+            if [ "$COUNT" != "1" ]; then
+              echo "NG: missing table: $TABLE"
+              exit 1
+            fi
+            echo "OK: table exists: $TABLE"
+          done
+
+      - name: Check required views
+        run: |
+          REQUIRED_VIEWS="
+          v_race_overview
+          v_prediction_ticket_results
+          v_prediction_run_summary
+          "
+
+          for VIEW in $REQUIRED_VIEWS; do
+            COUNT=$(sqlite3 db/check_boatrace.sqlite3 "SELECT COUNT(*) FROM sqlite_master WHERE type='view' AND name='$VIEW';")
+            if [ "$COUNT" != "1" ]; then
+              echo "NG: missing view: $VIEW"
+              exit 1
+            fi
+            echo "OK: view exists: $VIEW"
+          done
 
       - name: Foreign key check
         run: |
           RESULT=$(sqlite3 db/check_boatrace.sqlite3 "PRAGMA foreign_key_check;")
           if [ -n "$RESULT" ]; then
+            echo "NG: foreign key check failed"
             echo "$RESULT"
             exit 1
           fi
           echo "OK: foreign key check passed"
 
+      - name: STEP 61 result
+        run: |
+          echo "STEP 61 CHECK: OK"
