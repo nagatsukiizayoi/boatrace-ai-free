@@ -1,0 +1,196 @@
+name: Check CSV Prediction JSON
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check-csv-prediction-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la db || true
+          ls -la scripts || true
+          ls -la data/import || true
+          ls -la docs || true
+
+      - name: Check required files
+        run: |
+          test -f db/schema.sql
+          test -f scripts/init_db.py
+          test -f scripts/patch_step68_schema.py
+          test -f scripts/import_race_csv.py
+          test -f scripts/generate_simple_predictions.py
+          test -f scripts/export_prediction_json.py
+          test -f data/import/races.csv
+          test -f data/import/race_entries.csv
+
+      - name: Compile Python scripts
+        run: |
+          python -m py_compile scripts/init_db.py
+          python -m py_compile scripts/patch_step68_schema.py
+          python -m py_compile scripts/import_race_csv.py
+          python -m py_compile scripts/generate_simple_predictions.py
+          python -m py_compile scripts/export_prediction_json.py
+
+      - name: Initialize SQLite database
+        run: |
+          python scripts/init_db.py --reset
+
+      - name: Apply STEP 68 schema patch
+        run: |
+          python scripts/patch_step68_schema.py
+
+      - name: Import race CSV
+        run: |
+          python scripts/import_race_csv.py
+
+      - name: Generate simple predictions
+        run: |
+          python scripts/generate_simple_predictions.py
+
+      - name: Export prediction JSON
+        run: |
+          python scripts/export_prediction_json.py
+
+      - name: Validate prediction JSON syntax
+        run: |
+          python -m json.tool docs/prediction.json > /dev/null
+
+      - name: Validate database counts
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+
+          db_path = Path("db/boatrace.sqlite3")
+
+          if not db_path.exists():
+              raise SystemExit("Database does not exist: db/boatrace.sqlite3")
+
+          conn = sqlite3.connect(db_path)
+
+          expected_min_counts = {
+              "venues": 1,
+              "races": 2,
+              "racers": 12,
+              "race_entries": 12,
+              "prediction_runs": 1,
+              "predictions": 2,
+              "prediction_tickets": 6,
+          }
+
+          for table, min_count in expected_min_counts.items():
+              count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+              print(f"{table}: {count}")
+              if count < min_count:
+                  raise SystemExit(
+                      f"{table} count is too small: expected >= {min_count}, actual {count}"
+                  )
+
+          fk_rows = conn.execute("PRAGMA foreign_key_check;").fetchall()
+          if fk_rows:
+              print("Foreign key check: NG")
+              for row in fk_rows:
+                  print(row)
+              raise SystemExit(1)
+
+          print("Foreign key check: OK")
+          conn.close()
+          PY
+
+      - name: Validate prediction JSON structure
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("docs/prediction.json")
+
+          if not path.exists():
+              raise SystemExit("docs/prediction.json does not exist")
+
+          data = json.loads(path.read_text(encoding="utf-8"))
+
+          required_top_keys = [
+              "updated_at",
+              "run_key",
+              "model_name",
+              "model_version",
+              "target_date",
+              "summary",
+              "races",
+              "alerts",
+          ]
+
+          missing = [key for key in required_top_keys if key not in data]
+          if missing:
+              raise SystemExit(f"Missing top-level keys: {missing}")
+
+          if not isinstance(data["races"], list):
+              raise SystemExit("races must be a list")
+
+          if len(data["races"]) < 2:
+              raise SystemExit(f"races count is too small: {len(data['races'])}")
+
+          if not isinstance(data["alerts"], list):
+              raise SystemExit("alerts must be a list")
+
+          ticket_count = 0
+
+          for race in data["races"]:
+              if "recommendations" not in race:
+                  raise SystemExit("Each race must have recommendations")
+
+              if not isinstance(race["recommendations"], list):
+                  raise SystemExit("recommendations must be a list")
+
+              ticket_count += len(race["recommendations"])
+
+          if ticket_count < 6:
+              raise SystemExit(f"ticket count is too small: {ticket_count}")
+
+          run_key = str(data.get("run_key", ""))
+          if not run_key.startswith("csv-simple-rule-"):
+              raise SystemExit(f"Unexpected run_key: {run_key}")
+
+          print("Prediction JSON structure: OK")
+          print(f"run_key: {data['run_key']}")
+          print(f"target_date: {data['target_date']}")
+          print(f"model: {data['model_name']} / {data['model_version']}")
+          print(f"races: {len(data['races'])}")
+          print(f"alerts: {len(data['alerts'])}")
+          print(f"tickets: {ticket_count}")
+          PY
+
+      - name: Show prediction JSON preview
+        run: |
+          python -m json.tool docs/prediction.json | head -160
+
+      - name: STEP 71 check
+        run: |
+          echo "STEP 71 CHECK: OK"
