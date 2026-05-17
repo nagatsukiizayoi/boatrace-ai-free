@@ -1,0 +1,354 @@
+name: Check Odds Applied Prediction JSON
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check-odds-applied-prediction-json:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la db || true
+          ls -la scripts || true
+          ls -la data/import || true
+          ls -la docs || true
+
+      - name: Check required files
+        run: |
+          test -f db/schema.sql
+          test -f scripts/init_db.py
+          test -f scripts/patch_step68_schema.py
+          test -f scripts/patch_step78_ticket_schema.py
+          test -f scripts/import_race_csv.py
+          test -f scripts/import_odds_csv.py
+          test -f scripts/generate_simple_predictions.py
+          test -f scripts/apply_odds_to_predictions.py
+          test -f scripts/export_prediction_json.py
+          test -f scripts/enrich_prediction_json.py
+          test -f data/import/races.csv
+          test -f data/import/race_entries.csv
+          test -f data/import/odds.csv
+
+      - name: Compile Python scripts
+        run: |
+          python -m py_compile scripts/init_db.py
+          python -m py_compile scripts/patch_step68_schema.py
+          python -m py_compile scripts/patch_step78_ticket_schema.py
+          python -m py_compile scripts/import_race_csv.py
+          python -m py_compile scripts/import_odds_csv.py
+          python -m py_compile scripts/generate_simple_predictions.py
+          python -m py_compile scripts/apply_odds_to_predictions.py
+          python -m py_compile scripts/export_prediction_json.py
+          python -m py_compile scripts/enrich_prediction_json.py
+
+      - name: Initialize SQLite database
+        run: |
+          python scripts/init_db.py --reset
+
+      - name: Apply STEP 68 schema patch
+        run: |
+          python scripts/patch_step68_schema.py
+
+      - name: Apply STEP 78 ticket schema patch
+        run: |
+          python scripts/patch_step78_ticket_schema.py
+
+      - name: Import race CSV
+        run: |
+          python scripts/import_race_csv.py
+
+      - name: Import odds CSV
+        run: |
+          python scripts/import_odds_csv.py
+
+      - name: Generate simple predictions
+        run: |
+          python scripts/generate_simple_predictions.py
+
+      - name: Apply odds to prediction tickets
+        run: |
+          python scripts/apply_odds_to_predictions.py
+
+      - name: Export prediction JSON
+        run: |
+          python scripts/export_prediction_json.py
+
+      - name: Enrich prediction JSON explanations
+        run: |
+          python scripts/enrich_prediction_json.py
+
+      - name: Validate prediction JSON syntax
+        run: |
+          python -m json.tool docs/prediction.json > /dev/null
+
+      - name: Validate odds applied to tickets
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+
+          db_path = Path("db/boatrace.sqlite3")
+
+          if not db_path.exists():
+              raise SystemExit("Database does not exist: db/boatrace.sqlite3")
+
+          conn = sqlite3.connect(db_path)
+          conn.row_factory = sqlite3.Row
+
+          expected_min_counts = {
+              "venues": 1,
+              "races": 2,
+              "racers": 12,
+              "race_entries": 12,
+              "odds_snapshots": 18,
+              "prediction_runs": 1,
+              "predictions": 2,
+              "prediction_tickets": 6,
+          }
+
+          for table, min_count in expected_min_counts.items():
+              count = conn.execute(f"SELECT COUNT(*) AS c FROM {table}").fetchone()["c"]
+              print(f"{table}: {count}")
+              if count < min_count:
+                  raise SystemExit(
+                      f"{table} count is too small: expected >= {min_count}, actual {count}"
+                  )
+
+          cols = {
+              row["name"]
+              for row in conn.execute("PRAGMA table_info(prediction_tickets);").fetchall()
+          }
+
+          required_ticket_cols = {
+              "odds",
+              "expected_value",
+              "amount",
+              "probability",
+          }
+
+          missing_cols = sorted(required_ticket_cols - cols)
+          if missing_cols:
+              raise SystemExit(f"prediction_tickets missing columns: {missing_cols}")
+
+          total_tickets = conn.execute("""
+              SELECT COUNT(*) AS c
+              FROM prediction_tickets
+          """).fetchone()["c"]
+
+          matched_tickets = conn.execute("""
+              SELECT COUNT(*) AS c
+              FROM prediction_tickets
+              WHERE odds IS NOT NULL
+                AND odds > 0
+          """).fetchone()["c"]
+
+          ev_tickets = conn.execute("""
+              SELECT COUNT(*) AS c
+              FROM prediction_tickets
+              WHERE expected_value IS NOT NULL
+                AND expected_value > 0
+          """).fetchone()["c"]
+
+          print(f"total_tickets: {total_tickets}")
+          print(f"tickets_with_odds: {matched_tickets}")
+          print(f"tickets_with_expected_value: {ev_tickets}")
+
+          if total_tickets < 6:
+              raise SystemExit(f"ticket count is too small: {total_tickets}")
+
+          if matched_tickets < 1:
+              raise SystemExit("No tickets have odds applied")
+
+          if ev_tickets < 1:
+              raise SystemExit("No tickets have expected_value calculated")
+
+          rows = conn.execute("""
+              SELECT
+                  r.race_no,
+                  t.bet_type,
+                  t.combination,
+                  t.probability,
+                  t.odds,
+                  t.expected_value,
+                  t.amount
+              FROM prediction_tickets t
+              JOIN predictions p ON p.id = t.prediction_id
+              JOIN races r ON r.id = p.race_id
+              ORDER BY r.race_no, t.id
+          """).fetchall()
+
+          print("\nTicket odds preview:")
+          for row in rows:
+              print(
+                  f'{row["race_no"]}R',
+                  row["bet_type"],
+                  row["combination"],
+                  f'prob={row["probability"]}',
+                  f'odds={row["odds"]}',
+                  f'EV={row["expected_value"]}',
+                  f'amount={row["amount"]}',
+              )
+
+          fk_rows = conn.execute("PRAGMA foreign_key_check;").fetchall()
+          if fk_rows:
+              print("Foreign key check: NG")
+              for row in fk_rows:
+                  print(dict(row))
+              raise SystemExit(1)
+
+          print("Foreign key check: OK")
+          conn.close()
+          PY
+
+      - name: Validate prediction JSON contains odds and expected values
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("docs/prediction.json")
+
+          if not path.exists():
+              raise SystemExit("docs/prediction.json does not exist")
+
+          data = json.loads(path.read_text(encoding="utf-8"))
+
+          required_top_keys = [
+              "updated_at",
+              "run_key",
+              "model_name",
+              "model_version",
+              "target_date",
+              "summary",
+              "races",
+              "alerts",
+              "explainability",
+          ]
+
+          missing = [key for key in required_top_keys if key not in data]
+          if missing:
+              raise SystemExit(f"Missing top-level keys: {missing}")
+
+          races = data.get("races")
+          if not isinstance(races, list):
+              raise SystemExit("races must be a list")
+
+          if len(races) < 2:
+              raise SystemExit(f"races count is too small: {len(races)}")
+
+          ticket_count = 0
+          tickets_with_odds = 0
+          tickets_with_ev = 0
+
+          for race_index, race in enumerate(races, start=1):
+              recommendations = race.get("recommendations")
+
+              if not isinstance(recommendations, list):
+                  raise SystemExit(f"race[{race_index}].recommendations must be a list")
+
+              if "score_explanation" not in race:
+                  raise SystemExit(f"race[{race_index}] missing score_explanation")
+
+              if "score_details" not in race:
+                  raise SystemExit(f"race[{race_index}] missing score_details")
+
+              for ticket in recommendations:
+                  ticket_count += 1
+
+                  odds = ticket.get("odds")
+                  expected_value = ticket.get("expected_value")
+
+                  try:
+                      odds_value = float(odds)
+                  except (TypeError, ValueError):
+                      odds_value = 0.0
+
+                  try:
+                      ev_value = float(expected_value)
+                  except (TypeError, ValueError):
+                      ev_value = 0.0
+
+                  if odds_value > 0:
+                      tickets_with_odds += 1
+
+                  if ev_value > 0:
+                      tickets_with_ev += 1
+
+          print(f"races: {len(races)}")
+          print(f"tickets: {ticket_count}")
+          print(f"tickets_with_odds: {tickets_with_odds}")
+          print(f"tickets_with_expected_value: {tickets_with_ev}")
+
+          if ticket_count < 6:
+              raise SystemExit(f"ticket count is too small: {ticket_count}")
+
+          if tickets_with_odds < 1:
+              raise SystemExit("No recommendation ticket has odds > 0")
+
+          if tickets_with_ev < 1:
+              raise SystemExit("No recommendation ticket has expected_value > 0")
+
+          explainability = data.get("explainability")
+          if not isinstance(explainability, dict):
+              raise SystemExit("explainability must be an object")
+
+          if explainability.get("enabled") is not True:
+              raise SystemExit("explainability.enabled must be true")
+
+          print("prediction.json odds and expected values: OK")
+          print(f"run_key: {data.get('run_key')}")
+          print(f"target_date: {data.get('target_date')}")
+          print(f"explainability: {explainability}")
+          PY
+
+      - name: Show prediction JSON odds preview
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path("docs/prediction.json").read_text(encoding="utf-8"))
+
+          for race in data.get("races", []):
+              race_no = race.get("race_no") or race.get("raceNo")
+              print(f"\nRace {race_no}")
+
+              for ticket in race.get("recommendations", []):
+                  print({
+                      "bet_type": ticket.get("bet_type"),
+                      "combination": ticket.get("combination") or ticket.get("ticket"),
+                      "amount": ticket.get("amount"),
+                      "odds": ticket.get("odds"),
+                      "expected_value": ticket.get("expected_value"),
+                      "confidence": ticket.get("confidence"),
+                  })
+          PY
+
+      - name: STEP 79 check
+        run: |
+          echo "STEP 79 CHECK: OK"
