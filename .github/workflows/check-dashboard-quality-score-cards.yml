@@ -1,0 +1,77 @@
+name: Check Dashboard Quality Score Cards
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  dashboard-quality-score-cards:
+    name: Dashboard Quality Score Cards
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la docs
+          ls -la scripts
+          ls -la .github/workflows
+
+      - name: Check required files
+        run: |
+          test -f docs/index.html
+          test -f docs/prediction.json
+          test -f scripts/check_dashboard_quality_score_cards.py
+          test -f scripts/check_recommendation_reasons.py
+          test -f scripts/check_grouped_recommendation_reasons.py
+          test -f scripts/check_healthcheck_recommendation_reason_summary.py
+          test -f .github/workflows/check-dashboard-quality-score-cards.yml
+
+      - name: Validate prediction JSON syntax
+        run: |
+          python -m json.tool docs/prediction.json > /dev/null
+          echo "prediction.json syntax: OK"
+
+      - name: Compile quality score checkers
+        run: |
+          python -m py_compile scripts/check_dashboard_quality_score_cards.py
+          python -m py_compile scripts/check_recommendation_reasons.py
+          python -m py_compile scripts/check_grouped_recommendation_reasons.py
+          python -m py_compile scripts/check_healthcheck_recommendation_reason_summary.py
+
+      - name: Run STEP 91 recommendation reason validation
+        run: |
+          python scripts/check_recommendation_reasons.py
+
+      - name: Run STEP 95 grouped recommendation reason validation
+        run: |
+          python scripts/check_grouped_recommendation_reasons.py
+
+      - name: Run STEP 97 healthcheck recommendation reason validation
+        run: |
+          python scripts/check_healthcheck_recommendation_reason_summary.py
+
+      - name: Run STEP 99 dashboard quality score validation
+        run: |
+          python scripts/check_dashboard_quality_score_cards.py
