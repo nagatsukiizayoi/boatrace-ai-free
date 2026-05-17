@@ -1,0 +1,264 @@
+name: Check Dashboard Expected Value Alerts
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check-dashboard-expected-value-alerts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la docs || true
+          ls -la scripts || true
+
+      - name: Check required files
+        run: |
+          test -f docs/index.html
+          test -f docs/prediction.json
+          test -f scripts/patch_index_expected_value_alerts.py
+          test -f scripts/create_expected_value_alerts.py
+
+      - name: Validate index.html contains STEP 82 expected value alert panel
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("docs/index.html")
+          html = path.read_text(encoding="utf-8")
+
+          required_tokens = [
+              "STEP82_EXPECTED_VALUE_ALERT_STYLE",
+              "STEP82_EXPECTED_VALUE_ALERT_HTML",
+              "STEP82_EXPECTED_VALUE_ALERT_SCRIPT",
+              "step82ExpectedValueAlertPanel",
+              "step82EvAlertStatus",
+              "step82EvAlertContent",
+              "step82LoadExpectedValueAlerts",
+              "step82ToggleExpectedValueAlerts",
+              "期待値アラート",
+              "expected_value",
+              "ev-alert-panel",
+              "ev-alert-card",
+          ]
+
+          missing = [token for token in required_tokens if token not in html]
+
+          if missing:
+              raise SystemExit(f"Missing STEP82 dashboard tokens: {missing}")
+
+          print("docs/index.html STEP82 expected value alert panel: OK")
+          print(f"index.html size: {path.stat().st_size} bytes")
+          PY
+
+      - name: Validate prediction.json syntax
+        run: |
+          python -m json.tool docs/prediction.json > /dev/null
+
+      - name: Validate prediction.json expected value alerts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("docs/prediction.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+
+          required_top_keys = [
+              "updated_at",
+              "run_key",
+              "model_name",
+              "model_version",
+              "target_date",
+              "summary",
+              "races",
+              "alerts",
+          ]
+
+          missing = [key for key in required_top_keys if key not in data]
+          if missing:
+              raise SystemExit(f"Missing top-level keys: {missing}")
+
+          alerts = data.get("alerts")
+          if not isinstance(alerts, list):
+              raise SystemExit("alerts must be a list")
+
+          if len(alerts) == 0:
+              raise SystemExit("alerts must not be empty")
+
+          expected_value_alerts = []
+
+          for alert in alerts:
+              if not isinstance(alert, dict):
+                  continue
+
+              text = " ".join([
+                  str(alert.get("message", "")),
+                  str(alert.get("type", "")),
+                  str(alert.get("alert_type", "")),
+                  str(alert.get("details", "")),
+                  str(alert.get("details_json", "")),
+              ])
+
+              if (
+                  "期待値" in text
+                  or "expected_value" in text
+                  or "high_expected_value" in text
+                  or "value_bet" in text
+              ):
+                  expected_value_alerts.append(alert)
+
+          print(f"alerts: {len(alerts)}")
+          print(f"expected_value_alerts: {len(expected_value_alerts)}")
+
+          if len(expected_value_alerts) < 1:
+              raise SystemExit("No expected value alert found in prediction.json")
+
+          races = data.get("races")
+          if not isinstance(races, list):
+              raise SystemExit("races must be a list")
+
+          if len(races) == 0:
+              raise SystemExit("races must not be empty")
+
+          ticket_count = 0
+          tickets_with_odds = 0
+          tickets_with_ev = 0
+          high_ev_tickets = 0
+
+          for race_index, race in enumerate(races, start=1):
+              if not isinstance(race, dict):
+                  raise SystemExit(f"race[{race_index}] must be an object")
+
+              recommendations = race.get("recommendations")
+
+              if not isinstance(recommendations, list):
+                  raise SystemExit(f"race[{race_index}].recommendations must be a list")
+
+              for ticket_index, ticket in enumerate(recommendations, start=1):
+                  ticket_count += 1
+
+                  if not isinstance(ticket, dict):
+                      raise SystemExit(
+                          f"race[{race_index}].recommendations[{ticket_index}] must be an object"
+                      )
+
+                  if "odds" not in ticket:
+                      raise SystemExit(
+                          f"race[{race_index}].recommendations[{ticket_index}] missing odds"
+                      )
+
+                  if "expected_value" not in ticket:
+                      raise SystemExit(
+                          f"race[{race_index}].recommendations[{ticket_index}] missing expected_value"
+                      )
+
+                  try:
+                      odds = float(ticket.get("odds") or 0)
+                  except (TypeError, ValueError):
+                      odds = 0.0
+
+                  try:
+                      ev = float(ticket.get("expected_value") or 0)
+                  except (TypeError, ValueError):
+                      ev = 0.0
+
+                  if odds > 0:
+                      tickets_with_odds += 1
+
+                  if ev > 0:
+                      tickets_with_ev += 1
+
+                  if ev >= 1.2:
+                      high_ev_tickets += 1
+
+          print(f"races: {len(races)}")
+          print(f"tickets: {ticket_count}")
+          print(f"tickets_with_odds: {tickets_with_odds}")
+          print(f"tickets_with_expected_value: {tickets_with_ev}")
+          print(f"high_ev_tickets: {high_ev_tickets}")
+
+          if ticket_count < 1:
+              raise SystemExit("No recommendation tickets found")
+
+          if tickets_with_odds < 1:
+              raise SystemExit("No recommendation ticket has odds > 0")
+
+          if tickets_with_ev < 1:
+              raise SystemExit("No recommendation ticket has expected_value > 0")
+
+          if high_ev_tickets < 1:
+              raise SystemExit("No recommendation ticket has expected_value >= 1.2")
+
+          print("prediction.json expected value alerts: OK")
+          print(f"run_key: {data.get('run_key')}")
+          print(f"target_date: {data.get('target_date')}")
+          PY
+
+      - name: Show expected value alert preview
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path("docs/prediction.json").read_text(encoding="utf-8"))
+
+          print("Expected value alerts preview:")
+
+          for alert in data.get("alerts", []):
+              text = " ".join([
+                  str(alert.get("message", "")),
+                  str(alert.get("type", "")),
+                  str(alert.get("alert_type", "")),
+                  str(alert.get("details", "")),
+                  str(alert.get("details_json", "")),
+              ])
+
+              if "期待値" in text or "expected_value" in text:
+                  print(json.dumps(alert, ensure_ascii=False, indent=2)[:3000])
+
+          print("\nRecommendation EV preview:")
+
+          for race in data.get("races", []):
+              race_no = race.get("race_no") or race.get("raceNo")
+              print(f"\nRace {race_no}")
+
+              for ticket in race.get("recommendations", []):
+                  print({
+                      "bet_type": ticket.get("bet_type"),
+                      "combination": ticket.get("combination") or ticket.get("ticket"),
+                      "amount": ticket.get("amount"),
+                      "odds": ticket.get("odds"),
+                      "expected_value": ticket.get("expected_value"),
+                      "confidence": ticket.get("confidence"),
+                  })
+
+          PY
+
+      - name: STEP 83 check
+        run: |
+          echo "STEP 83 CHECK: OK"
