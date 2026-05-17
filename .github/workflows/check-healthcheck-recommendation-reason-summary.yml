@@ -1,0 +1,71 @@
+name: Check Healthcheck Recommendation Reason Summary
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  healthcheck-recommendation-reason-summary:
+    name: Healthcheck Recommendation Reason Summary
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la docs
+          ls -la scripts
+          ls -la .github/workflows
+
+      - name: Check required files
+        run: |
+          test -f docs/healthcheck.html
+          test -f docs/prediction.json
+          test -f scripts/check_healthcheck_recommendation_reason_summary.py
+          test -f scripts/check_recommendation_reasons.py
+          test -f scripts/check_grouped_recommendation_reasons.py
+          test -f .github/workflows/check-healthcheck-recommendation-reason-summary.yml
+
+      - name: Validate prediction JSON syntax
+        run: |
+          python -m json.tool docs/prediction.json > /dev/null
+          echo "prediction.json syntax: OK"
+
+      - name: Compile recommendation reason healthcheck scripts
+        run: |
+          python -m py_compile scripts/check_healthcheck_recommendation_reason_summary.py
+          python -m py_compile scripts/check_recommendation_reasons.py
+          python -m py_compile scripts/check_grouped_recommendation_reasons.py
+
+      - name: Run STEP 91 recommendation reason validation
+        run: |
+          python scripts/check_recommendation_reasons.py
+
+      - name: Run STEP 95 grouped recommendation reason validation
+        run: |
+          python scripts/check_grouped_recommendation_reasons.py
+
+      - name: Run STEP 97 healthcheck recommendation reason summary validation
+        run: |
+          python scripts/check_healthcheck_recommendation_reason_summary.py
