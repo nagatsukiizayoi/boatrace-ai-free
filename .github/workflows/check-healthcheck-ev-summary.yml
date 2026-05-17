@@ -1,0 +1,293 @@
+name: Check Healthcheck EV Summary
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check-healthcheck-ev-summary:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la docs
+          ls -la scripts
+          ls -la data/import || true
+
+      - name: Check required files
+        run: |
+          test -f docs/healthcheck.html
+          test -f docs/prediction.json
+          test -f scripts/patch_healthcheck_ev_summary.py
+          test -f scripts/init_db.py
+          test -f scripts/patch_step68_schema.py
+          test -f scripts/patch_step78_ticket_schema.py
+          test -f scripts/import_race_csv.py
+          test -f scripts/import_odds_csv.py
+          test -f scripts/generate_simple_predictions.py
+          test -f scripts/apply_odds_to_predictions.py
+          test -f scripts/create_expected_value_alerts.py
+          test -f scripts/export_prediction_json.py
+          test -f scripts/enrich_prediction_json.py
+          test -f data/import/races.csv
+          test -f data/import/race_entries.csv
+          test -f data/import/odds.csv
+
+      - name: Compile Python scripts
+        run: |
+          python -m py_compile scripts/patch_healthcheck_ev_summary.py
+          python -m py_compile scripts/init_db.py
+          python -m py_compile scripts/patch_step68_schema.py
+          python -m py_compile scripts/patch_step78_ticket_schema.py
+          python -m py_compile scripts/import_race_csv.py
+          python -m py_compile scripts/import_odds_csv.py
+          python -m py_compile scripts/generate_simple_predictions.py
+          python -m py_compile scripts/apply_odds_to_predictions.py
+          python -m py_compile scripts/create_expected_value_alerts.py
+          python -m py_compile scripts/export_prediction_json.py
+          python -m py_compile scripts/enrich_prediction_json.py
+
+      - name: Validate healthcheck STEP86 panel markers
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          p = Path("docs/healthcheck.html")
+          html = p.read_text(encoding="utf-8")
+
+          required_tokens = [
+              "STEP86_EV_HEALTHCHECK_STYLE",
+              "STEP86_EV_HEALTHCHECK_HTML",
+              "STEP86_EV_HEALTHCHECK_SCRIPT",
+              "expected_value",
+              "odds",
+              "期待値",
+              "EV",
+          ]
+
+          missing = [token for token in required_tokens if token not in html]
+          if missing:
+              raise SystemExit(f"Missing STEP86 healthcheck tokens: {missing}")
+
+          print("Healthcheck STEP86 markers: OK")
+          PY
+
+      - name: Run full prediction pipeline
+        run: |
+          python scripts/init_db.py --reset
+          python scripts/patch_step68_schema.py
+          python scripts/patch_step78_ticket_schema.py
+          python scripts/import_race_csv.py
+          python scripts/import_odds_csv.py
+          python scripts/generate_simple_predictions.py
+          python scripts/apply_odds_to_predictions.py
+          python scripts/create_expected_value_alerts.py
+          python scripts/export_prediction_json.py
+          python scripts/enrich_prediction_json.py
+          python -m json.tool docs/prediction.json > /dev/null
+
+      - name: Validate DB EV and alerts
+        run: |
+          python - <<'PY'
+          import sqlite3
+          import sys
+
+          conn = sqlite3.connect("db/boatrace.sqlite3")
+          conn.row_factory = sqlite3.Row
+
+          fk = conn.execute("PRAGMA foreign_key_check;").fetchall()
+          if fk:
+              raise SystemExit(f"Foreign key check failed: {fk}")
+
+          ticket_count = conn.execute("SELECT COUNT(*) FROM prediction_tickets").fetchone()[0]
+          odds_count = conn.execute("SELECT COUNT(*) FROM prediction_tickets WHERE odds IS NOT NULL AND odds > 0").fetchone()[0]
+          ev_count = conn.execute("SELECT COUNT(*) FROM prediction_tickets WHERE expected_value IS NOT NULL AND expected_value > 0").fetchone()[0]
+          high_ev_count = conn.execute("SELECT COUNT(*) FROM prediction_tickets WHERE expected_value >= 1.2").fetchone()[0]
+          alert_count = conn.execute("SELECT COUNT(*) FROM alert_events").fetchone()[0]
+
+          print("ticket_count:", ticket_count)
+          print("odds_count:", odds_count)
+          print("ev_count:", ev_count)
+          print("high_ev_count:", high_ev_count)
+          print("alert_count:", alert_count)
+          print("Foreign key check: OK")
+
+          if ticket_count < 6:
+              raise SystemExit("prediction_tickets must be >= 6")
+          if odds_count < 1:
+              raise SystemExit("odds-applied tickets must be >= 1")
+          if ev_count < 1:
+              raise SystemExit("expected_value tickets must be >= 1")
+          if high_ev_count < 1:
+              raise SystemExit("high EV tickets expected_value >= 1.2 must be >= 1")
+          if alert_count < 1:
+              raise SystemExit("alert_events must be >= 1")
+
+          rows = conn.execute("""
+              SELECT
+                r.race_no,
+                t.bet_type,
+                t.combination,
+                t.odds,
+                t.expected_value,
+                t.amount
+              FROM prediction_tickets t
+              JOIN predictions p ON p.id = t.prediction_id
+              JOIN races r ON r.id = p.race_id
+              WHERE t.expected_value >= 1.2
+              ORDER BY t.expected_value DESC
+              LIMIT 10
+          """).fetchall()
+
+          print("High EV ticket preview:")
+          for row in rows:
+              print(
+                  f'{row["race_no"]}R',
+                  row["bet_type"],
+                  row["combination"],
+                  "odds=", row["odds"],
+                  "EV=", row["expected_value"],
+                  "amount=", row["amount"],
+              )
+
+          conn.close()
+          PY
+
+      - name: Validate prediction.json EV summary data
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          p = Path("docs/prediction.json")
+          data = json.loads(p.read_text(encoding="utf-8"))
+
+          required_top = [
+              "updated_at",
+              "run_key",
+              "model_name",
+              "model_version",
+              "target_date",
+              "summary",
+              "races",
+              "alerts",
+          ]
+
+          missing = [k for k in required_top if k not in data]
+          if missing:
+              raise SystemExit(f"Missing top-level keys: {missing}")
+
+          races = data.get("races", [])
+          alerts = data.get("alerts", [])
+
+          if not isinstance(races, list) or not races:
+              raise SystemExit("races must be a non-empty list")
+          if not isinstance(alerts, list):
+              raise SystemExit("alerts must be a list")
+
+          tickets = []
+          for race in races:
+              for rec in race.get("recommendations", []):
+                  tickets.append({
+                      "race": race,
+                      "rec": rec,
+                  })
+
+          if not tickets:
+              raise SystemExit("No recommendations found")
+
+          odds_tickets = []
+          ev_tickets = []
+          high_ev_tickets = []
+
+          for item in tickets:
+              rec = item["rec"]
+              odds = rec.get("odds")
+              ev = rec.get("expected_value")
+
+              try:
+                  odds_f = float(odds)
+              except (TypeError, ValueError):
+                  odds_f = 0.0
+
+              try:
+                  ev_f = float(ev)
+              except (TypeError, ValueError):
+                  ev_f = 0.0
+
+              if odds_f > 0:
+                  odds_tickets.append(item)
+              if ev_f > 0:
+                  ev_tickets.append(item)
+              if ev_f >= 1.2:
+                  high_ev_tickets.append(item)
+
+          alert_text = json.dumps(alerts, ensure_ascii=False)
+          expected_value_alerts = [
+              a for a in alerts
+              if "期待値" in json.dumps(a, ensure_ascii=False)
+              or "expected_value" in json.dumps(a, ensure_ascii=False)
+              or "EV" in json.dumps(a, ensure_ascii=False)
+          ]
+
+          print("races:", len(races))
+          print("alerts:", len(alerts))
+          print("recommendations:", len(tickets))
+          print("odds_tickets:", len(odds_tickets))
+          print("ev_tickets:", len(ev_tickets))
+          print("high_ev_tickets:", len(high_ev_tickets))
+          print("expected_value_alerts:", len(expected_value_alerts))
+
+          if len(odds_tickets) < 1:
+              raise SystemExit("No recommendations with odds > 0")
+          if len(ev_tickets) < 1:
+              raise SystemExit("No recommendations with expected_value > 0")
+          if len(high_ev_tickets) < 1:
+              raise SystemExit("No recommendations with expected_value >= 1.2")
+          if len(expected_value_alerts) < 1:
+              raise SystemExit("No expected-value alerts found in prediction.json")
+
+          print("High EV JSON preview:")
+          for item in high_ev_tickets[:10]:
+              race = item["race"]
+              rec = item["rec"]
+              print(
+                  f'{race.get("race_no", "?")}R',
+                  rec.get("bet_type"),
+                  rec.get("combination"),
+                  "odds=", rec.get("odds"),
+                  "EV=", rec.get("expected_value"),
+              )
+          PY
+
+      - name: Show healthcheck preview tokens
+        run: |
+          grep -n "STEP86_EV_HEALTHCHECK\|期待値\|expected_value\|odds" docs/healthcheck.html | head -50
+
+      - name: Show prediction JSON preview
+        run: |
+          python -m json.tool docs/prediction.json | head -160
+
+      - name: STEP 87 check
+        run: echo "STEP 87 CHECK: OK"
