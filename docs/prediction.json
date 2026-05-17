@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-05-17T14:20:57+09:00",
-  "generated_at": "2026-05-17T05:20:57+00:00",
+  "updated_at": "2026-05-17T15:42:29+09:00",
+  "generated_at": "2026-05-17T06:42:30+00:00",
   "run_key": "csv-simple-rule-20260516-001",
   "prediction_run_id": 1,
   "target_date": "2026-05-16",
@@ -1005,7 +1005,7 @@
   "alerts": [],
   "explainability": {
     "enabled": true,
-    "generated_at": "2026-05-17T14:20:57+09:00",
+    "generated_at": "2026-05-17T15:42:30+09:00",
     "method": "simple_rule_score_v1",
     "enriched_race_count": 2,
     "description": "CSV出走表から生成した簡易予想に、スコア詳細と予想理由を追加しています。"
