@@ -46,6 +46,7 @@ jobs:
           test -f scripts/import_race_csv.py
           test -f scripts/generate_simple_predictions.py
           test -f scripts/export_prediction_json.py
+          test -f scripts/enrich_prediction_json.py
           test -f data/import/races.csv
           test -f data/import/race_entries.csv
 
@@ -56,6 +57,7 @@ jobs:
           python -m py_compile scripts/import_race_csv.py
           python -m py_compile scripts/generate_simple_predictions.py
           python -m py_compile scripts/export_prediction_json.py
+          python -m py_compile scripts/enrich_prediction_json.py
 
       - name: Initialize SQLite database
         run: |
@@ -76,6 +78,10 @@ jobs:
       - name: Export prediction JSON
         run: |
           python scripts/export_prediction_json.py
+
+      - name: Enrich prediction JSON explanations
+        run: |
+          python scripts/enrich_prediction_json.py
 
       - name: Validate prediction JSON syntax
         run: |
@@ -123,7 +129,7 @@ jobs:
           conn.close()
           PY
 
-      - name: Validate prediction JSON structure
+      - name: Validate prediction JSON structure and explanations
         run: |
           python - <<'PY'
           import json
@@ -145,6 +151,7 @@ jobs:
               "summary",
               "races",
               "alerts",
+              "explainability",
           ]
 
           missing = [key for key in required_top_keys if key not in data]
@@ -160,7 +167,26 @@ jobs:
           if not isinstance(data["alerts"], list):
               raise SystemExit("alerts must be a list")
 
+          explainability = data.get("explainability")
+          if not isinstance(explainability, dict):
+              raise SystemExit("explainability must be an object")
+
+          if explainability.get("enabled") is not True:
+              raise SystemExit("explainability.enabled must be true")
+
+          if explainability.get("method") != "simple_rule_score_v1":
+              raise SystemExit(
+                  f"Unexpected explainability method: {explainability.get('method')}"
+              )
+
+          enriched_race_count = explainability.get("enriched_race_count", 0)
+          if enriched_race_count < 2:
+              raise SystemExit(
+                  f"enriched_race_count is too small: {enriched_race_count}"
+              )
+
           ticket_count = 0
+          explained_race_count = 0
 
           for race in data["races"]:
               if "recommendations" not in race:
@@ -171,6 +197,46 @@ jobs:
 
               ticket_count += len(race["recommendations"])
 
+              if "score_explanation" not in race:
+                  raise SystemExit("Each race must have score_explanation")
+
+              if "score_details" not in race:
+                  raise SystemExit("Each race must have score_details")
+
+              score_explanation = race["score_explanation"]
+              score_details = race["score_details"]
+
+              if not isinstance(score_explanation, dict):
+                  raise SystemExit("score_explanation must be an object")
+
+              if not isinstance(score_details, list):
+                  raise SystemExit("score_details must be a list")
+
+              if len(score_details) < 3:
+                  raise SystemExit("score_details must contain at least 3 boats")
+
+              required_explanation_keys = [
+                  "favorite_boat_no",
+                  "rival_boat_no",
+                  "darkhorse_boat_no",
+                  "summary",
+                  "score_method",
+                  "top_summary",
+                  "score_details",
+              ]
+
+              missing_explanation = [
+                  key for key in required_explanation_keys
+                  if key not in score_explanation
+              ]
+
+              if missing_explanation:
+                  raise SystemExit(
+                      f"Missing score_explanation keys: {missing_explanation}"
+                  )
+
+              explained_race_count += 1
+
           if ticket_count < 6:
               raise SystemExit(f"ticket count is too small: {ticket_count}")
 
@@ -178,19 +244,40 @@ jobs:
           if not run_key.startswith("csv-simple-rule-"):
               raise SystemExit(f"Unexpected run_key: {run_key}")
 
-          print("Prediction JSON structure: OK")
+          print("Prediction JSON structure and explanations: OK")
           print(f"run_key: {data['run_key']}")
           print(f"target_date: {data['target_date']}")
           print(f"model: {data['model_name']} / {data['model_version']}")
           print(f"races: {len(data['races'])}")
+          print(f"explained_races: {explained_race_count}")
           print(f"alerts: {len(data['alerts'])}")
           print(f"tickets: {ticket_count}")
+          print(f"explainability: {explainability}")
           PY
 
-      - name: Show prediction JSON preview
+      - name: Show prediction JSON explanation preview
         run: |
-          python -m json.tool docs/prediction.json | head -160
+          python - <<'PY'
+          import json
+          from pathlib import Path
 
-      - name: STEP 71 check
+          data = json.loads(Path("docs/prediction.json").read_text(encoding="utf-8"))
+
+          print("Explainability:")
+          print(json.dumps(data.get("explainability"), ensure_ascii=False, indent=2))
+
+          print("\nFirst race score explanation:")
+          races = data.get("races") or []
+          if races:
+              first = races[0]
+              preview = {
+                  "race_no": first.get("race_no") or first.get("raceNo"),
+                  "prediction_summary": first.get("prediction_summary"),
+                  "score_explanation": first.get("score_explanation"),
+              }
+              print(json.dumps(preview, ensure_ascii=False, indent=2)[:5000])
+          PY
+
+      - name: STEP 73 check
         run: |
-          echo "STEP 71 CHECK: OK"
+          echo "STEP 73 CHECK: OK"
