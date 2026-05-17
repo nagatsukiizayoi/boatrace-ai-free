@@ -1,0 +1,59 @@
+name: Check Full Prediction Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  full-prediction-pipeline:
+    name: Full Prediction Pipeline
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la db
+          ls -la docs
+          ls -la scripts
+          ls -la data/import
+          ls -la .github/workflows
+
+      - name: Check required full pipeline files
+        run: |
+          test -f scripts/run_full_prediction_pipeline.py
+          test -f db/schema.sql
+          test -f data/import/races.csv
+          test -f data/import/race_entries.csv
+          test -f data/import/odds.csv
+          test -f docs/index.html
+          test -f docs/healthcheck.html
+
+      - name: Compile full pipeline runner
+        run: |
+          python -m py_compile scripts/run_full_prediction_pipeline.py
+
+      - name: Run STEP 101 full prediction pipeline
+        run: |
+          python scripts/run_full_prediction_pipeline.py
