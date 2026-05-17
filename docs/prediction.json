@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-05-17T15:57:28+09:00",
-  "generated_at": "2026-05-17T06:57:28+00:00",
+  "updated_at": "2026-05-17T17:25:31+09:00",
+  "generated_at": "2026-05-17T08:25:31+00:00",
   "run_key": "csv-simple-rule-20260516-001",
   "prediction_run_id": 1,
   "target_date": "2026-05-16",
@@ -244,7 +244,7 @@
           "final_odds": 16.8,
           "expected_odds": null,
           "estimated_probability": null,
-          "expected_value": 1.04,
+          "expected_value": 2.8392,
           "rank": null,
           "confidence": 0.602,
           "memo": "三番手の逆転を押さえる形",
@@ -300,7 +300,7 @@
           "final_odds": 16.8,
           "expected_odds": null,
           "estimated_probability": null,
-          "expected_value": 1.04,
+          "expected_value": 2.8392,
           "rank": null,
           "confidence": 0.602,
           "memo": "三番手の逆転を押さえる形",
@@ -716,7 +716,7 @@
           "final_odds": 7.8,
           "expected_odds": null,
           "estimated_probability": null,
-          "expected_value": 1.12,
+          "expected_value": 1.599,
           "rank": null,
           "confidence": 0.604,
           "memo": "本命から対抗・三番手への基本形",
@@ -734,7 +734,7 @@
           "final_odds": 10.6,
           "expected_odds": null,
           "estimated_probability": null,
-          "expected_value": 1.04,
+          "expected_value": 1.7914,
           "rank": null,
           "confidence": 0.604,
           "memo": "三番手の逆転を押さえる形",
@@ -752,7 +752,7 @@
           "final_odds": 2.9,
           "expected_odds": null,
           "estimated_probability": null,
-          "expected_value": 0.98,
+          "expected_value": 0.7888,
           "rank": null,
           "confidence": 0.604,
           "memo": "上位3艇の組み合わせ押さえ",
@@ -772,7 +772,7 @@
           "final_odds": 7.8,
           "expected_odds": null,
           "estimated_probability": null,
-          "expected_value": 1.12,
+          "expected_value": 1.599,
           "rank": null,
           "confidence": 0.604,
           "memo": "本命から対抗・三番手への基本形",
@@ -790,7 +790,7 @@
           "final_odds": 10.6,
           "expected_odds": null,
           "estimated_probability": null,
-          "expected_value": 1.04,
+          "expected_value": 1.7914,
           "rank": null,
           "confidence": 0.604,
           "memo": "三番手の逆転を押さえる形",
@@ -808,7 +808,7 @@
           "final_odds": 2.9,
           "expected_odds": null,
           "estimated_probability": null,
-          "expected_value": 0.98,
+          "expected_value": 0.7888,
           "rank": null,
           "confidence": 0.604,
           "memo": "上位3艇の組み合わせ押さえ",
@@ -1002,10 +1002,41 @@
       }
     }
   ],
-  "alerts": [],
+  "alerts": [
+    {
+      "id": 1,
+      "race_id": 1,
+      "level": "warning",
+      "type": "missing_final_odds",
+      "message": "オッズ未取得: 3rentan 1-2-4",
+      "details": {
+        "source": "apply_odds_to_predictions",
+        "bet_type": "3rentan",
+        "combination": "1-2-4",
+        "reason": "prediction_tickets に対応する odds_snapshots が見つかりませんでした。"
+      },
+      "occurred_at": "2026-05-17T17:25:31+09:00",
+      "resolved_at": null
+    },
+    {
+      "id": 2,
+      "race_id": 1,
+      "level": "warning",
+      "type": "missing_final_odds",
+      "message": "オッズ未取得: 3renfuku 1-2-4",
+      "details": {
+        "source": "apply_odds_to_predictions",
+        "bet_type": "3renfuku",
+        "combination": "1-2-4",
+        "reason": "prediction_tickets に対応する odds_snapshots が見つかりませんでした。"
+      },
+      "occurred_at": "2026-05-17T17:25:31+09:00",
+      "resolved_at": null
+    }
+  ],
   "explainability": {
     "enabled": true,
-    "generated_at": "2026-05-17T15:57:28+09:00",
+    "generated_at": "2026-05-17T17:25:31+09:00",
     "method": "simple_rule_score_v1",
     "enriched_race_count": 2,
     "description": "CSV出走表から生成した簡易予想に、スコア詳細と予想理由を追加しています。"
