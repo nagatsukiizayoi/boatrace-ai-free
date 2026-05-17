@@ -32,170 +32,20 @@ jobs:
           pwd
           ls -la
           ls -la docs
+          ls -la scripts
           ls -la .github/workflows
 
       - name: Check required files
         run: |
           test -f docs/healthcheck.html
           test -f docs/prediction.json
+          test -f scripts/check_healthcheck_ev_summary.py
           test -f .github/workflows/check-healthcheck-ev-summary.yml
 
-      - name: Validate healthcheck STEP86 markers
+      - name: Compile STEP 87 checker
         run: |
-          python - <<'PY'
-          from pathlib import Path
+          python -m py_compile scripts/check_healthcheck_ev_summary.py
 
-          html = Path("docs/healthcheck.html").read_text(encoding="utf-8")
-
-          required_tokens = [
-              "STEP86_EV_HEALTHCHECK_STYLE",
-              "STEP86_EV_HEALTHCHECK_HTML",
-              "STEP86_EV_HEALTHCHECK_SCRIPT",
-              "expected_value",
-              "odds",
-          ]
-
-          missing = [token for token in required_tokens if token not in html]
-
-          if missing:
-              raise SystemExit(f"Missing healthcheck tokens: {missing}")
-
-          print("Healthcheck STEP86 markers: OK")
-          PY
-
-      - name: Validate prediction JSON syntax
+      - name: Run STEP 87 healthcheck EV summary validation
         run: |
-          python -m json.tool docs/prediction.json > /dev/null
-          echo "prediction.json syntax: OK"
-
-      - name: Validate EV data in prediction JSON
-        run: |
-          python - <<'PY'
-          import json
-          from pathlib import Path
-
-          path = Path("docs/prediction.json")
-          data = json.loads(path.read_text(encoding="utf-8"))
-
-          required_top_keys = [
-              "updated_at",
-              "run_key",
-              "model_name",
-              "model_version",
-              "target_date",
-              "summary",
-              "races",
-              "alerts",
-          ]
-
-          missing_top = [key for key in required_top_keys if key not in data]
-          if missing_top:
-              raise SystemExit(f"Missing top-level keys: {missing_top}")
-
-          races = data.get("races", [])
-          alerts = data.get("alerts", [])
-
-          if not isinstance(races, list) or not races:
-              raise SystemExit("races must be a non-empty list")
-
-          if not isinstance(alerts, list):
-              raise SystemExit("alerts must be a list")
-
-          recommendations = []
-
-          for race in races:
-              race_no = race.get("race_no")
-              venue_name = race.get("venue_name") or race.get("venue") or ""
-              for rec in race.get("recommendations", []):
-                  recommendations.append({
-                      "race_no": race_no,
-                      "venue_name": venue_name,
-                      "rec": rec,
-                  })
-
-          if not recommendations:
-              raise SystemExit("No recommendations found in prediction.json")
-
-          odds_count = 0
-          ev_count = 0
-          high_ev_count = 0
-          max_odds = 0.0
-          max_ev = 0.0
-          high_ev_items = []
-
-          for item in recommendations:
-              rec = item["rec"]
-
-              try:
-                  odds = float(rec.get("odds") or 0)
-              except (TypeError, ValueError):
-                  odds = 0.0
-
-              try:
-                  ev = float(rec.get("expected_value") or 0)
-              except (TypeError, ValueError):
-                  ev = 0.0
-
-              if odds > 0:
-                  odds_count += 1
-                  max_odds = max(max_odds, odds)
-
-              if ev > 0:
-                  ev_count += 1
-                  max_ev = max(max_ev, ev)
-
-              if ev >= 1.2:
-                  high_ev_count += 1
-                  high_ev_items.append({
-                      "race_no": item["race_no"],
-                      "venue_name": item["venue_name"],
-                      "bet_type": rec.get("bet_type"),
-                      "combination": rec.get("combination"),
-                      "odds": odds,
-                      "expected_value": ev,
-                  })
-
-          expected_value_alert_count = 0
-
-          for alert in alerts:
-              text = json.dumps(alert, ensure_ascii=False)
-              if "期待値" in text or "expected_value" in text or "EV" in text:
-                  expected_value_alert_count += 1
-
-          print("races:", len(races))
-          print("alerts:", len(alerts))
-          print("recommendations:", len(recommendations))
-          print("odds_count:", odds_count)
-          print("ev_count:", ev_count)
-          print("high_ev_count:", high_ev_count)
-          print("expected_value_alert_count:", expected_value_alert_count)
-          print("max_odds:", max_odds)
-          print("max_ev:", max_ev)
-
-          if odds_count < 1:
-              raise SystemExit("No recommendation with odds > 0")
-
-          if ev_count < 1:
-              raise SystemExit("No recommendation with expected_value > 0")
-
-          if high_ev_count < 1:
-              raise SystemExit("No recommendation with expected_value >= 1.2")
-
-          if expected_value_alert_count < 1:
-              raise SystemExit("No expected value alert found in alerts")
-
-          print("High EV preview:")
-          for item in high_ev_items[:10]:
-              print(
-                  f'{item["race_no"]}R',
-                  item["bet_type"],
-                  item["combination"],
-                  "odds=", item["odds"],
-                  "EV=", item["expected_value"],
-              )
-
-          print("Prediction JSON EV data: OK")
-          PY
-
-      - name: STEP 87 check
-        run: echo "STEP 87 CHECK: OK"
+          python scripts/check_healthcheck_ev_summary.py
