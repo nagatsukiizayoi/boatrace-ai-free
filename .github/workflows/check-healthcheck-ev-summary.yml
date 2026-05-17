@@ -2,14 +2,19 @@ name: Check Healthcheck EV Summary
 
 on:
   push:
+    branches:
+      - main
   pull_request:
-  workflow_dispatch:
+    branches:
+      - main
+  workflow_dispatch: {}
 
 permissions:
   contents: read
 
 jobs:
-  check-healthcheck-ev-summary:
+  healthcheck-ev-summary:
+    name: Healthcheck EV Summary
     runs-on: ubuntu-latest
 
     steps:
@@ -27,13 +32,13 @@ jobs:
           pwd
           ls -la
           ls -la docs
-          ls -la scripts
+          ls -la .github/workflows
 
       - name: Check required files
         run: |
           test -f docs/healthcheck.html
           test -f docs/prediction.json
-          test -f scripts/patch_healthcheck_ev_summary.py
+          test -f .github/workflows/check-healthcheck-ev-summary.yml
 
       - name: Validate healthcheck STEP86 markers
         run: |
@@ -52,7 +57,7 @@ jobs:
 
           missing = [t for t in required_tokens if t not in html]
           if missing:
-              raise SystemExit(f"Missing tokens in docs/healthcheck.html: {missing}")
+              raise SystemExit(f"Missing healthcheck tokens: {missing}")
 
           print("Healthcheck STEP86 markers: OK")
           PY
@@ -61,7 +66,7 @@ jobs:
         run: |
           python -m json.tool docs/prediction.json > /dev/null
 
-      - name: Validate prediction JSON EV data
+      - name: Validate EV data in prediction JSON
         run: |
           python - <<'PY'
           import json
@@ -79,10 +84,8 @@ jobs:
               raise SystemExit("alerts must be a list")
 
           recommendations = []
-
           for race in races:
-              for rec in race.get("recommendations", []):
-                  recommendations.append(rec)
+              recommendations.extend(race.get("recommendations", []))
 
           if not recommendations:
               raise SystemExit("No recommendations found")
@@ -90,40 +93,29 @@ jobs:
           odds_count = 0
           ev_count = 0
           high_ev_count = 0
-          max_ev = 0.0
-          max_odds = 0.0
 
           for rec in recommendations:
-              odds = rec.get("odds")
-              ev = rec.get("expected_value")
+              try:
+                  odds = float(rec.get("odds") or 0)
+              except ValueError:
+                  odds = 0.0
 
               try:
-                  odds_f = float(odds)
-              except (TypeError, ValueError):
-                  odds_f = 0.0
+                  ev = float(rec.get("expected_value") or 0)
+              except ValueError:
+                  ev = 0.0
 
-              try:
-                  ev_f = float(ev)
-              except (TypeError, ValueError):
-                  ev_f = 0.0
-
-              if odds_f > 0:
+              if odds > 0:
                   odds_count += 1
-                  max_odds = max(max_odds, odds_f)
-
-              if ev_f > 0:
+              if ev > 0:
                   ev_count += 1
-                  max_ev = max(max_ev, ev_f)
-
-              if ev_f >= 1.2:
+              if ev >= 1.2:
                   high_ev_count += 1
 
-          alert_text = json.dumps(alerts, ensure_ascii=False)
           expected_value_alert_count = 0
-
           for alert in alerts:
-              s = json.dumps(alert, ensure_ascii=False)
-              if "期待値" in s or "expected_value" in s or "EV" in s:
+              text = json.dumps(alert, ensure_ascii=False)
+              if "期待値" in text or "expected_value" in text or "EV" in text:
                   expected_value_alert_count += 1
 
           print("races:", len(races))
@@ -133,8 +125,6 @@ jobs:
           print("ev_count:", ev_count)
           print("high_ev_count:", high_ev_count)
           print("expected_value_alert_count:", expected_value_alert_count)
-          print("max_ev:", max_ev)
-          print("max_odds:", max_odds)
 
           if odds_count < 1:
               raise SystemExit("No recommendation with odds > 0")
