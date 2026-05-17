@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-05-17T22:53:21+09:00",
-  "generated_at": "2026-05-17T13:53:21+00:00",
+  "updated_at": "2026-05-17T23:02:27+09:00",
+  "generated_at": "2026-05-17T14:02:28+00:00",
   "run_key": "csv-simple-rule-20260516-001",
   "prediction_run_id": 1,
   "target_date": "2026-05-16",
@@ -233,7 +233,18 @@
           "reason": "本命から対抗・三番手への基本形",
           "is_hit": 0,
           "payout_amount": 0,
-          "profit_amount": 0
+          "profit_amount": 0,
+          "recommendation_reason": "EV 1.12 の参考買い目です。評価グレードは C です。対象買い目は 3rentan 1-2-4 です。",
+          "reason_points": [
+            "買い目は 3rentan 1-2-4 です",
+            "expected_value=1.12 は基準値 1.20 未満です",
+            "odds が未設定のため、オッズ評価は未反映です",
+            "信頼度 confidence=0.602 を使用しています",
+            "購入金額 amount=400 円で資金配分されています"
+          ],
+          "value_grade": "C",
+          "risk_note": "期待値基準未満のため、参考候補として扱ってください",
+          "reason_version": "recommendation_reason_v1"
         },
         {
           "ticket": "1-4-2",
@@ -251,7 +262,18 @@
           "reason": "三番手の逆転を押さえる形",
           "is_hit": 0,
           "payout_amount": 0,
-          "profit_amount": 0
+          "profit_amount": 0,
+          "recommendation_reason": "EV 2.84 の高期待値買い目です。オッズ 16.80 倍を反映しています。評価グレードは A です。対象買い目は 3rentan 1-4-2 です。",
+          "reason_points": [
+            "買い目は 3rentan 1-4-2 です",
+            "expected_value=2.84 が基準値 1.20 を上回っています",
+            "odds=16.80 の高配当候補です",
+            "信頼度 confidence=0.602 を使用しています",
+            "購入金額 amount=300 円で資金配分されています"
+          ],
+          "value_grade": "A",
+          "risk_note": "高オッズのためブレが大きく、連敗リスクに注意してください",
+          "reason_version": "recommendation_reason_v1"
         },
         {
           "ticket": "1-2-4",
@@ -269,7 +291,18 @@
           "reason": "上位3艇の組み合わせ押さえ",
           "is_hit": 0,
           "payout_amount": 0,
-          "profit_amount": 0
+          "profit_amount": 0,
+          "recommendation_reason": "EV 0.98 の参考買い目です。評価グレードは C です。対象買い目は 3renfuku 1-2-4 です。",
+          "reason_points": [
+            "買い目は 3renfuku 1-2-4 です",
+            "expected_value=0.98 は基準値 1.20 未満です",
+            "odds が未設定のため、オッズ評価は未反映です",
+            "信頼度 confidence=0.602 を使用しています",
+            "購入金額 amount=200 円で資金配分されています"
+          ],
+          "value_grade": "C",
+          "risk_note": "期待値基準未満のため、参考候補として扱ってください",
+          "reason_version": "recommendation_reason_v1"
         }
       ],
       "tickets": [
@@ -723,7 +756,18 @@
           "reason": "本命から対抗・三番手への基本形",
           "is_hit": 0,
           "payout_amount": 0,
-          "profit_amount": 0
+          "profit_amount": 0,
+          "recommendation_reason": "EV 1.60 の高期待値買い目です。オッズ 7.80 倍を反映しています。評価グレードは B です。対象買い目は 3rentan 1-2-5 です。",
+          "reason_points": [
+            "買い目は 3rentan 1-2-5 です",
+            "expected_value=1.60 が基準値 1.20 を上回っています",
+            "odds=7.80 のオッズが反映されています",
+            "信頼度 confidence=0.604 を使用しています",
+            "購入金額 amount=400 円で資金配分されています"
+          ],
+          "value_grade": "B",
+          "risk_note": "期待値基準は満たしていますが、オッズ変動に注意してください",
+          "reason_version": "recommendation_reason_v1"
         },
         {
           "ticket": "1-5-2",
@@ -741,7 +785,18 @@
           "reason": "三番手の逆転を押さえる形",
           "is_hit": 0,
           "payout_amount": 0,
-          "profit_amount": 0
+          "profit_amount": 0,
+          "recommendation_reason": "EV 1.79 の高期待値買い目です。オッズ 10.60 倍を反映しています。評価グレードは B です。対象買い目は 3rentan 1-5-2 です。",
+          "reason_points": [
+            "買い目は 3rentan 1-5-2 です",
+            "expected_value=1.79 が基準値 1.20 を上回っています",
+            "odds=10.60 の高配当候補です",
+            "信頼度 confidence=0.604 を使用しています",
+            "購入金額 amount=300 円で資金配分されています"
+          ],
+          "value_grade": "B",
+          "risk_note": "高オッズのためブレが大きく、連敗リスクに注意してください",
+          "reason_version": "recommendation_reason_v1"
         },
         {
           "ticket": "1-2-5",
@@ -759,7 +814,18 @@
           "reason": "上位3艇の組み合わせ押さえ",
           "is_hit": 0,
           "payout_amount": 0,
-          "profit_amount": 0
+          "profit_amount": 0,
+          "recommendation_reason": "EV 0.79 の参考買い目です。オッズ 2.90 倍を反映しています。評価グレードは C です。対象買い目は 3renfuku 1-2-5 です。",
+          "reason_points": [
+            "買い目は 3renfuku 1-2-5 です",
+            "expected_value=0.79 は基準値 1.20 未満です",
+            "odds=2.90 のオッズが反映されています",
+            "信頼度 confidence=0.604 を使用しています",
+            "購入金額 amount=200 円で資金配分されています"
+          ],
+          "value_grade": "C",
+          "risk_note": "期待値基準未満のため、参考候補として扱ってください",
+          "reason_version": "recommendation_reason_v1"
         }
       ],
       "tickets": [
@@ -1015,7 +1081,7 @@
         "combination": "1-2-4",
         "reason": "prediction_tickets に対応する odds_snapshots が見つかりませんでした。"
       },
-      "occurred_at": "2026-05-17T22:53:21+09:00",
+      "occurred_at": "2026-05-17T23:02:27+09:00",
       "resolved_at": null
     },
     {
@@ -1030,7 +1096,7 @@
         "combination": "1-2-4",
         "reason": "prediction_tickets に対応する odds_snapshots が見つかりませんでした。"
       },
-      "occurred_at": "2026-05-17T22:53:21+09:00",
+      "occurred_at": "2026-05-17T23:02:27+09:00",
       "resolved_at": null
     },
     {
@@ -1057,7 +1123,7 @@
         "threshold": 1.2,
         "message": "expected_value がしきい値以上の買い目です。"
       },
-      "occurred_at": "2026-05-17T22:53:21+09:00",
+      "occurred_at": "2026-05-17T23:02:28+09:00",
       "resolved_at": null
     },
     {
@@ -1084,7 +1150,7 @@
         "threshold": 1.2,
         "message": "expected_value がしきい値以上の買い目です。"
       },
-      "occurred_at": "2026-05-17T22:53:21+09:00",
+      "occurred_at": "2026-05-17T23:02:28+09:00",
       "resolved_at": null
     },
     {
@@ -1111,15 +1177,29 @@
         "threshold": 1.2,
         "message": "expected_value がしきい値以上の買い目です。"
       },
-      "occurred_at": "2026-05-17T22:53:21+09:00",
+      "occurred_at": "2026-05-17T23:02:28+09:00",
       "resolved_at": null
     }
   ],
   "explainability": {
     "enabled": true,
-    "generated_at": "2026-05-17T22:53:21+09:00",
+    "generated_at": "2026-05-17T23:02:28+09:00",
     "method": "simple_rule_score_v1",
     "enriched_race_count": 2,
     "description": "CSV出走表から生成した簡易予想に、スコア詳細と予想理由を追加しています。"
+  },
+  "recommendation_reasoning": {
+    "enabled": true,
+    "version": "recommendation_reason_v1",
+    "high_ev_threshold": 1.2,
+    "total_recommendations": 6,
+    "enriched_recommendations": 6,
+    "high_ev_recommendations": 3,
+    "grade_counts": {
+      "C": 3,
+      "A": 1,
+      "B": 2
+    },
+    "updated_at": "2026-05-17T14:02:28.659870+00:00"
   }
 }
