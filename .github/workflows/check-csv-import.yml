@@ -1,0 +1,137 @@
+name: Check CSV Import
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check-csv-import:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la db || true
+          ls -la scripts || true
+          ls -la data/import || true
+
+      - name: Check required files
+        run: |
+          test -f db/schema.sql
+          test -f scripts/init_db.py
+          test -f scripts/patch_step68_schema.py
+          test -f scripts/import_race_csv.py
+          test -f data/import/races.csv
+          test -f data/import/race_entries.csv
+
+      - name: Initialize SQLite database
+        run: |
+          python scripts/init_db.py --reset
+
+      - name: Apply STEP 68 schema patch
+        run: |
+          python scripts/patch_step68_schema.py
+
+      - name: Import race CSV
+        run: |
+          python scripts/import_race_csv.py
+
+      - name: Validate imported counts
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+
+          db_path = Path("db/boatrace.sqlite3")
+          if not db_path.exists():
+              raise SystemExit("Database does not exist: db/boatrace.sqlite3")
+
+          conn = sqlite3.connect(db_path)
+
+          expected = {
+              "venues": 1,
+              "races": 2,
+              "racers": 12,
+              "race_entries": 12,
+          }
+
+          for table, min_count in expected.items():
+              count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+              print(f"{table}: {count}")
+              if count < min_count:
+                  raise SystemExit(
+                      f"{table} count is too small: expected >= {min_count}, actual {count}"
+                  )
+
+          fk_rows = conn.execute("PRAGMA foreign_key_check;").fetchall()
+          if fk_rows:
+              print("Foreign key check: NG")
+              for row in fk_rows:
+                  print(row)
+              raise SystemExit(1)
+
+          print("Foreign key check: OK")
+          conn.close()
+          PY
+
+      - name: Show imported race overview
+        run: |
+          python - <<'PY'
+          import sqlite3
+
+          conn = sqlite3.connect("db/boatrace.sqlite3")
+          conn.row_factory = sqlite3.Row
+
+          rows = conn.execute("""
+              SELECT
+                  r.race_date,
+                  v.venue_code,
+                  v.venue_name,
+                  r.race_no,
+                  r.race_name,
+                  COUNT(e.id) AS entry_count
+              FROM races r
+              JOIN venues v ON v.id = r.venue_id
+              LEFT JOIN race_entries e ON e.race_id = r.id
+              GROUP BY r.id
+              ORDER BY r.race_date, v.venue_code, r.race_no
+          """).fetchall()
+
+          for row in rows:
+              print(
+                  row["race_date"],
+                  row["venue_code"],
+                  row["venue_name"],
+                  f'{row["race_no"]}R',
+                  row["race_name"],
+                  f'entries={row["entry_count"]}'
+              )
+
+          conn.close()
+          PY
+
+      - name: STEP 69 check
+        run: |
+          echo "STEP 69 CHECK: OK"
