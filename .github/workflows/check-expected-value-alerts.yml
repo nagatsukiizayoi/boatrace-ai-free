@@ -1,0 +1,334 @@
+name: Check Expected Value Alerts
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check-expected-value-alerts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la db || true
+          ls -la scripts || true
+          ls -la data/import || true
+          ls -la docs || true
+
+      - name: Check required files
+        run: |
+          test -f db/schema.sql
+          test -f scripts/init_db.py
+          test -f scripts/patch_step68_schema.py
+          test -f scripts/patch_step78_ticket_schema.py
+          test -f scripts/import_race_csv.py
+          test -f scripts/import_odds_csv.py
+          test -f scripts/generate_simple_predictions.py
+          test -f scripts/apply_odds_to_predictions.py
+          test -f scripts/create_expected_value_alerts.py
+          test -f scripts/export_prediction_json.py
+          test -f scripts/enrich_prediction_json.py
+          test -f data/import/races.csv
+          test -f data/import/race_entries.csv
+          test -f data/import/odds.csv
+
+      - name: Compile Python scripts
+        run: |
+          python -m py_compile scripts/init_db.py
+          python -m py_compile scripts/patch_step68_schema.py
+          python -m py_compile scripts/patch_step78_ticket_schema.py
+          python -m py_compile scripts/import_race_csv.py
+          python -m py_compile scripts/import_odds_csv.py
+          python -m py_compile scripts/generate_simple_predictions.py
+          python -m py_compile scripts/apply_odds_to_predictions.py
+          python -m py_compile scripts/create_expected_value_alerts.py
+          python -m py_compile scripts/export_prediction_json.py
+          python -m py_compile scripts/enrich_prediction_json.py
+
+      - name: Initialize SQLite database
+        run: |
+          python scripts/init_db.py --reset
+
+      - name: Apply STEP 68 schema patch
+        run: |
+          python scripts/patch_step68_schema.py
+
+      - name: Apply STEP 78 ticket schema patch
+        run: |
+          python scripts/patch_step78_ticket_schema.py
+
+      - name: Import race CSV
+        run: |
+          python scripts/import_race_csv.py
+
+      - name: Import odds CSV
+        run: |
+          python scripts/import_odds_csv.py
+
+      - name: Generate simple predictions
+        run: |
+          python scripts/generate_simple_predictions.py
+
+      - name: Apply odds to prediction tickets
+        run: |
+          python scripts/apply_odds_to_predictions.py
+
+      - name: Create expected value alerts
+        run: |
+          python scripts/create_expected_value_alerts.py
+
+      - name: Export prediction JSON
+        run: |
+          python scripts/export_prediction_json.py
+
+      - name: Enrich prediction JSON explanations
+        run: |
+          python scripts/enrich_prediction_json.py
+
+      - name: Validate prediction JSON syntax
+        run: |
+          python -m json.tool docs/prediction.json > /dev/null
+
+      - name: Validate expected value alerts in database
+        run: |
+          python - <<'PY'
+          import sqlite3
+          from pathlib import Path
+
+          db_path = Path("db/boatrace.sqlite3")
+
+          if not db_path.exists():
+              raise SystemExit("Database does not exist: db/boatrace.sqlite3")
+
+          conn = sqlite3.connect(db_path)
+          conn.row_factory = sqlite3.Row
+
+          expected_min_counts = {
+              "venues": 1,
+              "races": 2,
+              "racers": 12,
+              "race_entries": 12,
+              "odds_snapshots": 18,
+              "prediction_runs": 1,
+              "predictions": 2,
+              "prediction_tickets": 6,
+              "alert_events": 1,
+          }
+
+          for table, min_count in expected_min_counts.items():
+              count = conn.execute(f"SELECT COUNT(*) AS c FROM {table}").fetchone()["c"]
+              print(f"{table}: {count}")
+              if count < min_count:
+                  raise SystemExit(
+                      f"{table} count is too small: expected >= {min_count}, actual {count}"
+                  )
+
+          high_ev_tickets = conn.execute("""
+              SELECT COUNT(*) AS c
+              FROM prediction_tickets
+              WHERE expected_value IS NOT NULL
+                AND expected_value >= 1.2
+          """).fetchone()["c"]
+
+          print(f"high_expected_value_tickets: {high_ev_tickets}")
+
+          if high_ev_tickets < 1:
+              raise SystemExit("No high expected value tickets found")
+
+          expected_value_alerts = conn.execute("""
+              SELECT COUNT(*) AS c
+              FROM alert_events
+              WHERE message LIKE '%期待値%'
+          """).fetchone()["c"]
+
+          print(f"expected_value_alerts: {expected_value_alerts}")
+
+          if expected_value_alerts < 1:
+              raise SystemExit("No expected value alerts found")
+
+          rows = conn.execute("""
+              SELECT
+                  id,
+                  level,
+                  alert_type,
+                  message
+              FROM alert_events
+              WHERE message LIKE '%期待値%'
+              ORDER BY id
+          """).fetchall()
+
+          print("\nExpected value alert preview:")
+          for row in rows:
+              print(
+                  f'id={row["id"]}',
+                  f'level={row["level"]}',
+                  f'type={row["alert_type"]}',
+                  f'message={row["message"]}',
+              )
+
+          fk_rows = conn.execute("PRAGMA foreign_key_check;").fetchall()
+          if fk_rows:
+              print("Foreign key check: NG")
+              for row in fk_rows:
+                  print(dict(row))
+              raise SystemExit(1)
+
+          print("Foreign key check: OK")
+
+          conn.close()
+          PY
+
+      - name: Validate prediction JSON contains expected value alerts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("docs/prediction.json")
+
+          if not path.exists():
+              raise SystemExit("docs/prediction.json does not exist")
+
+          data = json.loads(path.read_text(encoding="utf-8"))
+
+          required_top_keys = [
+              "updated_at",
+              "run_key",
+              "model_name",
+              "model_version",
+              "target_date",
+              "summary",
+              "races",
+              "alerts",
+              "explainability",
+          ]
+
+          missing = [key for key in required_top_keys if key not in data]
+          if missing:
+              raise SystemExit(f"Missing top-level keys: {missing}")
+
+          alerts = data.get("alerts")
+          if not isinstance(alerts, list):
+              raise SystemExit("alerts must be a list")
+
+          if len(alerts) < 1:
+              raise SystemExit("alerts must not be empty")
+
+          expected_value_alerts = []
+
+          for alert in alerts:
+              text = " ".join([
+                  str(alert.get("message", "")),
+                  str(alert.get("type", "")),
+                  str(alert.get("alert_type", "")),
+                  str(alert.get("details", "")),
+              ])
+
+              if "期待値" in text or "expected_value" in text:
+                  expected_value_alerts.append(alert)
+
+          print(f"alerts: {len(alerts)}")
+          print(f"expected_value_alerts: {len(expected_value_alerts)}")
+
+          if len(expected_value_alerts) < 1:
+              raise SystemExit("No expected value alert found in prediction.json")
+
+          races = data.get("races")
+          if not isinstance(races, list):
+              raise SystemExit("races must be a list")
+
+          ticket_count = 0
+          tickets_with_ev = 0
+
+          for race in races:
+              recommendations = race.get("recommendations")
+              if not isinstance(recommendations, list):
+                  raise SystemExit("Each race must have recommendations")
+
+              for ticket in recommendations:
+                  ticket_count += 1
+
+                  try:
+                      ev = float(ticket.get("expected_value") or 0)
+                  except (TypeError, ValueError):
+                      ev = 0.0
+
+                  if ev > 0:
+                      tickets_with_ev += 1
+
+          print(f"tickets: {ticket_count}")
+          print(f"tickets_with_expected_value: {tickets_with_ev}")
+
+          if ticket_count < 6:
+              raise SystemExit(f"ticket count is too small: {ticket_count}")
+
+          if tickets_with_ev < 1:
+              raise SystemExit("No tickets with expected_value found")
+
+          explainability = data.get("explainability")
+          if not isinstance(explainability, dict):
+              raise SystemExit("explainability must be an object")
+
+          if explainability.get("enabled") is not True:
+              raise SystemExit("explainability.enabled must be true")
+
+          print("prediction.json expected value alerts: OK")
+          print(f"run_key: {data.get('run_key')}")
+          print(f"target_date: {data.get('target_date')}")
+          PY
+
+      - name: Show expected value alerts preview
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path("docs/prediction.json").read_text(encoding="utf-8"))
+
+          print("Alerts preview:")
+          for alert in data.get("alerts", []):
+              text = str(alert.get("message", ""))
+              if "期待値" in text or "expected_value" in text:
+                  print(json.dumps(alert, ensure_ascii=False, indent=2)[:3000])
+
+          print("\nRecommendations EV preview:")
+          for race in data.get("races", []):
+              race_no = race.get("race_no") or race.get("raceNo")
+              print(f"\nRace {race_no}")
+
+              for ticket in race.get("recommendations", []):
+                  print({
+                      "bet_type": ticket.get("bet_type"),
+                      "combination": ticket.get("combination") or ticket.get("ticket"),
+                      "amount": ticket.get("amount"),
+                      "odds": ticket.get("odds"),
+                      "expected_value": ticket.get("expected_value"),
+                  })
+          PY
+
+      - name: STEP 81 check
+        run: |
+          echo "STEP 81 CHECK: OK"
