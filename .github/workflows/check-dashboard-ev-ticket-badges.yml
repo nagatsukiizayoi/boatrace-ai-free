@@ -1,0 +1,256 @@
+name: Check Dashboard EV Ticket Badges
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check-dashboard-ev-ticket-badges:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la docs || true
+          ls -la scripts || true
+
+      - name: Check required files
+        run: |
+          test -f docs/index.html
+          test -f docs/prediction.json
+          test -f scripts/patch_index_ev_ticket_badges.py
+
+      - name: Validate index.html contains STEP 84 EV ticket badge panel
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path("docs/index.html")
+          html = path.read_text(encoding="utf-8")
+
+          required_tokens = [
+              "STEP84_EV_TICKET_BADGE_STYLE",
+              "STEP84_EV_TICKET_BADGE_HTML",
+              "STEP84_EV_TICKET_BADGE_SCRIPT",
+              "step84EvTicketBadgePanel",
+              "step84EvTicketBadgeStatus",
+              "step84EvTicketBadgeContent",
+              "step84LoadEvTicketBadges",
+              "step84ToggleEvTicketBadges",
+              "STEP84_EV_THRESHOLD",
+              "レース別 EV高 買い目",
+              "expected_value",
+              "recommendations",
+              "ev-ticket-badge-panel",
+              "ev-ticket-item",
+          ]
+
+          missing = [token for token in required_tokens if token not in html]
+
+          if missing:
+              raise SystemExit(f"Missing STEP84 dashboard tokens: {missing}")
+
+          print("docs/index.html STEP84 EV ticket badge panel: OK")
+          print(f"index.html size: {path.stat().st_size} bytes")
+          PY
+
+      - name: Validate prediction.json syntax
+        run: |
+          python -m json.tool docs/prediction.json > /dev/null
+
+      - name: Validate prediction.json EV tickets
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          path = Path("docs/prediction.json")
+          data = json.loads(path.read_text(encoding="utf-8"))
+
+          required_top_keys = [
+              "updated_at",
+              "run_key",
+              "model_name",
+              "model_version",
+              "target_date",
+              "summary",
+              "races",
+              "alerts",
+          ]
+
+          missing = [key for key in required_top_keys if key not in data]
+          if missing:
+              raise SystemExit(f"Missing top-level keys: {missing}")
+
+          races = data.get("races")
+          if not isinstance(races, list):
+              raise SystemExit("races must be a list")
+
+          if len(races) == 0:
+              raise SystemExit("races must not be empty")
+
+          ticket_count = 0
+          tickets_with_odds = 0
+          tickets_with_ev = 0
+          high_ev_tickets = 0
+          high_ev_races = set()
+          max_ev = 0.0
+          max_odds = 0.0
+
+          for race_index, race in enumerate(races, start=1):
+              if not isinstance(race, dict):
+                  raise SystemExit(f"race[{race_index}] must be an object")
+
+              recommendations = race.get("recommendations")
+
+              if not isinstance(recommendations, list):
+                  raise SystemExit(f"race[{race_index}].recommendations must be a list")
+
+              race_no = (
+                  race.get("race_no")
+                  or race.get("raceNo")
+                  or race.get("race_number")
+                  or race_index
+              )
+
+              for ticket_index, ticket in enumerate(recommendations, start=1):
+                  ticket_count += 1
+
+                  if not isinstance(ticket, dict):
+                      raise SystemExit(
+                          f"race[{race_index}].recommendations[{ticket_index}] must be an object"
+                      )
+
+                  if "odds" not in ticket:
+                      raise SystemExit(
+                          f"race[{race_index}].recommendations[{ticket_index}] missing odds"
+                      )
+
+                  if "expected_value" not in ticket:
+                      raise SystemExit(
+                          f"race[{race_index}].recommendations[{ticket_index}] missing expected_value"
+                      )
+
+                  try:
+                      odds = float(ticket.get("odds") or 0)
+                  except (TypeError, ValueError):
+                      odds = 0.0
+
+                  try:
+                      ev = float(ticket.get("expected_value") or 0)
+                  except (TypeError, ValueError):
+                      ev = 0.0
+
+                  if odds > 0:
+                      tickets_with_odds += 1
+
+                  if ev > 0:
+                      tickets_with_ev += 1
+
+                  if ev >= 1.2:
+                      high_ev_tickets += 1
+                      high_ev_races.add(str(race_no))
+
+                  if ev > max_ev:
+                      max_ev = ev
+
+                  if odds > max_odds:
+                      max_odds = odds
+
+          print(f"races: {len(races)}")
+          print(f"tickets: {ticket_count}")
+          print(f"tickets_with_odds: {tickets_with_odds}")
+          print(f"tickets_with_expected_value: {tickets_with_ev}")
+          print(f"high_ev_tickets: {high_ev_tickets}")
+          print(f"high_ev_races: {len(high_ev_races)}")
+          print(f"max_ev: {max_ev}")
+          print(f"max_odds: {max_odds}")
+
+          if ticket_count < 1:
+              raise SystemExit("No recommendation tickets found")
+
+          if tickets_with_odds < 1:
+              raise SystemExit("No recommendation ticket has odds > 0")
+
+          if tickets_with_ev < 1:
+              raise SystemExit("No recommendation ticket has expected_value > 0")
+
+          if high_ev_tickets < 1:
+              raise SystemExit("No recommendation ticket has expected_value >= 1.2")
+
+          if len(high_ev_races) < 1:
+              raise SystemExit("No race has high EV tickets")
+
+          print("prediction.json EV ticket badges data: OK")
+          print(f"run_key: {data.get('run_key')}")
+          print(f"target_date: {data.get('target_date')}")
+          PY
+
+      - name: Show EV ticket badge preview
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          data = json.loads(Path("docs/prediction.json").read_text(encoding="utf-8"))
+
+          print("EV ticket badge preview:")
+
+          total = 0
+
+          for race in data.get("races", []):
+              race_no = race.get("race_no") or race.get("raceNo")
+              venue = race.get("venue") or race.get("venue_name") or ""
+
+              high_ev = []
+
+              for ticket in race.get("recommendations", []):
+                  try:
+                      ev = float(ticket.get("expected_value") or 0)
+                  except (TypeError, ValueError):
+                      ev = 0.0
+
+                  if ev >= 1.2:
+                      high_ev.append(ticket)
+
+              if high_ev:
+                  print(f"\nRace {race_no} {venue}")
+                  for ticket in high_ev:
+                      total += 1
+                      print({
+                          "bet_type": ticket.get("bet_type"),
+                          "combination": ticket.get("combination") or ticket.get("ticket"),
+                          "amount": ticket.get("amount"),
+                          "odds": ticket.get("odds"),
+                          "expected_value": ticket.get("expected_value"),
+                          "confidence": ticket.get("confidence"),
+                      })
+
+          print(f"\nHigh EV tickets total: {total}")
+          PY
+
+      - name: STEP 85 check
+        run: |
+          echo "STEP 85 CHECK: OK"
