@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-05-17T13:50:59+09:00",
-  "generated_at": "2026-05-17T04:50:59+00:00",
+  "updated_at": "2026-05-17T14:13:47+09:00",
+  "generated_at": "2026-05-17T05:13:47+00:00",
   "run_key": "csv-simple-rule-20260516-001",
   "prediction_run_id": 1,
   "target_date": "2026-05-16",
@@ -327,7 +327,189 @@
           "payout_amount": 0,
           "profit_amount": 0
         }
-      ]
+      ],
+      "score_explanation": {
+        "favorite_boat_no": 1,
+        "rival_boat_no": 2,
+        "darkhorse_boat_no": 4,
+        "confidence": 0.602,
+        "expected_value": 1.029,
+        "recommended_total_amount": 900,
+        "summary": "1号艇 サンプル太郎 を本命、2号艇を対抗、4号艇を三番手評価。",
+        "score_method": {
+          "name": "simple_rule_score_v1",
+          "description": "全国勝率、当地勝率、ST、枠番補正を組み合わせた簡易スコアです。",
+          "weights": {
+            "national_win_rate": 0.65,
+            "local_win_rate": 0.35,
+            "frame_bonus": "1枠を最も評価し、外枠はやや割引",
+            "st_bonus": "0.15付近のSTを高評価"
+          }
+        },
+        "top_summary": [
+          "本命: 1号艇 サンプル太郎 (score=6.9345)",
+          "対抗: 2号艇 サンプル次郎 (score=6.208)",
+          "三番手: 4号艇 サンプル四郎 (score=5.8225)"
+        ],
+        "score_details": [
+          {
+            "rank": 1,
+            "boat_no": 1,
+            "frame_no": 1,
+            "racer_name": "サンプル太郎",
+            "racer_class": "A1",
+            "score": 6.9345,
+            "national_win_rate": 6.45,
+            "local_win_rate": 6.12,
+            "st_timing": 0.15,
+            "reason": "1号艇: 全国勝率が高い、当地勝率も高い、STが早め、1枠有利を評価。総合スコア 6.9345"
+          },
+          {
+            "rank": 2,
+            "boat_no": 2,
+            "frame_no": 2,
+            "racer_name": "サンプル次郎",
+            "racer_class": "A2",
+            "score": 6.208,
+            "national_win_rate": 5.82,
+            "local_win_rate": 5.7,
+            "st_timing": 0.17,
+            "reason": "2号艇: 全国勝率が安定、当地適性は標準以上、STは標準圏、内寄り枠を評価。総合スコア 6.208"
+          },
+          {
+            "rank": 3,
+            "boat_no": 4,
+            "frame_no": 4,
+            "racer_name": "サンプル四郎",
+            "racer_class": "A2",
+            "score": 5.8225,
+            "national_win_rate": 5.65,
+            "local_win_rate": 5.4,
+            "st_timing": 0.16,
+            "reason": "4号艇: 全国勝率が安定、当地適性は標準以上、STが早め。総合スコア 5.8225"
+          },
+          {
+            "rank": 4,
+            "boat_no": 3,
+            "frame_no": 3,
+            "racer_name": "サンプル三郎",
+            "racer_class": "B1",
+            "score": 5.2175,
+            "national_win_rate": 4.95,
+            "local_win_rate": 4.8,
+            "st_timing": 0.18,
+            "reason": "3号艇: 全国勝率は控えめ、当地勝率はやや低め、STは標準圏、内寄り枠を評価。総合スコア 5.2175"
+          },
+          {
+            "rank": 5,
+            "boat_no": 5,
+            "frame_no": 5,
+            "racer_name": "サンプル五郎",
+            "racer_class": "B1",
+            "score": 4.57,
+            "national_win_rate": 4.5,
+            "local_win_rate": 4.3,
+            "st_timing": 0.21,
+            "reason": "5号艇: 全国勝率は控えめ、当地勝率はやや低め、STは慎重寄り、外枠のためやや割引。総合スコア 4.57"
+          },
+          {
+            "rank": 6,
+            "boat_no": 6,
+            "frame_no": 6,
+            "racer_name": "サンプル六郎",
+            "racer_class": "B2",
+            "score": 3.81,
+            "national_win_rate": 3.8,
+            "local_win_rate": 3.6,
+            "st_timing": 0.22,
+            "reason": "6号艇: 全国勝率は控えめ、当地勝率はやや低め、STは慎重寄り、外枠のためやや割引。総合スコア 3.81"
+          }
+        ]
+      },
+      "score_details": [
+        {
+          "rank": 1,
+          "boat_no": 1,
+          "frame_no": 1,
+          "racer_name": "サンプル太郎",
+          "racer_class": "A1",
+          "score": 6.9345,
+          "national_win_rate": 6.45,
+          "local_win_rate": 6.12,
+          "st_timing": 0.15,
+          "reason": "1号艇: 全国勝率が高い、当地勝率も高い、STが早め、1枠有利を評価。総合スコア 6.9345"
+        },
+        {
+          "rank": 2,
+          "boat_no": 2,
+          "frame_no": 2,
+          "racer_name": "サンプル次郎",
+          "racer_class": "A2",
+          "score": 6.208,
+          "national_win_rate": 5.82,
+          "local_win_rate": 5.7,
+          "st_timing": 0.17,
+          "reason": "2号艇: 全国勝率が安定、当地適性は標準以上、STは標準圏、内寄り枠を評価。総合スコア 6.208"
+        },
+        {
+          "rank": 3,
+          "boat_no": 4,
+          "frame_no": 4,
+          "racer_name": "サンプル四郎",
+          "racer_class": "A2",
+          "score": 5.8225,
+          "national_win_rate": 5.65,
+          "local_win_rate": 5.4,
+          "st_timing": 0.16,
+          "reason": "4号艇: 全国勝率が安定、当地適性は標準以上、STが早め。総合スコア 5.8225"
+        },
+        {
+          "rank": 4,
+          "boat_no": 3,
+          "frame_no": 3,
+          "racer_name": "サンプル三郎",
+          "racer_class": "B1",
+          "score": 5.2175,
+          "national_win_rate": 4.95,
+          "local_win_rate": 4.8,
+          "st_timing": 0.18,
+          "reason": "3号艇: 全国勝率は控えめ、当地勝率はやや低め、STは標準圏、内寄り枠を評価。総合スコア 5.2175"
+        },
+        {
+          "rank": 5,
+          "boat_no": 5,
+          "frame_no": 5,
+          "racer_name": "サンプル五郎",
+          "racer_class": "B1",
+          "score": 4.57,
+          "national_win_rate": 4.5,
+          "local_win_rate": 4.3,
+          "st_timing": 0.21,
+          "reason": "5号艇: 全国勝率は控えめ、当地勝率はやや低め、STは慎重寄り、外枠のためやや割引。総合スコア 4.57"
+        },
+        {
+          "rank": 6,
+          "boat_no": 6,
+          "frame_no": 6,
+          "racer_name": "サンプル六郎",
+          "racer_class": "B2",
+          "score": 3.81,
+          "national_win_rate": 3.8,
+          "local_win_rate": 3.6,
+          "st_timing": 0.22,
+          "reason": "6号艇: 全国勝率は控えめ、当地勝率はやや低め、STは慎重寄り、外枠のためやや割引。総合スコア 3.81"
+        }
+      ],
+      "score_method": {
+        "name": "simple_rule_score_v1",
+        "description": "全国勝率、当地勝率、ST、枠番補正を組み合わせた簡易スコアです。",
+        "weights": {
+          "national_win_rate": 0.65,
+          "local_win_rate": 0.35,
+          "frame_bonus": "1枠を最も評価し、外枠はやや割引",
+          "st_bonus": "0.15付近のSTを高評価"
+        }
+      }
     },
     {
       "id": 2,
@@ -635,8 +817,197 @@
           "payout_amount": 0,
           "profit_amount": 0
         }
-      ]
+      ],
+      "score_explanation": {
+        "favorite_boat_no": 1,
+        "rival_boat_no": 2,
+        "darkhorse_boat_no": 5,
+        "confidence": 0.604,
+        "expected_value": 1.032,
+        "recommended_total_amount": 900,
+        "summary": "1号艇 テスト一郎 を本命、2号艇を対抗、5号艇を三番手評価。",
+        "score_method": {
+          "name": "simple_rule_score_v1",
+          "description": "全国勝率、当地勝率、ST、枠番補正を組み合わせた簡易スコアです。",
+          "weights": {
+            "national_win_rate": 0.65,
+            "local_win_rate": 0.35,
+            "frame_bonus": "1枠を最も評価し、外枠はやや割引",
+            "st_bonus": "0.15付近のSTを高評価"
+          }
+        },
+        "top_summary": [
+          "本命: 1号艇 テスト一郎 (score=7.15)",
+          "対抗: 2号艇 テスト二郎 (score=6.355)",
+          "三番手: 5号艇 テスト五郎 (score=5.5975)"
+        ],
+        "score_details": [
+          {
+            "rank": 1,
+            "boat_no": 1,
+            "frame_no": 1,
+            "racer_name": "テスト一郎",
+            "racer_class": "A1",
+            "score": 7.15,
+            "national_win_rate": 6.7,
+            "local_win_rate": 6.3,
+            "st_timing": 0.14,
+            "reason": "1号艇: 全国勝率が高い、当地勝率も高い、STが早め、1枠有利を評価。総合スコア 7.15"
+          },
+          {
+            "rank": 2,
+            "boat_no": 2,
+            "frame_no": 2,
+            "racer_name": "テスト二郎",
+            "racer_class": "A2",
+            "score": 6.355,
+            "national_win_rate": 5.95,
+            "local_win_rate": 5.85,
+            "st_timing": 0.16,
+            "reason": "2号艇: 全国勝率が安定、当地適性は標準以上、STが早め、内寄り枠を評価。総合スコア 6.355"
+          },
+          {
+            "rank": 3,
+            "boat_no": 5,
+            "frame_no": 5,
+            "racer_name": "テスト五郎",
+            "racer_class": "A2",
+            "score": 5.5975,
+            "national_win_rate": 5.55,
+            "local_win_rate": 5.2,
+            "st_timing": 0.18,
+            "reason": "5号艇: 全国勝率が安定、当地適性は標準以上、STは標準圏、外枠のためやや割引。総合スコア 5.5975"
+          },
+          {
+            "rank": 4,
+            "boat_no": 4,
+            "frame_no": 4,
+            "racer_name": "テスト四郎",
+            "racer_class": "B1",
+            "score": 5.037,
+            "national_win_rate": 4.88,
+            "local_win_rate": 4.7,
+            "st_timing": 0.2,
+            "reason": "4号艇: 全国勝率は控えめ、当地勝率はやや低め、STは慎重寄り。総合スコア 5.037"
+          },
+          {
+            "rank": 5,
+            "boat_no": 3,
+            "frame_no": 3,
+            "racer_name": "テスト三郎",
+            "racer_class": "B1",
+            "score": 5.0075,
+            "national_win_rate": 4.75,
+            "local_win_rate": 4.6,
+            "st_timing": 0.19,
+            "reason": "3号艇: 全国勝率は控えめ、当地勝率はやや低め、STは標準圏、内寄り枠を評価。総合スコア 5.0075"
+          },
+          {
+            "rank": 6,
+            "boat_no": 6,
+            "frame_no": 6,
+            "racer_name": "テスト六郎",
+            "racer_class": "B2",
+            "score": 3.95,
+            "national_win_rate": 3.95,
+            "local_win_rate": 3.75,
+            "st_timing": 0.23,
+            "reason": "6号艇: 全国勝率は控えめ、当地勝率はやや低め、STは慎重寄り、外枠のためやや割引。総合スコア 3.95"
+          }
+        ]
+      },
+      "score_details": [
+        {
+          "rank": 1,
+          "boat_no": 1,
+          "frame_no": 1,
+          "racer_name": "テスト一郎",
+          "racer_class": "A1",
+          "score": 7.15,
+          "national_win_rate": 6.7,
+          "local_win_rate": 6.3,
+          "st_timing": 0.14,
+          "reason": "1号艇: 全国勝率が高い、当地勝率も高い、STが早め、1枠有利を評価。総合スコア 7.15"
+        },
+        {
+          "rank": 2,
+          "boat_no": 2,
+          "frame_no": 2,
+          "racer_name": "テスト二郎",
+          "racer_class": "A2",
+          "score": 6.355,
+          "national_win_rate": 5.95,
+          "local_win_rate": 5.85,
+          "st_timing": 0.16,
+          "reason": "2号艇: 全国勝率が安定、当地適性は標準以上、STが早め、内寄り枠を評価。総合スコア 6.355"
+        },
+        {
+          "rank": 3,
+          "boat_no": 5,
+          "frame_no": 5,
+          "racer_name": "テスト五郎",
+          "racer_class": "A2",
+          "score": 5.5975,
+          "national_win_rate": 5.55,
+          "local_win_rate": 5.2,
+          "st_timing": 0.18,
+          "reason": "5号艇: 全国勝率が安定、当地適性は標準以上、STは標準圏、外枠のためやや割引。総合スコア 5.5975"
+        },
+        {
+          "rank": 4,
+          "boat_no": 4,
+          "frame_no": 4,
+          "racer_name": "テスト四郎",
+          "racer_class": "B1",
+          "score": 5.037,
+          "national_win_rate": 4.88,
+          "local_win_rate": 4.7,
+          "st_timing": 0.2,
+          "reason": "4号艇: 全国勝率は控えめ、当地勝率はやや低め、STは慎重寄り。総合スコア 5.037"
+        },
+        {
+          "rank": 5,
+          "boat_no": 3,
+          "frame_no": 3,
+          "racer_name": "テスト三郎",
+          "racer_class": "B1",
+          "score": 5.0075,
+          "national_win_rate": 4.75,
+          "local_win_rate": 4.6,
+          "st_timing": 0.19,
+          "reason": "3号艇: 全国勝率は控えめ、当地勝率はやや低め、STは標準圏、内寄り枠を評価。総合スコア 5.0075"
+        },
+        {
+          "rank": 6,
+          "boat_no": 6,
+          "frame_no": 6,
+          "racer_name": "テスト六郎",
+          "racer_class": "B2",
+          "score": 3.95,
+          "national_win_rate": 3.95,
+          "local_win_rate": 3.75,
+          "st_timing": 0.23,
+          "reason": "6号艇: 全国勝率は控えめ、当地勝率はやや低め、STは慎重寄り、外枠のためやや割引。総合スコア 3.95"
+        }
+      ],
+      "score_method": {
+        "name": "simple_rule_score_v1",
+        "description": "全国勝率、当地勝率、ST、枠番補正を組み合わせた簡易スコアです。",
+        "weights": {
+          "national_win_rate": 0.65,
+          "local_win_rate": 0.35,
+          "frame_bonus": "1枠を最も評価し、外枠はやや割引",
+          "st_bonus": "0.15付近のSTを高評価"
+        }
+      }
     }
   ],
-  "alerts": []
+  "alerts": [],
+  "explainability": {
+    "enabled": true,
+    "generated_at": "2026-05-17T14:13:47+09:00",
+    "method": "simple_rule_score_v1",
+    "enriched_race_count": 2,
+    "description": "CSV出走表から生成した簡易予想に、スコア詳細と予想理由を追加しています。"
+  }
 }
