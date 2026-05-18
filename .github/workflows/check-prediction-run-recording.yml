@@ -1,0 +1,42 @@
+name: Check Prediction Run Recording
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  prediction-run-recording:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Check required files
+        run: |
+          test -f db/schema.sql
+          test -f docs/prediction.json
+          test -f scripts/init_db.py
+          test -f scripts/record_prediction_run.py
+          test -f scripts/check_prediction_run_recording.py
+      - name: Compile scripts
+        run: |
+          python -m py_compile scripts/record_prediction_run.py
+          python -m py_compile scripts/check_prediction_run_recording.py
+      - name: Initialize database
+        run: python scripts/init_db.py --reset
+      - name: Validate prediction JSON
+        run: python -m json.tool docs/prediction.json > /dev/null
+      - name: Record prediction run
+        run: python scripts/record_prediction_run.py
+      - name: Check prediction run recording
+        run: python scripts/check_prediction_run_recording.py
