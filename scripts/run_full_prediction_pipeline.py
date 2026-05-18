@@ -137,8 +137,6 @@ def main() -> None:
         "docs/index.html",
         "docs/healthcheck.html",
         "scripts/init_db.py",
-        "scripts/patch_step68_schema.py",
-        "scripts/patch_step78_ticket_schema.py",
         "scripts/import_race_csv.py",
         "scripts/import_odds_csv.py",
         "scripts/generate_simple_predictions.py",
@@ -159,8 +157,6 @@ def main() -> None:
 
     scripts_to_compile = [
         "scripts/init_db.py",
-        "scripts/patch_step68_schema.py",
-        "scripts/patch_step78_ticket_schema.py",
         "scripts/import_race_csv.py",
         "scripts/import_odds_csv.py",
         "scripts/generate_simple_predictions.py",
@@ -181,8 +177,6 @@ def main() -> None:
 
     pipeline_commands = [
         [PYTHON, "scripts/init_db.py", "--reset"],
-        [PYTHON, "scripts/patch_step68_schema.py"],
-        [PYTHON, "scripts/patch_step78_ticket_schema.py"],
         [PYTHON, "scripts/import_race_csv.py"],
         [PYTHON, "scripts/import_odds_csv.py"],
         [PYTHON, "scripts/generate_simple_predictions.py"],

@@ -169,8 +169,6 @@ def main() -> None:
     else:
         run([PYTHON, "scripts/init_db.py"])
 
-    run([PYTHON, "scripts/patch_step68_schema.py"])
-    run([PYTHON, "scripts/patch_step78_ticket_schema.py"])
 
     validate_schema()
 
