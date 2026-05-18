@@ -1,0 +1,73 @@
+name: Check Database Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  database-build:
+    name: Database Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la db
+          ls -la scripts
+          ls -la data/import
+          ls -la .github/workflows
+
+      - name: Check required files
+        run: |
+          test -f db/schema.sql
+          test -f scripts/build_database.py
+          test -f scripts/check_database_build.py
+          test -f scripts/init_db.py
+          test -f scripts/patch_step68_schema.py
+          test -f scripts/patch_step78_ticket_schema.py
+          test -f scripts/import_race_csv.py
+          test -f scripts/import_odds_csv.py
+          test -f data/import/races.csv
+          test -f data/import/race_entries.csv
+          test -f data/import/odds.csv
+          test -f .github/workflows/check-database-build.yml
+
+      - name: Compile database scripts
+        run: |
+          python -m py_compile scripts/build_database.py
+          python -m py_compile scripts/check_database_build.py
+          python -m py_compile scripts/init_db.py
+          python -m py_compile scripts/patch_step68_schema.py
+          python -m py_compile scripts/patch_step78_ticket_schema.py
+          python -m py_compile scripts/import_race_csv.py
+          python -m py_compile scripts/import_odds_csv.py
+
+      - name: Build database with sample data
+        run: |
+          python scripts/build_database.py --reset --with-sample-data
+
+      - name: Run STEP 103 database build validation
+        run: |
+          python scripts/check_database_build.py
