@@ -126,6 +126,13 @@ def validate_prediction_json() -> None:
     print("prediction.json validation: OK")
 
 
+
+def run_script(script_path):
+    import subprocess
+    import sys
+    print("RUN:", script_path)
+    subprocess.run([sys.executable, script_path], check=True)
+
 def main() -> None:
     print("STEP 101 full prediction pipeline")
 
@@ -205,6 +212,10 @@ def main() -> None:
 
     print("")
     print("Full prediction pipeline validation: OK")
+
+    run_script("scripts/record_prediction_run.py")
+    run_script("scripts/check_prediction_run_recording.py")
+
     print("STEP 101 CHECK: OK")
 
 
