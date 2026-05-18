@@ -625,7 +625,7 @@ CREATE TABLE IF NOT EXISTS prediction_runs (
     target_date TEXT NOT NULL,
     started_at TEXT,
     finished_at TEXT,
-    status TEXT NOT NULL DEFAULT 'success',
+    status TEXT NOT NULL DEFAULT 'completed',
     race_count INTEGER NOT NULL DEFAULT 0,
     recommendation_count INTEGER NOT NULL DEFAULT 0,
     high_ev_count INTEGER NOT NULL DEFAULT 0,
