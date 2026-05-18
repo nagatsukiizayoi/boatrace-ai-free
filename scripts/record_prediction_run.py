@@ -100,6 +100,12 @@ def main():
         table = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='prediction_runs'").fetchone()
         if table is None:
             raise SystemExit('prediction_runs table does not exist')
+        cols = {r[1] for r in conn.execute("PRAGMA table_info(prediction_runs)").fetchall()}
+        migrations = [("started_at", "ALTER TABLE prediction_runs ADD COLUMN started_at TEXT"), ("finished_at", "ALTER TABLE prediction_runs ADD COLUMN finished_at TEXT"), ("race_count", "ALTER TABLE prediction_runs ADD COLUMN race_count INTEGER NOT NULL DEFAULT 0"), ("recommendation_count", "ALTER TABLE prediction_runs ADD COLUMN recommendation_count INTEGER NOT NULL DEFAULT 0"), ("high_ev_count", "ALTER TABLE prediction_runs ADD COLUMN high_ev_count INTEGER NOT NULL DEFAULT 0"), ("alert_count", "ALTER TABLE prediction_runs ADD COLUMN alert_count INTEGER NOT NULL DEFAULT 0"), ("quality_score", "ALTER TABLE prediction_runs ADD COLUMN quality_score REAL")]
+        for name, sql in migrations:
+            if name not in cols:
+                conn.execute(sql)
+        conn.commit()
         conn.execute("""
             INSERT INTO prediction_runs (
                 run_key, model_name, model_version, target_date,
