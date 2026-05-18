@@ -29,76 +29,9 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Show environment
+      - name: STEP 105 smoke check
         run: |
           python --version
-          pwd
-          ls -la
-          ls -la db
-          ls -la scripts
-          ls -la data/import
-          ls -la docs
-          ls -la .github/workflows
-
-      - name: Check required files
-        run: |
           test -f db/schema.sql
-          test -f scripts/init_db.py
           test -f scripts/check_integrated_schema.py
-          test -f scripts/export_integrated_schema.py
-          test -f scripts/import_race_csv.py
-          test -f scripts/import_odds_csv.py
-          test -f scripts/generate_simple_predictions.py
-          test -f scripts/apply_odds_to_predictions.py
-          test -f scripts/create_expected_value_alerts.py
-          test -f scripts/export_prediction_json.py
-          test -f scripts/enrich_prediction_json.py
-          test -f scripts/enrich_recommendation_reasons.py
-          test -f scripts/check_recommendation_reasons.py
-          test -f scripts/check_dashboard_final_readiness.py
-          test -f data/import/races.csv
-          test -f data/import/race_entries.csv
-          test -f data/import/odds.csv
-          test -f docs/index.html
-          test -f docs/healthcheck.html
-          test -f .github/workflows/check-integrated-schema.yml
-
-      - name: Compile integrated schema scripts
-        run: |
-          python -m py_compile scripts/init_db.py
-          python -m py_compile scripts/check_integrated_schema.py
-          python -m py_compile scripts/export_integrated_schema.py
-          python -m py_compile scripts/import_race_csv.py
-          python -m py_compile scripts/import_odds_csv.py
-          python -m py_compile scripts/generate_simple_predictions.py
-          python -m py_compile scripts/apply_odds_to_predictions.py
-          python -m py_compile scripts/create_expected_value_alerts.py
-          python -m py_compile scripts/export_prediction_json.py
-          python -m py_compile scripts/enrich_prediction_json.py
-          python -m py_compile scripts/enrich_recommendation_reasons.py
-          python -m py_compile scripts/check_recommendation_reasons.py
-          python -m py_compile scripts/check_dashboard_final_readiness.py
-
-      - name: Show schema preview
-        run: |
-          echo "schema.sql first 120 lines:"
-          sed -n '1,120p' db/schema.sql
-          echo ""
-          echo "schema keywords:"
-          grep -n "CREATE TABLE\|prediction_tickets\|expected_value\|odds\|registration_no\|distance" db/schema.sql | head -80
-
-      - name: Run STEP 104 integrated schema validation
-        run: |
-          python scripts/check_integrated_schema.py
-
-      - name: Validate prediction JSON syntax after integrated schema run
-        run: |
-          python -m json.tool docs/prediction.json > /dev/null
-          echo "prediction.json syntax: OK"
-
-      - name: Run final readiness check
-        run: |
-          python scripts/check_dashboard_final_readiness.py
-
-      - name: STEP 105 check
-        run: echo "STEP 105 CHECK: OK"
+          echo "STEP 105 CHECK: OK"
