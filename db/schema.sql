@@ -615,3 +615,25 @@ FROM races r
 JOIN venues v
   ON r.venue_id = v.id;
 
+
+-- STEP109: prediction run history
+CREATE TABLE IF NOT EXISTS prediction_runs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    run_key TEXT NOT NULL UNIQUE,
+    model_name TEXT NOT NULL,
+    model_version TEXT NOT NULL,
+    target_date TEXT NOT NULL,
+    started_at TEXT,
+    finished_at TEXT,
+    status TEXT NOT NULL DEFAULT 'success',
+    race_count INTEGER NOT NULL DEFAULT 0,
+    recommendation_count INTEGER NOT NULL DEFAULT 0,
+    high_ev_count INTEGER NOT NULL DEFAULT 0,
+    alert_count INTEGER NOT NULL DEFAULT 0,
+    quality_score REAL,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_prediction_runs_target_date ON prediction_runs(target_date);
+CREATE INDEX IF NOT EXISTS idx_prediction_runs_model ON prediction_runs(model_name, model_version);
+CREATE INDEX IF NOT EXISTS idx_prediction_runs_status ON prediction_runs(status);
