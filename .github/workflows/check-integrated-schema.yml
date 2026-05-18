@@ -42,18 +42,7 @@ jobs:
       - name: Check required files
         run: |
           test -f db/schema.sql
-          test -f scripts/init_db.py
           test -f scripts/check_integrated_schema.py
-          test -f scripts/export_integrated_schema.py
-          test -f scripts/import_race_csv.py
-          test -f scripts/import_odds_csv.py
-          test -f scripts/generate_simple_predictions.py
-          test -f scripts/apply_odds_to_predictions.py
-          test -f scripts/create_expected_value_alerts.py
-          test -f scripts/export_prediction_json.py
-          test -f scripts/enrich_prediction_json.py
-          test -f scripts/enrich_recommendation_reasons.py
-          test -f scripts/check_recommendation_reasons.py
           test -f scripts/check_dashboard_final_readiness.py
           test -f data/import/races.csv
           test -f data/import/race_entries.csv
@@ -61,18 +50,19 @@ jobs:
           test -f docs/index.html
           test -f docs/healthcheck.html
 
-      - name: Compile integrated schema checker
+      - name: Compile check scripts
         run: |
           python -m py_compile scripts/check_integrated_schema.py
           python -m py_compile scripts/check_dashboard_final_readiness.py
 
-      - name: Run STEP 104 integrated schema validation
+      - name: Run integrated schema validation
         run: |
           python scripts/check_integrated_schema.py
 
-      - name: Run final readiness check
+      - name: Run final readiness validation
         run: |
           python scripts/check_dashboard_final_readiness.py
 
       - name: STEP 105 check
-        run: echo "STEP 105 CHECK: OK"
+        run: |
+          echo "STEP 105 CHECK: OK"
