@@ -1,0 +1,34 @@
+name: Check Dashboard Prediction Run Summary
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  dashboard-prediction-run-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Check required files
+        run: |
+          test -f docs/index.html
+          test -f docs/prediction_run_summary.json
+          test -f scripts/check_dashboard_prediction_run_summary.py
+      - name: Validate JSON
+        run: python -m json.tool docs/prediction_run_summary.json > /dev/null
+      - name: Compile checker
+        run: python -m py_compile scripts/check_dashboard_prediction_run_summary.py
+      - name: Run STEP 115 checker
+        run: python scripts/check_dashboard_prediction_run_summary.py
