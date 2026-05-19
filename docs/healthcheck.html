@@ -926,5 +926,45 @@
 })();
 </script>
 
+<!-- STEP116_PREDICTION_RUN_HEALTHCHECK_STYLE -->
+<style>
+.step116-run-health-panel{margin:24px 0;padding:16px;border:1px solid #dbeafe;border-radius:12px;background:#f8fbff;}
+.step116-run-health-panel h2{margin:0 0 12px;color:#17324d;}
+.step116-run-health-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;}
+.step116-run-health-card{padding:12px;border-radius:10px;background:white;border:1px solid #e2e8f0;}
+.step116-run-health-label{font-size:.78rem;color:#64748b;margin-bottom:4px;}
+.step116-run-health-value{font-size:1.05rem;font-weight:700;color:#0f172a;word-break:break-all;}
+.step116-run-health-note{margin-top:10px;font-size:.85rem;color:#475569;}
+.step116-run-health-ok{color:#047857;font-weight:700;}
+.step116-run-health-warn{color:#b45309;font-weight:700;}
+.step116-run-health-error{color:#b91c1c;font-weight:700;}
+</style>
+<!-- STEP116_PREDICTION_RUN_HEALTHCHECK_HTML -->
+<section id="step116PredictionRunHealthPanel" class="step116-run-health-panel">
+  <h2>予測実行履歴 Health Check</h2>
+  <div id="step116PredictionRunHealthStatus" class="step116-run-health-note">Loading prediction_run_summary.json...</div>
+  <div class="step116-run-health-grid">
+    <div class="step116-run-health-card"><div class="step116-run-health-label">Status</div><div id="step116HealthStatus" class="step116-run-health-value">-</div></div>
+    <div class="step116-run-health-card"><div class="step116-run-health-label">Run Key</div><div id="step116HealthRunKey" class="step116-run-health-value">-</div></div>
+    <div class="step116-run-health-card"><div class="step116-run-health-label">Model</div><div id="step116HealthModel" class="step116-run-health-value">-</div></div>
+    <div class="step116-run-health-card"><div class="step116-run-health-label">Target Date</div><div id="step116HealthTargetDate" class="step116-run-health-value">-</div></div>
+    <div class="step116-run-health-card"><div class="step116-run-health-label">Races</div><div id="step116HealthRaceCount" class="step116-run-health-value">-</div></div>
+    <div class="step116-run-health-card"><div class="step116-run-health-label">Recommendations</div><div id="step116HealthRecommendationCount" class="step116-run-health-value">-</div></div>
+    <div class="step116-run-health-card"><div class="step116-run-health-label">High EV</div><div id="step116HealthHighEvCount" class="step116-run-health-value">-</div></div>
+    <div class="step116-run-health-card"><div class="step116-run-health-label">Alerts</div><div id="step116HealthAlertCount" class="step116-run-health-value">-</div></div>
+    <div class="step116-run-health-card"><div class="step116-run-health-label">Quality Score</div><div id="step116HealthQualityScore" class="step116-run-health-value">-</div></div>
+    <div class="step116-run-health-card"><div class="step116-run-health-label">Run Count</div><div id="step116HealthRunCount" class="step116-run-health-value">-</div></div>
+  </div>
+  <div id="step116HealthGeneratedAt" class="step116-run-health-note">generated_at: -</div>
+</section>
+<!-- STEP116_PREDICTION_RUN_HEALTHCHECK_SCRIPT -->
+<script>
+(function(){
+function setText(id,v){var e=document.getElementById(id);if(e){e.textContent=(v===undefined||v===null||v==="")?"-":String(v);}}
+function setStatus(v,cls){var e=document.getElementById("step116PredictionRunHealthStatus");if(e){e.textContent=v;e.className="step116-run-health-note "+(cls||"");}}
+fetch("./prediction_run_summary.json?step=116").then(function(r){if(!r.ok){throw new Error("HTTP "+r.status);}return r.json();}).then(function(data){
+var latest=data.latest||{};var summary=data.summary||{};
+setText("step116HealthStatus",latest.status);setText("step116HealthRunKey",latest.run_key);setText("step116HealthModel",((latest.model_name||"-")+" "+(latest.model_version||"")).trim());setText("step116HealthTargetDate",latest.target_date);
+
 </body>
 </html>
