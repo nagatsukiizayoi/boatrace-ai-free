@@ -5831,5 +5831,46 @@
 })();
 </script>
 
+<!-- STEP114_PREDICTION_RUN_SUMMARY_STYLE -->
+<style>
+.step114-run-panel{margin:24px 0;padding:16px;border:1px solid #d7e3f4;border-radius:12px;background:#f8fbff;}
+.step114-run-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
+.step114-run-card{padding:12px;border-radius:10px;background:white;border:1px solid #e2e8f0;}
+.step114-run-label{font-size:.78rem;color:#64748b;margin-bottom:4px;}
+.step114-run-value{font-size:1.05rem;font-weight:700;color:#0f172a;word-break:break-all;}
+.step114-run-note{margin-top:10px;font-size:.85rem;color:#475569;}
+</style>
+<!-- STEP114_PREDICTION_RUN_SUMMARY_HTML -->
+<section id="step114PredictionRunSummaryPanel" class="step114-run-panel">
+  <h2>予測実行履歴サマリー</h2>
+  <div id="step114PredictionRunStatus" class="step114-run-note">Loading prediction_run_summary.json...</div>
+  <div class="step114-run-grid">
+    <div class="step114-run-card"><div class="step114-run-label">Status</div><div id="step114RunStatus" class="step114-run-value">-</div></div>
+    <div class="step114-run-card"><div class="step114-run-label">Run Key</div><div id="step114RunKey" class="step114-run-value">-</div></div>
+    <div class="step114-run-card"><div class="step114-run-label">Model</div><div id="step114Model" class="step114-run-value">-</div></div>
+    <div class="step114-run-card"><div class="step114-run-label">Target Date</div><div id="step114TargetDate" class="step114-run-value">-</div></div>
+    <div class="step114-run-card"><div class="step114-run-label">Races</div><div id="step114RaceCount" class="step114-run-value">-</div></div>
+    <div class="step114-run-card"><div class="step114-run-label">Recommendations</div><div id="step114RecommendationCount" class="step114-run-value">-</div></div>
+    <div class="step114-run-card"><div class="step114-run-label">High EV</div><div id="step114HighEvCount" class="step114-run-value">-</div></div>
+    <div class="step114-run-card"><div class="step114-run-label">Alerts</div><div id="step114AlertCount" class="step114-run-value">-</div></div>
+    <div class="step114-run-card"><div class="step114-run-label">Quality Score</div><div id="step114QualityScore" class="step114-run-value">-</div></div>
+    <div class="step114-run-card"><div class="step114-run-label">Run Count</div><div id="step114RunCount" class="step114-run-value">-</div></div>
+  </div>
+  <div id="step114GeneratedAt" class="step114-run-note">generated_at: -</div>
+</section>
+<!-- STEP114_PREDICTION_RUN_SUMMARY_SCRIPT -->
+<script>
+(function(){
+function setText(id,v){var e=document.getElementById(id);if(e){e.textContent=(v===undefined||v===null||v==="")?"-":String(v);}}
+function setStatus(v){var e=document.getElementById("step114PredictionRunStatus");if(e){e.textContent=v;}}
+fetch("./prediction_run_summary.json?step=114").then(function(r){if(!r.ok){throw new Error("HTTP "+r.status);}return r.json();}).then(function(data){
+var latest=data.latest||{};var summary=data.summary||{};
+setText("step114RunStatus",latest.status);setText("step114RunKey",latest.run_key);setText("step114Model",((latest.model_name||"-")+" "+(latest.model_version||"")).trim());setText("step114TargetDate",latest.target_date);
+setText("step114RaceCount",latest.race_count);setText("step114RecommendationCount",latest.recommendation_count);setText("step114HighEvCount",latest.high_ev_count);setText("step114AlertCount",latest.alert_count);setText("step114QualityScore",latest.quality_score);
+setText("step114RunCount",summary.run_count||(data.runs?data.runs.length:"-"));setText("step114GeneratedAt","generated_at: "+(data.generated_at||"-"));setStatus("OK: 予測実行履歴サマリーを表示しました");
+}).catch(function(e){setStatus("ERROR: prediction_run_summary.json を読み込めません: "+e.message);});
+})();
+</script>
+
 </body>
 </html>
