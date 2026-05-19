@@ -1,0 +1,55 @@
+name: Check Results Import
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  results-import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+          ls -la data/import
+          ls -la scripts
+      - name: Check required files
+        run: |
+          test -f db/schema.sql
+          test -f data/import/races.csv
+          test -f data/import/race_entries.csv
+          test -f data/import/odds.csv
+          test -f data/import/race_results.csv
+          test -f data/import/payouts.csv
+          test -f scripts/build_database.py
+          test -f scripts/import_results_csv.py
+          test -f scripts/check_race_results_payouts_schema.py
+          test -f scripts/check_results_import.py
+      - name: Compile scripts
+        run: |
+          python -m py_compile scripts/import_results_csv.py
+          python -m py_compile scripts/check_race_results_payouts_schema.py
+          python -m py_compile scripts/check_results_import.py
+      - name: Build database with sample data
+        run: python scripts/build_database.py --reset --with-sample-data
+      - name: Check results schema
+        run: python scripts/check_race_results_payouts_schema.py
+      - name: Import race results and payouts
+        run: python scripts/import_results_csv.py
+      - name: Check imported results
+        run: python scripts/check_results_import.py
