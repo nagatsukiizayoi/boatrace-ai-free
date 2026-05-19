@@ -672,3 +672,28 @@ CREATE TABLE IF NOT EXISTS payouts (
 CREATE INDEX IF NOT EXISTS idx_payouts_race_id ON payouts(race_id);
 CREATE INDEX IF NOT EXISTS idx_payouts_bet_type ON payouts(bet_type);
 CREATE INDEX IF NOT EXISTS idx_payouts_ticket ON payouts(ticket);
+
+-- STEP124: bet result settlement table
+CREATE TABLE IF NOT EXISTS bet_results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    prediction_ticket_id INTEGER,
+    race_id INTEGER NOT NULL,
+    bet_type TEXT NOT NULL,
+    ticket TEXT NOT NULL,
+    stake_yen INTEGER NOT NULL DEFAULT 100 CHECK (stake_yen >= 0),
+    is_hit INTEGER NOT NULL DEFAULT 0 CHECK (is_hit IN (0, 1)),
+    payout_yen INTEGER NOT NULL DEFAULT 0 CHECK (payout_yen >= 0),
+    return_yen INTEGER NOT NULL DEFAULT 0 CHECK (return_yen >= 0),
+    profit_yen INTEGER NOT NULL DEFAULT 0,
+    return_rate REAL NOT NULL DEFAULT 0,
+    settled_at TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT,
+    UNIQUE(race_id, bet_type, ticket),
+    FOREIGN KEY (race_id) REFERENCES races(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_bet_results_race_id ON bet_results(race_id);
+CREATE INDEX IF NOT EXISTS idx_bet_results_bet_type ON bet_results(bet_type);
+CREATE INDEX IF NOT EXISTS idx_bet_results_ticket ON bet_results(ticket);
+CREATE INDEX IF NOT EXISTS idx_bet_results_is_hit ON bet_results(is_hit);
