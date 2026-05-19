@@ -175,6 +175,8 @@ def main() -> None:
     if args.with_sample_data:
         run([PYTHON, "scripts/import_race_csv.py"])
         run([PYTHON, "scripts/import_odds_csv.py"])
+        run([PYTHON, "scripts/import_results_csv.py"])
+        run([PYTHON, "scripts/check_results_import.py"])
         validate_schema()
 
     print("")

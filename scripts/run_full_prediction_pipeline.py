@@ -219,6 +219,8 @@ def main() -> None:
     run_script("scripts/export_prediction_run_summary.py")
     run_script("scripts/check_dashboard_prediction_run_summary.py")
     run_script("scripts/check_healthcheck_prediction_run_summary.py")
+    run_script("scripts/import_results_csv.py")
+    run_script("scripts/check_results_import.py")
     print("STEP 101 CHECK: OK")
 
 
