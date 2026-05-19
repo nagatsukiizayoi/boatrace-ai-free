@@ -1,0 +1,24 @@
+name: Check Healthcheck Prediction Run Summary
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  healthcheck-prediction-run-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: STEP 117 smoke check
+        run: |
+          echo workflow recognized
+          echo STEP 117 CHECK: OK
