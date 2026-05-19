@@ -1,0 +1,3 @@
+race_id,result_status,first_boat_no,second_boat_no,third_boat_no,winning_trick,finalized_at,trifecta_combination,trifecta_payout,trifecta_popularity,exacta_combination,exacta_payout,quinella_combination,quinella_payout
+1,official,1,2,3,逃げ,2026-01-01T12:10:00+09:00,1-2-3,1240,3,1-2,420,1-2,260
+2,official,2,1,4,まくり,2026-01-01T13:10:00+09:00,2-1-4,2380,7,2-1,760,1-2,310
