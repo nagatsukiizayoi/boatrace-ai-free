@@ -637,3 +637,38 @@ CREATE TABLE IF NOT EXISTS prediction_runs (
 CREATE INDEX IF NOT EXISTS idx_prediction_runs_target_date ON prediction_runs(target_date);
 CREATE INDEX IF NOT EXISTS idx_prediction_runs_model ON prediction_runs(model_name, model_version);
 CREATE INDEX IF NOT EXISTS idx_prediction_runs_status ON prediction_runs(status);
+
+-- STEP120: race results and payouts
+CREATE TABLE IF NOT EXISTS race_results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    race_id INTEGER NOT NULL,
+    result_status TEXT NOT NULL DEFAULT 'official' CHECK (result_status IN ('pending', 'official', 'cancelled', 'no_contest')),
+    first_place INTEGER,
+    second_place INTEGER,
+    third_place INTEGER,
+    winning_method TEXT,
+    decided_at TEXT,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT,
+    UNIQUE(race_id),
+    FOREIGN KEY (race_id) REFERENCES races(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_race_results_race_id ON race_results(race_id);
+CREATE INDEX IF NOT EXISTS idx_race_results_status ON race_results(result_status);
+
+CREATE TABLE IF NOT EXISTS payouts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    race_id INTEGER NOT NULL,
+    bet_type TEXT NOT NULL CHECK (bet_type IN ('trifecta', 'trio', 'exacta', 'quinella', 'wide', 'win', 'place')),
+    ticket TEXT NOT NULL,
+    payout_yen INTEGER NOT NULL DEFAULT 0 CHECK (payout_yen >= 0),
+    popularity INTEGER,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(race_id, bet_type, ticket),
+    FOREIGN KEY (race_id) REFERENCES races(id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_payouts_race_id ON payouts(race_id);
+CREATE INDEX IF NOT EXISTS idx_payouts_bet_type ON payouts(bet_type);
+CREATE INDEX IF NOT EXISTS idx_payouts_ticket ON payouts(ticket);
