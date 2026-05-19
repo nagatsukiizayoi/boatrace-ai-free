@@ -18,7 +18,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - name: STEP 117 smoke check
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Check required files
         run: |
-          echo workflow recognized
-          echo STEP 117 CHECK: OK
+          test -f docs/healthcheck.html
+          test -f docs/prediction_run_summary.json
+          test -f scripts/check_healthcheck_prediction_run_summary.py
+      - name: Validate prediction run summary JSON
+        run: python -m json.tool docs/prediction_run_summary.json > /dev/null
+      - name: Compile checker
+        run: python -m py_compile scripts/check_healthcheck_prediction_run_summary.py
+      - name: Run STEP 117 checker
+        run: python scripts/check_healthcheck_prediction_run_summary.py
