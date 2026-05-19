@@ -1,0 +1,64 @@
+name: Check Bet Results Settlement
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  bet-results-settlement:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Show environment
+        run: |
+          python --version
+          pwd
+          ls -la
+
+      - name: Verify required files
+        run: |
+          test -f scripts/run_full_prediction_pipeline.py
+          test -f scripts/import_results_csv.py
+          test -f scripts/settle_bet_results.py
+          test -f scripts/check_bet_results_settlement.py
+          test -f data/import/race_results.csv
+          test -f data/import/payouts.csv
+
+      - name: Compile Python scripts
+        run: |
+          python -m py_compile scripts/run_full_prediction_pipeline.py
+          python -m py_compile scripts/import_results_csv.py
+          python -m py_compile scripts/settle_bet_results.py
+          python -m py_compile scripts/check_bet_results_settlement.py
+
+      - name: Run full prediction pipeline
+        run: |
+          python scripts/run_full_prediction_pipeline.py
+
+      - name: Import results CSV
+        run: |
+          python scripts/import_results_csv.py
+
+      - name: Settle bet results
+        run: |
+          python scripts/settle_bet_results.py
+
+      - name: Check bet results settlement
+        run: |
+          python scripts/check_bet_results_settlement.py

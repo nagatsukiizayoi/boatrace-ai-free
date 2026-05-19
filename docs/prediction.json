@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-05-20T00:59:45+09:00",
-  "generated_at": "2026-05-19T15:59:45+00:00",
+  "updated_at": "2026-05-20T01:14:38+09:00",
+  "generated_at": "2026-05-19T16:14:38+00:00",
   "run_key": "csv-simple-rule-20260516-001",
   "prediction_run_id": 1,
   "target_date": "2026-05-16",
@@ -1081,7 +1081,7 @@
         "combination": "1-2-4",
         "reason": "prediction_tickets に対応する odds_snapshots が見つかりませんでした。"
       },
-      "occurred_at": "2026-05-20T00:59:45+09:00",
+      "occurred_at": "2026-05-20T01:14:38+09:00",
       "resolved_at": null
     },
     {
@@ -1096,7 +1096,7 @@
         "combination": "1-2-4",
         "reason": "prediction_tickets に対応する odds_snapshots が見つかりませんでした。"
       },
-      "occurred_at": "2026-05-20T00:59:45+09:00",
+      "occurred_at": "2026-05-20T01:14:38+09:00",
       "resolved_at": null
     },
     {
@@ -1123,7 +1123,7 @@
         "threshold": 1.2,
         "message": "expected_value がしきい値以上の買い目です。"
       },
-      "occurred_at": "2026-05-20T00:59:45+09:00",
+      "occurred_at": "2026-05-20T01:14:38+09:00",
       "resolved_at": null
     },
     {
@@ -1150,7 +1150,7 @@
         "threshold": 1.2,
         "message": "expected_value がしきい値以上の買い目です。"
       },
-      "occurred_at": "2026-05-20T00:59:45+09:00",
+      "occurred_at": "2026-05-20T01:14:38+09:00",
       "resolved_at": null
     },
     {
@@ -1177,13 +1177,13 @@
         "threshold": 1.2,
         "message": "expected_value がしきい値以上の買い目です。"
       },
-      "occurred_at": "2026-05-20T00:59:45+09:00",
+      "occurred_at": "2026-05-20T01:14:38+09:00",
       "resolved_at": null
     }
   ],
   "explainability": {
     "enabled": true,
-    "generated_at": "2026-05-20T00:59:45+09:00",
+    "generated_at": "2026-05-20T01:14:38+09:00",
     "method": "simple_rule_score_v1",
     "enriched_race_count": 2,
     "description": "CSV出走表から生成した簡易予想に、スコア詳細と予想理由を追加しています。"
@@ -1200,6 +1200,6 @@
       "A": 1,
       "B": 2
     },
-    "updated_at": "2026-05-19T15:59:45.973116+00:00"
+    "updated_at": "2026-05-19T16:14:38.408738+00:00"
   }
 }
