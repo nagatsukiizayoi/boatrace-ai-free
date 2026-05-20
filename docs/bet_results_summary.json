@@ -1,0 +1,117 @@
+{
+  "generated_at": "2026-05-20T04:00:36+00:00",
+  "source": "db/boatrace.sqlite3:bet_results",
+  "summary": {
+    "total_bets": 6,
+    "hit_count": 0,
+    "miss_count": 6,
+    "hit_rate": 0.0,
+    "total_stake_yen": 600,
+    "total_return_yen": 0,
+    "total_profit_yen": -600,
+    "return_rate": 0.0,
+    "latest_settled_at": "2026-05-20T04:00:35+00:00"
+  },
+  "by_bet_type": [
+    {
+      "bet_type": "3renfuku",
+      "total_bets": 2,
+      "hit_count": 0,
+      "hit_rate": 0.0,
+      "total_stake_yen": 200,
+      "total_return_yen": 0,
+      "total_profit_yen": -200,
+      "return_rate": 0.0
+    },
+    {
+      "bet_type": "3rentan",
+      "total_bets": 4,
+      "hit_count": 0,
+      "hit_rate": 0.0,
+      "total_stake_yen": 400,
+      "total_return_yen": 0,
+      "total_profit_yen": -400,
+      "return_rate": 0.0
+    }
+  ],
+  "recent_results": [
+    {
+      "prediction_ticket_id": 6,
+      "race_id": 2,
+      "bet_type": "3renfuku",
+      "ticket": "1-2-5",
+      "stake_yen": 100,
+      "is_hit": 0,
+      "payout_yen": 0,
+      "return_yen": 0,
+      "profit_yen": -100,
+      "return_rate": 0.0,
+      "settled_at": "2026-05-20T04:00:35+00:00"
+    },
+    {
+      "prediction_ticket_id": 5,
+      "race_id": 2,
+      "bet_type": "3rentan",
+      "ticket": "1-5-2",
+      "stake_yen": 100,
+      "is_hit": 0,
+      "payout_yen": 0,
+      "return_yen": 0,
+      "profit_yen": -100,
+      "return_rate": 0.0,
+      "settled_at": "2026-05-20T04:00:35+00:00"
+    },
+    {
+      "prediction_ticket_id": 4,
+      "race_id": 2,
+      "bet_type": "3rentan",
+      "ticket": "1-2-5",
+      "stake_yen": 100,
+      "is_hit": 0,
+      "payout_yen": 0,
+      "return_yen": 0,
+      "profit_yen": -100,
+      "return_rate": 0.0,
+      "settled_at": "2026-05-20T04:00:35+00:00"
+    },
+    {
+      "prediction_ticket_id": 3,
+      "race_id": 1,
+      "bet_type": "3renfuku",
+      "ticket": "1-2-4",
+      "stake_yen": 100,
+      "is_hit": 0,
+      "payout_yen": 0,
+      "return_yen": 0,
+      "profit_yen": -100,
+      "return_rate": 0.0,
+      "settled_at": "2026-05-20T04:00:35+00:00"
+    },
+    {
+      "prediction_ticket_id": 2,
+      "race_id": 1,
+      "bet_type": "3rentan",
+      "ticket": "1-4-2",
+      "stake_yen": 100,
+      "is_hit": 0,
+      "payout_yen": 0,
+      "return_yen": 0,
+      "profit_yen": -100,
+      "return_rate": 0.0,
+      "settled_at": "2026-05-20T04:00:35+00:00"
+    },
+    {
+      "prediction_ticket_id": 1,
+      "race_id": 1,
+      "bet_type": "3rentan",
+      "ticket": "1-2-4",
+      "stake_yen": 100,
+      "is_hit": 0,
+      "payout_yen": 0,
+      "return_yen": 0,
+      "profit_yen": -100,
+      "return_rate": 0.0,
+      "settled_at": "2026-05-20T04:00:35+00:00"
+    }
+  ]
+}
