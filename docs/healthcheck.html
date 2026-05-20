@@ -966,5 +966,54 @@ fetch("./prediction_run_summary.json?step=116").then(function(r){if(!r.ok){throw
 var latest=data.latest||{};var summary=data.summary||{};
 setText("step116HealthStatus",latest.status);setText("step116HealthRunKey",latest.run_key);setText("step116HealthModel",((latest.model_name||"-")+" "+(latest.model_version||"")).trim());setText("step116HealthTargetDate",latest.target_date);
 
+<!-- STEP131_BET_RESULTS_HEALTHCHECK_STYLE -->
+<style>
+  .step131-bet-health { margin: 24px 0; padding: 16px; border: 1px solid #d0d7de; border-radius: 12px; background: #ffffff; }
+  .step131-bet-health h2 { margin: 0 0 12px; font-size: 1.25rem; }
+  .step131-bet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 12px; }
+  .step131-bet-card { padding: 12px; border-radius: 10px; background: #f6f8fa; }
+  .step131-bet-label { color: #57606a; font-size: 0.85rem; }
+  .step131-bet-value { margin-top: 4px; font-size: 1.15rem; font-weight: 700; }
+  .step131-bet-status { margin-top: 12px; font-weight: 700; }
+</style>
+
+<!-- STEP131_BET_RESULTS_HEALTHCHECK_HTML -->
+<section id="step131BetResultsHealthPanel" class="step131-bet-health">
+  <h2>的中判定 Health Check</h2>
+  <p id="step131BetResultsHealthStatus" class="step131-bet-status">読み込み中...</p>
+  <div id="step131BetResultsHealthCards" class="step131-bet-grid"></div>
+</section>
+
+<!-- STEP131_BET_RESULTS_HEALTHCHECK_SCRIPT -->
+<script>
+(function () {
+  const statusEl = document.getElementById("step131BetResultsHealthStatus");
+  const cardsEl = document.getElementById("step131BetResultsHealthCards");
+  if (!statusEl || !cardsEl) return;
+  function yen(v) { return Number(v || 0).toLocaleString("ja-JP") + "円"; }
+  function pct(v) { return (Number(v || 0) * 100).toFixed(1) + "%"; }
+  function card(label, value) { return "<div class=\"step131-bet-card\"><div class=\"step131-bet-label\">" + label + "</div><div class=\"step131-bet-value\">" + value + "</div></div>"; }
+  fetch("bet_results_summary.json?ts=" + Date.now())
+    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function (data) {
+      const s = data.summary || {};
+      cardsEl.innerHTML = [
+        card("総ベット数", s.total_bets || 0),
+        card("的中数", s.hit_count || 0),
+        card("的中率", pct(s.hit_rate)),
+        card("投資額", yen(s.total_stake_yen)),
+        card("払戻額", yen(s.total_return_yen)),
+        card("利益", yen(s.total_profit_yen)),
+        card("回収率", pct(s.return_rate)),
+        card("最新精算", s.latest_settled_at || "-")
+      ].join("");
+      statusEl.textContent = "OK: 的中判定 Health Check を表示しました";
+    })
+    .catch(function (err) {
+      statusEl.textContent = "ERROR: 的中判定 Health Check を読み込めませんでした: " + err.message;
+    });
+})();
+</script>
+
 </body>
 </html>
