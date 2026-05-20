@@ -1,0 +1,43 @@
+name: Check Bet Results Summary Quality
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  bet-results-summary-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Verify required files
+        run: |
+          test -f docs/bet_results_summary.json
+          test -f scripts/check_bet_results_summary_quality.py
+
+      - name: Validate JSON syntax
+        run: |
+          python -m json.tool docs/bet_results_summary.json > /dev/null
+
+      - name: Compile quality checker
+        run: |
+          python -m py_compile scripts/check_bet_results_summary_quality.py
+
+      - name: Run STEP 135 checker
+        run: |
+          python scripts/check_bet_results_summary_quality.py
