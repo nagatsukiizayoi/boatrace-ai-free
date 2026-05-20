@@ -1,0 +1,44 @@
+name: Check Healthcheck Bet Results Summary
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  healthcheck-bet-results-summary:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Verify required files
+        run: |
+          test -f docs/healthcheck.html
+          test -f docs/bet_results_summary.json
+          test -f scripts/check_healthcheck_bet_results_summary.py
+
+      - name: Validate JSON
+        run: |
+          python -m json.tool docs/bet_results_summary.json > /dev/null
+
+      - name: Compile checker
+        run: |
+          python -m py_compile scripts/check_healthcheck_bet_results_summary.py
+
+      - name: Run STEP 132 checker
+        run: |
+          python scripts/check_healthcheck_bet_results_summary.py
