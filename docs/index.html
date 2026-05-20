@@ -5921,5 +5921,64 @@ setText("step114RunCount",summary.run_count||(data.runs?data.runs.length:"-"));s
 })();
 </script>
 
+<!-- STEP142_BET_RESULTS_TREND_HISTORY_STYLE -->
+<style>
+  .step142-trend-panel { margin: 24px 0; padding: 16px; border: 1px solid #d0d7de; border-radius: 12px; background: #ffffff; }
+  .step142-trend-panel h2 { margin: 0 0 12px; font-size: 1.25rem; }
+  .step142-trend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 12px; }
+  .step142-trend-card { padding: 12px; border-radius: 10px; background: #f6f8fa; }
+  .step142-trend-label { color: #57606a; font-size: 0.85rem; }
+  .step142-trend-value { margin-top: 4px; font-size: 1.15rem; font-weight: 700; }
+  .step142-trend-status { margin-top: 12px; font-weight: 700; }
+  .step142-trend-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.9rem; }
+  .step142-trend-table th, .step142-trend-table td { border: 1px solid #d0d7de; padding: 6px 8px; text-align: right; }
+  .step142-trend-table th:first-child, .step142-trend-table td:first-child { text-align: left; }
+</style>
+
+<!-- STEP142_BET_RESULTS_TREND_HISTORY_HTML -->
+<section id="step142BetResultsTrendPanel" class="step142-trend-panel">
+  <h2>的中判定トレンド</h2>
+  <p id="step142BetResultsTrendStatus" class="step142-trend-status">読み込み中...</p>
+  <div id="step142BetResultsTrendCards" class="step142-trend-grid"></div>
+  <div id="step142BetResultsTrendTable"></div>
+</section>
+
+<!-- STEP142_BET_RESULTS_TREND_HISTORY_SCRIPT -->
+<script>
+(function () {
+  const statusEl = document.getElementById("step142BetResultsTrendStatus");
+  const cardsEl = document.getElementById("step142BetResultsTrendCards");
+  const tableEl = document.getElementById("step142BetResultsTrendTable");
+  if (!statusEl || !cardsEl || !tableEl) return;
+  function yen(v) { return Number(v || 0).toLocaleString("ja-JP") + "円"; }
+  function pct(v) { return (Number(v || 0) * 100).toFixed(1) + "%"; }
+  function card(label, value) { return "<div class=\"step142-trend-card\"><div class=\"step142-trend-label\">" + label + "</div><div class=\"step142-trend-value\">" + value + "</div></div>"; }
+  fetch("bet_results_summary_history.json?ts=" + Date.now())
+    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function (data) {
+      const summary = data.summary || {};
+      const history = Array.isArray(data.history) ? data.history : [];
+      const latest = history.length ? history[history.length - 1] : {};
+      cardsEl.innerHTML = [
+        card("履歴件数", summary.snapshot_count || history.length),
+        card("最新ベット数", latest.total_bets || 0),
+        card("最新的中率", pct(latest.hit_rate)),
+        card("最新回収率", pct(latest.return_rate)),
+        card("最新利益", yen(latest.total_profit_yen)),
+        card("最新生成", summary.latest_generated_at || latest.generated_at || "-")
+      ].join("");
+      const recent = history.slice(-10).reverse();
+      tableEl.innerHTML = "<h3>直近履歴</h3>" +
+        "<table class=\"step142-trend-table\"><thead><tr><th>snapshot</th><th>bets</th><th>hit</th><th>hit rate</th><th>stake</th><th>return</th><th>profit</th><th>return rate</th></tr></thead><tbody>" +
+        recent.map(function (x) { return "<tr><td>" + (x.snapshot_id || "-") + "</td><td>" + (x.total_bets || 0) + "</td><td>" + (x.hit_count || 0) + "</td><td>" + pct(x.hit_rate) + "</td><td>" + yen(x.total_stake_yen) + "</td><td>" + yen(x.total_return_yen) + "</td><td>" + yen(x.total_profit_yen) + "</td><td>" + pct(x.return_rate) + "</td></tr>"; }).join("") +
+        "</tbody></table>";
+      statusEl.textContent = "OK: 的中判定トレンドを表示しました";
+    })
+    .catch(function (err) {
+      statusEl.textContent = "ERROR: 的中判定トレンドを読み込めませんでした: " + err.message;
+    });
+})();
+</script>
+
 </body>
 </html>
