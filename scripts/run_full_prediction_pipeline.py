@@ -223,6 +223,9 @@ def main() -> None:
     run_script("scripts/check_results_import.py")
     run_script("scripts/settle_bet_results.py")
     run_script("scripts/check_bet_results_settlement.py")
+    run_script("scripts/export_bet_results_summary.py")
+    run_script("scripts/check_dashboard_bet_results_summary.py")
+    run_script("scripts/check_healthcheck_bet_results_summary.py")
     print("STEP 101 CHECK: OK")
 
 
