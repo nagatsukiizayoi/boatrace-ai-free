@@ -1,0 +1,24 @@
+{
+  "generated_at": "2026-05-20T06:34:56+00:00",
+  "source": "docs/bet_results_summary.json",
+  "summary": {
+    "snapshot_count": 1,
+    "max_snapshots": 50,
+    "latest_generated_at": "2026-05-20T06:34:55+00:00"
+  },
+  "history": [
+    {
+      "snapshot_id": "bet-results-20260520063455",
+      "generated_at": "2026-05-20T06:34:55+00:00",
+      "total_bets": 6,
+      "hit_count": 0,
+      "miss_count": 6,
+      "hit_rate": 0.0,
+      "total_stake_yen": 600,
+      "total_return_yen": 0,
+      "total_profit_yen": -600,
+      "return_rate": 0.0,
+      "latest_settled_at": "2026-05-20T06:34:55+00:00"
+    }
+  ]
+}
