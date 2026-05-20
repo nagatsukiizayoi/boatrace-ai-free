@@ -154,3 +154,113 @@ Prediction run summary JSON:
 ### STEP119 Completion
 
 STEP119 is complete when this README contains the latest database build flow, full prediction pipeline flow, prediction_runs usage, prediction_run_summary.json usage, dashboard and healthcheck references, and main GitHub Actions workflow list.
+
+<!-- STEP134_BET_RESULTS_FLOW -->
+## Bet Results / 的中判定フロー
+
+このプロジェクトでは、予測買い目とレース結果・払戻データを照合し、的中判定と回収率を `bet_results` テーブルに保存します。
+
+### Main flow
+
+1. 予測データを生成する
+2. レース結果CSVと払戻CSVを取り込む
+3. 予測買い目と払戻を照合する
+4. `bet_results` に的中判定・払戻・利益・回収率を保存する
+5. `docs/bet_results_summary.json` を出力する
+6. dashboard と healthcheck に的中判定サマリーを表示する
+
+### Key database table
+
+- `bet_results`
+  - `prediction_ticket_id`
+  - `race_id`
+  - `bet_type`
+  - `ticket`
+  - `stake_yen`
+  - `is_hit`
+  - `payout_yen`
+  - `return_yen`
+  - `profit_yen`
+  - `return_rate`
+  - `settled_at`
+
+### Key scripts
+
+- `scripts/import_results_csv.py`
+  - `data/import/race_results.csv` と `data/import/payouts.csv` をDBへ取り込みます。
+- `scripts/settle_bet_results.py`
+  - `prediction_tickets.prediction_id -> predictions.id -> predictions.race_id` を辿って race_id を解決し、払戻と照合します。
+- `scripts/check_bet_results_settlement.py`
+  - `bet_results` の件数、的中数、投資額、払戻額、利益、外部キー整合性を検証します。
+- `scripts/export_bet_results_summary.py`
+  - `docs/bet_results_summary.json` を出力します。
+- `scripts/check_dashboard_bet_results_summary.py`
+  - dashboard の的中判定サマリー表示を検証します。
+- `scripts/check_healthcheck_bet_results_summary.py`
+  - healthcheck の的中判定サマリー表示を検証します。
+
+### Full pipeline command
+
+```bash
+python scripts/run_full_prediction_pipeline.py
+```
+
+Expected checks include:
+
+```text
+STEP 121 CHECK: OK
+STEP 122 CHECK: OK
+STEP 125 CHECK: OK
+STEP 125 SETTLEMENT CHECK: OK
+STEP 128 CHECK: OK
+STEP 130 CHECK: OK
+STEP 132 CHECK: OK
+STEP 101 CHECK: OK
+```
+
+### Manual commands
+
+```bash
+python scripts/import_results_csv.py
+python scripts/settle_bet_results.py
+python scripts/check_bet_results_settlement.py
+python scripts/export_bet_results_summary.py
+python scripts/check_dashboard_bet_results_summary.py
+python scripts/check_healthcheck_bet_results_summary.py
+```
+
+### Output JSON
+
+- `docs/bet_results_summary.json`
+  - `generated_at`
+  - `source`
+  - `summary`
+  - `by_bet_type`
+  - `recent_results`
+
+The summary includes total bets, hit count, hit rate, total stake, total return, total profit, return rate, and latest settlement time.
+
+### Dashboard / Healthcheck
+
+- Dashboard:
+  - `docs/index.html`
+  - displays `的中判定サマリー`
+- Healthcheck:
+  - `docs/healthcheck.html`
+  - displays `的中判定 Health Check`
+
+GitHub Pages URLs:
+
+- https://nagatsukiizayoi.github.io/boatrace-ai-free/
+- https://nagatsukiizayoi.github.io/boatrace-ai-free/healthcheck.html
+
+### GitHub Actions
+
+Related workflows:
+
+- `Check Bet Results Settlement`
+- `Check Dashboard Bet Results Summary`
+- `Check Healthcheck Bet Results Summary`
+- `Check Full Prediction Pipeline`
+
+<!-- STEP134_END -->
