@@ -1064,5 +1064,54 @@ setText("step116HealthStatus",latest.status);setText("step116HealthRunKey",lates
 })();
 </script>
 
+<!-- STEP144_BET_RESULTS_TREND_HEALTHCHECK_STYLE -->
+<style>
+  .step144-trend-health { margin: 24px auto; padding: 16px; border: 1px solid #d0d7de; border-radius: 12px; background: #ffffff; max-width: 900px; }
+  .step144-trend-health h2 { margin: 0 0 12px; font-size: 1.25rem; }
+  .step144-trend-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 12px; }
+  .step144-trend-card { padding: 12px; border-radius: 10px; background: #f6f8fa; }
+  .step144-trend-label { color: #57606a; font-size: 0.85rem; }
+  .step144-trend-value { margin-top: 4px; font-size: 1.15rem; font-weight: 700; }
+  .step144-trend-status { margin-top: 12px; font-weight: 700; }
+</style>
+
+<!-- STEP144_BET_RESULTS_TREND_HEALTHCHECK_HTML -->
+<section id="step144BetResultsTrendHealthPanel" class="step144-trend-health">
+  <h2>的中判定トレンド Health Check</h2>
+  <p id="step144BetResultsTrendHealthStatus" class="step144-trend-status">読み込み中...</p>
+  <div id="step144BetResultsTrendHealthCards" class="step144-trend-grid"></div>
+</section>
+
+<!-- STEP144_BET_RESULTS_TREND_HEALTHCHECK_SCRIPT -->
+<script>
+(function () {
+  const statusEl = document.getElementById("step144BetResultsTrendHealthStatus");
+  const cardsEl = document.getElementById("step144BetResultsTrendHealthCards");
+  if (!statusEl || !cardsEl) return;
+  function yen(v) { return Number(v || 0).toLocaleString("ja-JP") + "円"; }
+  function pct(v) { return (Number(v || 0) * 100).toFixed(1) + "%"; }
+  function card(label, value) { return "<div class=\"step144-trend-card\"><div class=\"step144-trend-label\">" + label + "</div><div class=\"step144-trend-value\">" + value + "</div></div>"; }
+  fetch("bet_results_summary_history.json?ts=" + Date.now())
+    .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+    .then(function (data) {
+      const summary = data.summary || {};
+      const history = Array.isArray(data.history) ? data.history : [];
+      const latest = history.length ? history[history.length - 1] : {};
+      cardsEl.innerHTML = [
+        card("履歴件数", summary.snapshot_count || history.length),
+        card("最新ベット数", latest.total_bets || 0),
+        card("最新的中率", pct(latest.hit_rate)),
+        card("最新回収率", pct(latest.return_rate)),
+        card("最新利益", yen(latest.total_profit_yen)),
+        card("最新生成", summary.latest_generated_at || latest.generated_at || "-")
+      ].join("");
+      statusEl.textContent = "OK: 的中判定トレンド Health Check を表示しました";
+    })
+    .catch(function (err) {
+      statusEl.textContent = "ERROR: 的中判定トレンド Health Check を読み込めませんでした: " + err.message;
+    });
+})();
+</script>
+
 </body>
 </html>
