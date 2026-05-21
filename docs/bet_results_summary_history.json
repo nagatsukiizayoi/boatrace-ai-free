@@ -1,15 +1,15 @@
 {
-  "generated_at": "2026-05-21T10:01:53+00:00",
+  "generated_at": "2026-05-21T10:16:49+00:00",
   "source": "docs/bet_results_summary.json",
   "summary": {
-    "snapshot_count": 4,
+    "snapshot_count": 1,
     "max_snapshots": 50,
-    "latest_generated_at": "2026-05-21T10:01:53+00:00"
+    "latest_generated_at": "2026-05-21T10:16:48+00:00"
   },
   "history": [
     {
-      "snapshot_id": "bet-results-20260520063455",
-      "generated_at": "2026-05-20T06:34:55+00:00",
+      "snapshot_id": "bet-results-20260521101648",
+      "generated_at": "2026-05-21T10:16:48+00:00",
       "total_bets": 6,
       "hit_count": 0,
       "miss_count": 6,
@@ -18,46 +18,7 @@
       "total_return_yen": 0,
       "total_profit_yen": -600,
       "return_rate": 0.0,
-      "latest_settled_at": "2026-05-20T06:34:55+00:00"
-    },
-    {
-      "snapshot_id": "bet-results-20260520100934",
-      "generated_at": "2026-05-20T10:09:34+00:00",
-      "total_bets": 6,
-      "hit_count": 0,
-      "miss_count": 6,
-      "hit_rate": 0.0,
-      "total_stake_yen": 600,
-      "total_return_yen": 0,
-      "total_profit_yen": -600,
-      "return_rate": 0.0,
-      "latest_settled_at": "2026-05-20T10:09:34+00:00"
-    },
-    {
-      "snapshot_id": "bet-results-20260521095326",
-      "generated_at": "2026-05-21T09:53:26+00:00",
-      "total_bets": 6,
-      "hit_count": 0,
-      "miss_count": 6,
-      "hit_rate": 0.0,
-      "total_stake_yen": 600,
-      "total_return_yen": 0,
-      "total_profit_yen": -600,
-      "return_rate": 0.0,
-      "latest_settled_at": "2026-05-21T09:53:26+00:00"
-    },
-    {
-      "snapshot_id": "bet-results-20260521100153",
-      "generated_at": "2026-05-21T10:01:53+00:00",
-      "total_bets": 6,
-      "hit_count": 0,
-      "miss_count": 6,
-      "hit_rate": 0.0,
-      "total_stake_yen": 600,
-      "total_return_yen": 0,
-      "total_profit_yen": -600,
-      "return_rate": 0.0,
-      "latest_settled_at": "2026-05-21T10:01:53+00:00"
+      "latest_settled_at": "2026-05-21T10:11:12+00:00"
     }
   ]
 }
