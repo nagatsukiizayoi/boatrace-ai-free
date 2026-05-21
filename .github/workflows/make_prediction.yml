@@ -61,3 +61,9 @@ jobs:
         run: |
           python -m py_compile scripts/check_prediction_outputs_consistency.py
           python scripts/check_prediction_outputs_consistency.py
+
+
+      - name: Check make prediction outputs readiness
+        run: |
+          python -m py_compile scripts/check_make_prediction_outputs_ready.py
+          python scripts/check_make_prediction_outputs_ready.py
