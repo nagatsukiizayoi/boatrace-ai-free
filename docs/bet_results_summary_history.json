@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-05-21T09:53:26+00:00",
+  "generated_at": "2026-05-21T10:01:53+00:00",
   "source": "docs/bet_results_summary.json",
   "summary": {
-    "snapshot_count": 3,
+    "snapshot_count": 4,
     "max_snapshots": 50,
-    "latest_generated_at": "2026-05-21T09:53:26+00:00"
+    "latest_generated_at": "2026-05-21T10:01:53+00:00"
   },
   "history": [
     {
@@ -45,6 +45,19 @@
       "total_profit_yen": -600,
       "return_rate": 0.0,
       "latest_settled_at": "2026-05-21T09:53:26+00:00"
+    },
+    {
+      "snapshot_id": "bet-results-20260521100153",
+      "generated_at": "2026-05-21T10:01:53+00:00",
+      "total_bets": 6,
+      "hit_count": 0,
+      "miss_count": 6,
+      "hit_rate": 0.0,
+      "total_stake_yen": 600,
+      "total_return_yen": 0,
+      "total_profit_yen": -600,
+      "return_rate": 0.0,
+      "latest_settled_at": "2026-05-21T10:01:53+00:00"
     }
   ]
 }
