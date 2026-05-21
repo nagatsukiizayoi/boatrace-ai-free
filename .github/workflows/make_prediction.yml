@@ -35,6 +35,18 @@ jobs:
           git push
 
 
+      - name: Build database with sample data
+        run: |
+          python scripts/build_database.py --reset --with-sample-data
+
+      - name: Run full prediction pipeline
+        run: |
+          python scripts/run_full_prediction_pipeline.py
+
+      - name: Validate prediction JSON syntax
+        run: |
+          python -m json.tool docs/prediction.json > /dev/null
+
       - name: Check prediction JSON structure
         run: |
           python -m py_compile scripts/check_prediction_json_structure.py
