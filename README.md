@@ -264,3 +264,23 @@ Related workflows:
 - `Check Full Prediction Pipeline`
 
 <!-- STEP134_END -->
+
+<- STEP71_MAKE_PREDICTION_WORKFLOW_DOC -->
+
+## make_prediction workflow / prediction JSON generation
+
+The make_prediction workflow builds the sample database, runs the full prediction pipeline, exports docs/prediction.json and docs/prediction_run_summary.json, and validates them.
+
+### Related checks
+
+- scripts/check_prediction_json_structure.py
+- scripts/check_prediction_run_summary_structure.py
+- scripts/check_prediction_outputs_consistency.py
+- scripts/check_make_prediction_workflow.py
+- scripts/check_make_prediction_outputs_ready.py
+
+Expected success messages: STEP 66 CHECK: OK through STEP 70 CHECK: OK.
+
+Workflow file: .github/workflows/make_prediction.yml
+
+<- STEP71_END -->
