@@ -33,3 +33,9 @@ jobs:
           git add docs/prediction_runs.json || true
           git commit -m "Update prediction files" || echo "No changes to commit"
           git push
+
+
+      - name: Check prediction JSON structure
+        run: |
+          python -m py_compile scripts/check_prediction_json_structure.py
+          python scripts/check_prediction_json_structure.py
