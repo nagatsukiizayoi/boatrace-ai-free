@@ -11,6 +11,8 @@ REQUIRED_FILES = [
     Path("scripts/check_prediction_run_summary_structure.py"),
     Path("scripts/check_prediction_outputs_consistency.py"),
     Path("scripts/check_make_prediction_workflow.py"),
+    Path("scripts/check_readme_make_prediction_doc.py"),
+    Path("scripts/check_readme_make_prediction_badge.py"),
 ]
 
 
