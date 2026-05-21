@@ -1,4 +1,6 @@
 # boatrace-ai-free
+
+![make_prediction](https://github.com/nagatsukiizayoi/boatrace-ai-free/actions/workflows/make_prediction.yml/badge.svg)
 ---
 
 ## Current System Status

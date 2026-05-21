@@ -72,3 +72,8 @@ jobs:
         run: |
           python -m py_compile scripts/check_readme_make_prediction_doc.py
           python scripts/check_readme_make_prediction_doc.py
+
+      - name: Check README make prediction badge
+        run: |
+          python -m py_compile scripts/check_readme_make_prediction_badge.py
+          python scripts/check_readme_make_prediction_badge.py
