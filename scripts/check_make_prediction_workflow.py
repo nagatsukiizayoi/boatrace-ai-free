@@ -33,6 +33,14 @@ def main():
         "check_prediction_json_structure.py",
         "check_prediction_run_summary_structure.py",
         "check_prediction_outputs_consistency.py",
+        "0 12 * * *",
+        "cron:",
+        "schedule:",
+        "workflow_dispatch",
+        "check_make_prediction_schedule.py",
+        "check_readme_make_prediction_badge.py",
+        "check_readme_make_prediction_doc.py",
+        "check_make_prediction_outputs_ready.py",
     ]
 
     for token in required_tokens:
