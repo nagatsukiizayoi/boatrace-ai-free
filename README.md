@@ -312,3 +312,42 @@ The make_prediction workflow runs automatically on a schedule.
 - Manual execution is also available via workflow_dispatch.
 
 <!-- STEP77_END -->
+
+<!-- STEP82_DASHBOARD_READINESS_DOC -->
+
+## Dashboard readiness and prediction JSON compatibility
+
+The dashboard readiness checks verify that the generated dashboard files and prediction JSON are ready for GitHub Pages display.
+
+Related files:
+
+- `docs/index.html`
+- `docs/healthcheck.html`
+- `docs/prediction.json`
+- `scripts/ensure_prediction_json_dashboard_compat.py`
+- `scripts/check_recommendation_reasons.py`
+- `scripts/check_dashboard_final_readiness.py`
+
+The compatibility script updates `docs/prediction.json` so that dashboard-required fields are present, including:
+
+- `expected_value`
+- `value_grade`
+- `reason_version`
+- `recommendation_reason`
+- `reason_points`
+- `risk_note`
+- `recommendation_reasoning.version`
+
+Expected success messages:
+
+- `STEP 80 CHECK: OK`
+- `STEP 100 CHECK: OK`
+
+Local verification:
+
+`python scripts/ensure_prediction_json_dashboard_compat.py`
+`python scripts/check_recommendation_reasons.py`
+`python scripts/check_dashboard_final_readiness.py`
+
+<!-- STEP82_END -->
+
