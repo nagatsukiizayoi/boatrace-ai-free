@@ -59,3 +59,5 @@ jobs:
         run: |
           python scripts/ensure_prediction_json_dashboard_compat.py
           python scripts/check_dashboard_final_readiness.py
+          python -m py_compile scripts/check_readme_dashboard_readiness_doc.py
+          python scripts/check_readme_dashboard_readiness_doc.py
