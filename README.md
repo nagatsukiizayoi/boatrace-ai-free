@@ -286,3 +286,29 @@ Expected success messages: STEP 66 CHECK: OK through STEP 70 CHECK: OK.
 Workflow file: .github/workflows/make_prediction.yml
 
 <- STEP71_END -->
+
+<- STEP77_MAKE_PREDICTION_SCHEDULE_DOC -->
+
+### Scheduled execution
+
+The  workflow runs automatically on a schedule.
+
+- Cron: 
+- Timezone: UTC
+- Japan time: every day around 21:00 JST
+- Manual execution is also available via .
+
+<- STEP77_END -->
+
+<!-- STEP77_MAKE_PREDICTION_SCHEDULE_DOC -->
+
+### Scheduled execution
+
+The make_prediction workflow runs automatically on a schedule.
+
+- Cron: 0 12 * * *
+- Timezone: UTC
+- Japan time: every day around 21:00 JST
+- Manual execution is also available via workflow_dispatch.
+
+<!-- STEP77_END -->

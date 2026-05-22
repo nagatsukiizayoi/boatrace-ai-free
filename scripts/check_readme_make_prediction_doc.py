@@ -32,6 +32,11 @@ def main():
         "check_make_prediction_outputs_ready.py",
         "STEP 66 CHECK: OK",
         "STEP 70 CHECK: OK",
+        "workflow_dispatch",
+        "21:00 JST",
+        "0 12 * * *",
+        "STEP77_END",
+        "STEP77_MAKE_PREDICTION_SCHEDULE_DOC",
     ]
 
     for token in required_tokens:
