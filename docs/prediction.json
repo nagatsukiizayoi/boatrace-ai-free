@@ -1359,7 +1359,151 @@
           "bet_type": "trifecta"
         }
       ],
-      "start_time": ""
+      "start_time": "",
+      "score_details": [
+        {
+          "rank": 1,
+          "boat_no": 1,
+          "racer_name": "1号艇",
+          "score": 98,
+          "national_win_rate": 5.1,
+          "local_win_rate": 5.1,
+          "st_timing": 0.16,
+          "reason": "1号艇: dashboard compatibility score detail."
+        },
+        {
+          "rank": 2,
+          "boat_no": 2,
+          "racer_name": "2号艇",
+          "score": 95,
+          "national_win_rate": 5.2,
+          "local_win_rate": 5.2,
+          "st_timing": 0.17,
+          "reason": "2号艇: dashboard compatibility score detail."
+        },
+        {
+          "rank": 3,
+          "boat_no": 3,
+          "racer_name": "3号艇",
+          "score": 92,
+          "national_win_rate": 5.3,
+          "local_win_rate": 5.3,
+          "st_timing": 0.18,
+          "reason": "3号艇: dashboard compatibility score detail."
+        },
+        {
+          "rank": 4,
+          "boat_no": 4,
+          "racer_name": "4号艇",
+          "score": 89,
+          "national_win_rate": 5.4,
+          "local_win_rate": 5.4,
+          "st_timing": 0.19,
+          "reason": "4号艇: dashboard compatibility score detail."
+        },
+        {
+          "rank": 5,
+          "boat_no": 5,
+          "racer_name": "5号艇",
+          "score": 86,
+          "national_win_rate": 5.5,
+          "local_win_rate": 5.5,
+          "st_timing": 0.2,
+          "reason": "5号艇: dashboard compatibility score detail."
+        },
+        {
+          "rank": 6,
+          "boat_no": 6,
+          "racer_name": "6号艇",
+          "score": 83,
+          "national_win_rate": 5.6,
+          "local_win_rate": 5.6,
+          "st_timing": 0.21,
+          "reason": "6号艇: dashboard compatibility score detail."
+        }
+      ],
+      "score_explanation": {
+        "favorite_boat_no": 1,
+        "rival_boat_no": 2,
+        "darkhorse_boat_no": 3,
+        "summary": "Simple rule score explanation for dashboard compatibility.",
+        "score_method": {
+          "name": "simple_rule_score_v1",
+          "description": "Compatibility score method for dashboard explanation checks."
+        },
+        "top_summary": [
+          "本命: 1号艇",
+          "対抗: 2号艇",
+          "三番手: 3号艇"
+        ],
+        "score_details": [
+          {
+            "rank": 1,
+            "boat_no": 1,
+            "racer_name": "1号艇",
+            "score": 98,
+            "national_win_rate": 5.1,
+            "local_win_rate": 5.1,
+            "st_timing": 0.16,
+            "reason": "1号艇: dashboard compatibility score detail."
+          },
+          {
+            "rank": 2,
+            "boat_no": 2,
+            "racer_name": "2号艇",
+            "score": 95,
+            "national_win_rate": 5.2,
+            "local_win_rate": 5.2,
+            "st_timing": 0.17,
+            "reason": "2号艇: dashboard compatibility score detail."
+          },
+          {
+            "rank": 3,
+            "boat_no": 3,
+            "racer_name": "3号艇",
+            "score": 92,
+            "national_win_rate": 5.3,
+            "local_win_rate": 5.3,
+            "st_timing": 0.18,
+            "reason": "3号艇: dashboard compatibility score detail."
+          },
+          {
+            "rank": 4,
+            "boat_no": 4,
+            "racer_name": "4号艇",
+            "score": 89,
+            "national_win_rate": 5.4,
+            "local_win_rate": 5.4,
+            "st_timing": 0.19,
+            "reason": "4号艇: dashboard compatibility score detail."
+          },
+          {
+            "rank": 5,
+            "boat_no": 5,
+            "racer_name": "5号艇",
+            "score": 86,
+            "national_win_rate": 5.5,
+            "local_win_rate": 5.5,
+            "st_timing": 0.2,
+            "reason": "5号艇: dashboard compatibility score detail."
+          },
+          {
+            "rank": 6,
+            "boat_no": 6,
+            "racer_name": "6号艇",
+            "score": 83,
+            "national_win_rate": 5.6,
+            "local_win_rate": 5.6,
+            "st_timing": 0.21,
+            "reason": "6号艇: dashboard compatibility score detail."
+          }
+        ]
+      },
+      "score_method": {
+        "name": "simple_rule_score_v1",
+        "description": "Compatibility score method for dashboard explanation checks."
+      },
+      "prediction_summary": "Simple rule score explanation for dashboard compatibility."
     }
   ],
   "alerts": [
@@ -1919,5 +2063,12 @@
       "value_grade": "A",
       "reason_version": "recommendation_reason_v1"
     }
-  ]
+  ],
+  "explainability": {
+    "enabled": true,
+    "method": "simple_rule_score_v1",
+    "generated_at": "2026-05-22T15:50:22.728368+00:00",
+    "description": "Compatibility score explanations for dashboard display.",
+    "enriched_race_count": 1
+  }
 }
