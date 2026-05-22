@@ -61,6 +61,7 @@ jobs:
 
       - name: Run final readiness validation
         run: |
+          python scripts/ensure_prediction_json_dashboard_compat.py
           python scripts/check_dashboard_final_readiness.py
 
       - name: STEP 105 check
