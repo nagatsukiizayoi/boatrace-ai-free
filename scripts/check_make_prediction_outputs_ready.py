@@ -7,12 +7,14 @@ REQUIRED_FILES = [
     Path("docs/prediction.json"),
     Path("docs/prediction_run_summary.json"),
     Path(".github/workflows/make_prediction.yml"),
+    Path("README.md"),
     Path("scripts/check_prediction_json_structure.py"),
     Path("scripts/check_prediction_run_summary_structure.py"),
     Path("scripts/check_prediction_outputs_consistency.py"),
     Path("scripts/check_make_prediction_workflow.py"),
     Path("scripts/check_readme_make_prediction_doc.py"),
     Path("scripts/check_readme_make_prediction_badge.py"),
+    Path("scripts/check_make_prediction_schedule.py"),
 ]
 
 
@@ -56,6 +58,16 @@ def main():
         if not data:
             errors.append(f"{json_path} must not be empty")
 
+    workflow_text = Path(".github/workflows/make_prediction.yml").read_text(encoding="utf-8")
+    readme_text = Path("README.md").read_text(encoding="utf-8")
+
+    for label, text in [
+        ("make_prediction.yml", workflow_text),
+        ("README.md", readme_text),
+    ]:
+        if "<<<<<<<" in text or "=======" in text or ">>>>>>>" in text:
+            errors.append(f"{label} contains Git conflict markers")
+
     if errors:
         fail(errors)
 
@@ -64,6 +76,9 @@ def main():
         "scripts/check_prediction_run_summary_structure.py",
         "scripts/check_prediction_outputs_consistency.py",
         "scripts/check_make_prediction_workflow.py",
+        "scripts/check_readme_make_prediction_doc.py",
+        "scripts/check_readme_make_prediction_badge.py",
+        "scripts/check_make_prediction_schedule.py",
     ]
 
     for script in checks:
