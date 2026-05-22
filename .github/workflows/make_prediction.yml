@@ -77,3 +77,8 @@ jobs:
         run: |
           python -m py_compile scripts/check_readme_make_prediction_badge.py
           python scripts/check_readme_make_prediction_badge.py
+
+      - name: Check make prediction schedule
+        run: |
+          python -m py_compile scripts/check_make_prediction_schedule.py
+          python scripts/check_make_prediction_schedule.py
