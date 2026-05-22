@@ -65,6 +65,8 @@ jobs:
           python scripts/check_dashboard_final_readiness.py
           python -m py_compile scripts/check_readme_dashboard_readiness_doc.py
           python scripts/check_readme_dashboard_readiness_doc.py
+          python -m py_compile scripts/check_readme_dashboard_readiness_badge.py
+          python scripts/check_readme_dashboard_readiness_badge.py
 
       - name: STEP 105 check
         run: |

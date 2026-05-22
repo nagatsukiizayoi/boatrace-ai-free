@@ -1,4 +1,5 @@
 # boatrace-ai-free
+![Dashboard readiness](https://github.com/nagatsukiizayoi/boatrace-ai-free/actions/workflows/check-dashboard-final-readiness.yml/badge.svg)
 
 ![make_prediction](https://github.com/nagatsukiizayoi/boatrace-ai-free/actions/workflows/make_prediction.yml/badge.svg)
 ---
