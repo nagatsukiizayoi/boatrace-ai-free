@@ -1,0 +1,66 @@
+name: Check Make Prediction Readiness
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  check-make-prediction-readiness:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Verify required files
+        run: |
+          test -f README.md
+          test -f docs/prediction.json
+          test -f docs/prediction_run_summary.json
+          test -f .github/workflows/make_prediction.yml
+          test -f scripts/check_prediction_json_structure.py
+          test -f scripts/check_prediction_run_summary_structure.py
+          test -f scripts/check_prediction_outputs_consistency.py
+          test -f scripts/check_make_prediction_workflow.py
+          test -f scripts/check_make_prediction_outputs_ready.py
+          test -f scripts/check_readme_make_prediction_doc.py
+          test -f scripts/check_readme_make_prediction_badge.py
+          test -f scripts/check_make_prediction_schedule.py
+
+      - name: Validate JSON syntax
+        run: |
+          python -m json.tool docs/prediction.json > /dev/null
+          python -m json.tool docs/prediction_run_summary.json > /dev/null
+
+      - name: Compile check scripts
+        run: |
+          python -m py_compile scripts/check_prediction_json_structure.py
+          python -m py_compile scripts/check_prediction_run_summary_structure.py
+          python -m py_compile scripts/check_prediction_outputs_consistency.py
+          python -m py_compile scripts/check_make_prediction_workflow.py
+          python -m py_compile scripts/check_make_prediction_outputs_ready.py
+          python -m py_compile scripts/check_readme_make_prediction_doc.py
+          python -m py_compile scripts/check_readme_make_prediction_badge.py
+          python -m py_compile scripts/check_make_prediction_schedule.py
+
+      - name: Run make prediction readiness checks
+        run: |
+          python scripts/check_make_prediction_outputs_ready.py
+
+      - name: STEP 79 result
+        run: |
+          echo "STEP 79 CHECK: OK"
