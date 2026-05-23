@@ -56,4 +56,6 @@ jobs:
 
       - name: Run STEP 89 dashboard EV summary validation
         run: |
+          python -m py_compile scripts/ensure_prediction_json_dashboard_compat.py
+          python scripts/ensure_prediction_json_dashboard_compat.py
           python scripts/check_dashboard_ev_summary_cards.py

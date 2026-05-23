@@ -51,4 +51,6 @@ jobs:
 
       - name: Run STEP 87 healthcheck EV summary validation
         run: |
+          python -m py_compile scripts/ensure_prediction_json_dashboard_compat.py
+          python scripts/ensure_prediction_json_dashboard_compat.py
           python scripts/check_healthcheck_ev_summary.py

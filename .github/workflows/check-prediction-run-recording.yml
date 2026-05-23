@@ -40,3 +40,8 @@ jobs:
         run: python scripts/record_prediction_run.py
       - name: Check prediction run recording
         run: python scripts/check_prediction_run_recording.py
+
+      - name: Ensure prediction JSON dashboard compatibility
+        run: |
+          python -m py_compile scripts/ensure_prediction_json_dashboard_compat.py
+          python scripts/ensure_prediction_json_dashboard_compat.py

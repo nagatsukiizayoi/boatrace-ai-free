@@ -262,3 +262,8 @@ jobs:
       - name: STEP 83 check
         run: |
           echo "STEP 83 CHECK: OK"
+
+      - name: Ensure prediction JSON dashboard compatibility
+        run: |
+          python -m py_compile scripts/ensure_prediction_json_dashboard_compat.py
+          python scripts/ensure_prediction_json_dashboard_compat.py

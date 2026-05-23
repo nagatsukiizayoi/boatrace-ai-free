@@ -32,3 +32,8 @@ jobs:
         run: python -m py_compile scripts/check_healthcheck_prediction_run_summary.py
       - name: Run STEP 117 checker
         run: python scripts/check_healthcheck_prediction_run_summary.py
+
+      - name: Ensure prediction JSON dashboard compatibility
+        run: |
+          python -m py_compile scripts/ensure_prediction_json_dashboard_compat.py
+          python scripts/ensure_prediction_json_dashboard_compat.py

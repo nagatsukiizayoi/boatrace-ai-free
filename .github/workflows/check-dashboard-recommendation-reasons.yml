@@ -60,6 +60,8 @@ jobs:
 
       - name: Run STEP 91 recommendation reason validation
         run: |
+          python -m py_compile scripts/ensure_prediction_json_dashboard_compat.py
+          python scripts/ensure_prediction_json_dashboard_compat.py
           python scripts/check_recommendation_reasons.py
 
       - name: Run STEP 93 dashboard recommendation reason validation
