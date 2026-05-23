@@ -69,6 +69,8 @@ jobs:
           python scripts/check_readme_dashboard_readiness_badge.py
           python -m py_compile scripts/check_dashboard_readiness_outputs_ready.py
           python scripts/check_dashboard_readiness_outputs_ready.py
+          python -m py_compile scripts/check_dashboard_readiness_runbook.py
+          python scripts/check_dashboard_readiness_runbook.py
           python -m py_compile scripts/check_dashboard_readiness_workflows.py
           python scripts/check_dashboard_readiness_workflows.py
 

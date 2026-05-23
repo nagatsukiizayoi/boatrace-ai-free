@@ -17,6 +17,7 @@ REQUIRED_TOKENS = [
     "check_readme_dashboard_readiness_doc.py",
     "check_readme_dashboard_readiness_badge.py",
     "check_dashboard_readiness_outputs_ready.py",
+    "check_dashboard_readiness_runbook.py",
 ]
 
 CONFLICT_MARKERS = [
