@@ -282,6 +282,7 @@ def main() -> None:
     run([PYTHON, "scripts/export_prediction_json.py"])
     run([PYTHON, "scripts/enrich_prediction_json.py"])
     run([PYTHON, "scripts/enrich_recommendation_reasons.py"])
+    run([PYTHON, "scripts/ensure_prediction_json_dashboard_compat.py"])
 
     validate_schema()
     validate_counts()

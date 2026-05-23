@@ -391,6 +391,59 @@ def ensure_explainability_for_dashboard_explanation(data, races):
 
     return data
 
+
+def ensure_reasoning_counts_from_races(data):
+    races = data.get("races")
+    if not isinstance(races, list):
+        races = []
+
+    all_recommendations = []
+
+    for race in races:
+        if not isinstance(race, dict):
+            continue
+
+        recs = race.get("recommendations")
+        if not isinstance(recs, list):
+            continue
+
+        for rec in recs:
+            if isinstance(rec, dict):
+                all_recommendations.append(rec)
+
+    reasoning = data.get("recommendation_reasoning")
+    if not isinstance(reasoning, dict):
+        reasoning = {}
+
+    reasoning["enabled"] = True
+    reasoning["version"] = REASON_VERSION
+    reasoning["total_recommendations"] = len(all_recommendations)
+    reasoning["enriched_recommendations"] = len(all_recommendations)
+
+    items = []
+
+    for i, rec in enumerate(all_recommendations, start=1):
+        items.append(
+            {
+                "recommendation_id": rec.get("recommendation_id") or f"compat-rec-{i}",
+                "race_id": rec.get("race_id"),
+                "race_no": rec.get("race_no"),
+                "combination": rec.get("combination") or rec.get("selection"),
+                "selection": rec.get("selection") or rec.get("combination"),
+                "bet_type": rec.get("bet_type"),
+                "value_grade": rec.get("value_grade"),
+                "reason_version": rec.get("reason_version"),
+                "reason": rec.get("recommendation_reason") or rec.get("reason"),
+                "reason_points": rec.get("reason_points"),
+                "risk_note": rec.get("risk_note"),
+            }
+        )
+
+    reasoning["items"] = items
+    data["recommendation_reasoning"] = reasoning
+
+    return data
+
 def main():
     if not PREDICTION_PATH.exists():
         raise SystemExit(f"prediction.json not found: {PREDICTION_PATH}")
@@ -413,6 +466,8 @@ def main():
     ensure_reasoning(data, recommendations)
     ensure_summary(data, races, recommendations, alerts)
     ensure_explainability_for_dashboard_explanation(data, races)
+
+    ensure_reasoning_counts_from_races(data)
 
     PREDICTION_PATH.write_text(
         json.dumps(data, ensure_ascii=False, indent=2) + "\n",
