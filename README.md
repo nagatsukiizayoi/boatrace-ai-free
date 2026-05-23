@@ -400,3 +400,33 @@ Local verification:
 `python scripts/check_dashboard_readiness_workflows.py`
 
 <!-- STEP88_END -->
+
+<!-- STEP90_DASHBOARD_READINESS_FULL_INTEGRATION_DOC -->
+
+### Fully integrated dashboard readiness validation
+
+The integrated dashboard readiness check now also runs the dashboard readiness workflow validation.
+
+Main command:
+
+`python scripts/check_dashboard_readiness_outputs_ready.py`
+
+This command includes:
+
+- `scripts/ensure_prediction_json_dashboard_compat.py`
+- `scripts/check_recommendation_reasons.py`
+- `scripts/check_dashboard_final_readiness.py`
+- `scripts/check_readme_dashboard_readiness_doc.py`
+- `scripts/check_readme_dashboard_readiness_badge.py`
+- `scripts/check_dashboard_readiness_workflows.py`
+
+Expected success messages include:
+
+- `STEP 80 CHECK: OK`
+- `STEP 83 CHECK: OK`
+- `STEP 84 CHECK: OK`
+- `STEP 85 CHECK: OK`
+- `STEP 87 CHECK: OK`
+- `STEP 100 CHECK: OK`
+
+<!-- STEP90_END -->
