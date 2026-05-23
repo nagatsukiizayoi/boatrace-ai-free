@@ -372,3 +372,31 @@ Local verification:
 `python scripts/check_dashboard_readiness_outputs_ready.py`
 
 <!-- STEP86_END -->
+
+<!-- STEP88_DASHBOARD_READINESS_WORKFLOW_DOC -->
+
+### Dashboard readiness workflow validation
+
+The dashboard readiness workflow validation checks that the related GitHub Actions workflows include the required dashboard compatibility and validation steps.
+
+Related script:
+
+- `scripts/check_dashboard_readiness_workflows.py`
+
+Validated workflows include:
+
+- `.github/workflows/check-dashboard-final-readiness.yml`
+- `.github/workflows/check-integrated-schema.yml`
+- `.github/workflows/check-csv-prediction-json.yml`
+- `.github/workflows/check-dashboard-quality-score-cards.yml`
+
+Expected success message:
+
+- `Dashboard readiness workflows validation: OK`
+- `STEP 87 CHECK: OK`
+
+Local verification:
+
+`python scripts/check_dashboard_readiness_workflows.py`
+
+<!-- STEP88_END -->
