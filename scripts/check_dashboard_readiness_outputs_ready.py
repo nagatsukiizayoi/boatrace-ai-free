@@ -13,6 +13,7 @@ REQUIRED_FILES = [
     "scripts/check_dashboard_final_readiness.py",
     "scripts/check_readme_dashboard_readiness_doc.py",
     "scripts/check_readme_dashboard_readiness_badge.py",
+    "scripts/check_dashboard_readiness_workflows.py",
     ".github/workflows/check-dashboard-final-readiness.yml",
 ]
 
@@ -91,6 +92,7 @@ def main():
     run(["python", "scripts/check_dashboard_final_readiness.py"])
     run(["python", "scripts/check_readme_dashboard_readiness_doc.py"])
     run(["python", "scripts/check_readme_dashboard_readiness_badge.py"])
+    run(["python", "scripts/check_dashboard_readiness_workflows.py"])
 
     print("Dashboard readiness outputs validation: OK")
     print("STEP 85 CHECK: OK")
