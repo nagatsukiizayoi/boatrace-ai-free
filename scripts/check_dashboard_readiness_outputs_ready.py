@@ -37,15 +37,28 @@ def run(cmd):
         fail(f"command failed: {' '.join(cmd)}")
 
 
+def load_prediction_json():
+    try:
+        return json.loads(Path("docs/prediction.json").read_text(encoding="utf-8"))
+    except Exception as exc:
+        fail(f"docs/prediction.json is not valid JSON: {exc}")
+
+
 def main():
     for path in REQUIRED_FILES:
         if not Path(path).exists():
             fail(f"required file does not exist: {path}")
 
-    try:
-        data = json.loads(Path("docs/prediction.json").read_text(encoding="utf-8"))
-    except Exception as exc:
-        fail(f"docs/prediction.json is not valid JSON: {exc}")
+    for script in CHECK_SCRIPTS:
+        run(["python", "-m", "py_compile", script])
+
+    # Important:
+    # prediction.json may be generated in a minimal format.
+    # Normalize it before checking dashboard-required keys.
+    run(["python", "scripts/ensure_prediction_json_dashboard_compat.py"])
+    run(["python", "-m", "json.tool", "docs/prediction.json"])
+
+    data = load_prediction_json()
 
     if not isinstance(data, dict):
         fail("docs/prediction.json top-level must be an object")
@@ -64,13 +77,16 @@ def main():
 
     missing = [key for key in required_prediction_keys if key not in data]
     if missing:
-        fail(f"docs/prediction.json missing keys: {missing}")
+        fail(f"docs/prediction.json missing keys after compatibility patch: {missing}")
 
-    for script in CHECK_SCRIPTS:
-        run(["python", "-m", "py_compile", script])
+    races = data.get("races")
+    if not isinstance(races, list) or not races:
+        fail("docs/prediction.json races must be a non-empty list")
 
-    run(["python", "scripts/ensure_prediction_json_dashboard_compat.py"])
-    run(["python", "-m", "json.tool", "docs/prediction.json"])
+    recommendations = data.get("recommendations")
+    if not isinstance(recommendations, list) or not recommendations:
+        fail("docs/prediction.json recommendations must be a non-empty list")
+
     run(["python", "scripts/check_recommendation_reasons.py"])
     run(["python", "scripts/check_dashboard_final_readiness.py"])
     run(["python", "scripts/check_readme_dashboard_readiness_doc.py"])

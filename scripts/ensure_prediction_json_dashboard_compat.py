@@ -181,6 +181,48 @@ def ensure_recommendations(data, races):
     return fixed
 
 
+
+def ensure_race_recommendations(data, races, recommendations):
+    if not isinstance(races, list) or not races:
+        return
+
+    if not isinstance(recommendations, list) or not recommendations:
+        return
+
+    for race_index, race in enumerate(races, start=1):
+        if not isinstance(race, dict):
+            continue
+
+        existing = race.get("recommendations")
+
+        # If race-level recommendations are missing, copy top-level recommendations
+        # to the first race. Other races get an empty list if needed.
+        if not isinstance(existing, list):
+            existing = []
+
+        if not existing and race_index == 1:
+            race["recommendations"] = [
+                patch_recommendation(
+                    dict(rec) if isinstance(rec, dict) else rec,
+                    rec_index,
+                    race,
+                )
+                for rec_index, rec in enumerate(recommendations, start=1)
+            ]
+        elif existing:
+            race["recommendations"] = [
+                patch_recommendation(
+                    dict(rec) if isinstance(rec, dict) else rec,
+                    rec_index,
+                    race,
+                )
+                for rec_index, rec in enumerate(existing, start=1)
+            ]
+        else:
+            race["recommendations"] = []
+
+    data["races"] = races
+
 def ensure_alerts(data, recommendations):
     alerts = data.get("alerts")
     if not isinstance(alerts, list):
@@ -241,6 +283,8 @@ def ensure_reasoning(data, recommendations):
                 }
             )
 
+    reasoning["total_recommendations"] = len(recommendations)
+    reasoning["enriched_recommendations"] = len(recommendations)
     reasoning["items"] = items
     data["recommendation_reasoning"] = reasoning
     return reasoning
@@ -364,6 +408,7 @@ def main():
 
     races = ensure_races(data)
     recommendations = ensure_recommendations(data, races)
+    ensure_race_recommendations(data, races, recommendations)
     alerts = ensure_alerts(data, recommendations)
     ensure_reasoning(data, recommendations)
     ensure_summary(data, races, recommendations, alerts)
