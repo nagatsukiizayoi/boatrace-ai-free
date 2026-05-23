@@ -60,6 +60,10 @@ jobs:
           python -m py_compile scripts/check_grouped_recommendation_reasons.py
           python -m py_compile scripts/check_healthcheck_recommendation_reason_summary.py
 
+      - name: Ensure prediction JSON dashboard compatibility
+        run: |
+          python -m py_compile scripts/ensure_prediction_json_dashboard_compat.py
+          python scripts/ensure_prediction_json_dashboard_compat.py
       - name: Run STEP 91 recommendation reason validation
         run: |
           python scripts/check_recommendation_reasons.py
