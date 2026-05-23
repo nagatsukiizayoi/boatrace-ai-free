@@ -352,3 +352,23 @@ Local verification:
 
 <!-- STEP82_END -->
 
+<!-- STEP86_DASHBOARD_READINESS_INTEGRATED_DOC -->
+
+### Integrated dashboard readiness check
+
+The integrated dashboard readiness check runs the dashboard compatibility and validation scripts together.
+
+Related script:
+
+- `scripts/check_dashboard_readiness_outputs_ready.py`
+
+Expected success message:
+
+- `Dashboard readiness outputs validation: OK`
+- `STEP 85 CHECK: OK`
+
+Local verification:
+
+`python scripts/check_dashboard_readiness_outputs_ready.py`
+
+<!-- STEP86_END -->

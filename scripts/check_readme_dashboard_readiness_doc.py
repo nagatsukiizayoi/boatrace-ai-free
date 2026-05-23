@@ -22,6 +22,11 @@ REQUIRED_TOKENS = [
     "recommendation_reasoning.version",
     "STEP 80 CHECK: OK",
     "STEP 100 CHECK: OK",
+    "STEP 85 CHECK: OK",
+    "Dashboard readiness outputs validation: OK",
+    "scripts/check_dashboard_readiness_outputs_ready.py",
+    "STEP86_END",
+    "STEP86_DASHBOARD_READINESS_INTEGRATED_DOC",
 ]
 
 CONFLICT_MARKERS = [
