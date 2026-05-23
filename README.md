@@ -430,3 +430,7 @@ Expected success messages include:
 - `STEP 100 CHECK: OK`
 
 <!-- STEP90_END -->
+## 運用手順
+
+- [ダッシュボード運用手順書](docs/dashboard-readiness-runbook.md)
+
