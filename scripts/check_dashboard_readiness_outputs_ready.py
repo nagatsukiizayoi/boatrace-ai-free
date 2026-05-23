@@ -1,0 +1,84 @@
+from pathlib import Path
+import json
+import subprocess
+import sys
+
+REQUIRED_FILES = [
+    "docs/index.html",
+    "docs/healthcheck.html",
+    "docs/prediction.json",
+    "README.md",
+    "scripts/ensure_prediction_json_dashboard_compat.py",
+    "scripts/check_recommendation_reasons.py",
+    "scripts/check_dashboard_final_readiness.py",
+    "scripts/check_readme_dashboard_readiness_doc.py",
+    "scripts/check_readme_dashboard_readiness_badge.py",
+    ".github/workflows/check-dashboard-final-readiness.yml",
+]
+
+CHECK_SCRIPTS = [
+    "scripts/ensure_prediction_json_dashboard_compat.py",
+    "scripts/check_recommendation_reasons.py",
+    "scripts/check_dashboard_final_readiness.py",
+    "scripts/check_readme_dashboard_readiness_doc.py",
+    "scripts/check_readme_dashboard_readiness_badge.py",
+]
+
+
+def fail(message):
+    print(f"ERROR: {message}")
+    sys.exit(1)
+
+
+def run(cmd):
+    print("Running:", " ".join(cmd))
+    result = subprocess.run(cmd, text=True)
+    if result.returncode != 0:
+        fail(f"command failed: {' '.join(cmd)}")
+
+
+def main():
+    for path in REQUIRED_FILES:
+        if not Path(path).exists():
+            fail(f"required file does not exist: {path}")
+
+    try:
+        data = json.loads(Path("docs/prediction.json").read_text(encoding="utf-8"))
+    except Exception as exc:
+        fail(f"docs/prediction.json is not valid JSON: {exc}")
+
+    if not isinstance(data, dict):
+        fail("docs/prediction.json top-level must be an object")
+
+    required_prediction_keys = [
+        "run_key",
+        "model_name",
+        "model_version",
+        "target_date",
+        "summary",
+        "races",
+        "alerts",
+        "recommendation_reasoning",
+        "explainability",
+    ]
+
+    missing = [key for key in required_prediction_keys if key not in data]
+    if missing:
+        fail(f"docs/prediction.json missing keys: {missing}")
+
+    for script in CHECK_SCRIPTS:
+        run(["python", "-m", "py_compile", script])
+
+    run(["python", "scripts/ensure_prediction_json_dashboard_compat.py"])
+    run(["python", "-m", "json.tool", "docs/prediction.json"])
+    run(["python", "scripts/check_recommendation_reasons.py"])
+    run(["python", "scripts/check_dashboard_final_readiness.py"])
+    run(["python", "scripts/check_readme_dashboard_readiness_doc.py"])
+    run(["python", "scripts/check_readme_dashboard_readiness_badge.py"])
+
+    print("Dashboard readiness outputs validation: OK")
+    print("STEP 85 CHECK: OK")
+
+
+if __name__ == "__main__":
+    main()
