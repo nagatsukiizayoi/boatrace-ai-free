@@ -80,6 +80,10 @@ jobs:
         run: |
           python -m json.tool docs/prediction.json > /dev/null
 
+      - name: Ensure prediction JSON dashboard compatibility before EV ticket validation
+        run: |
+          python -m py_compile scripts/ensure_prediction_json_dashboard_compat.py
+          python scripts/ensure_prediction_json_dashboard_compat.py
       - name: Validate prediction.json EV tickets
         run: |
           python - <<'PY'
