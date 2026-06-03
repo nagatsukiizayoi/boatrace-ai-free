@@ -433,4 +433,7 @@ Expected success messages include:
 ## 運用手順
 
 - [ダッシュボード運用手順書](docs/dashboard-readiness-runbook.md)
+## 履歴データベース計画
+
+- [履歴データベース再構築計画](docs/history-database-rebuild-plan.md)
 
