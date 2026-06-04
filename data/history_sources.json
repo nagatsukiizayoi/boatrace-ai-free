@@ -1,0 +1,94 @@
+{
+  "version": "1.0",
+  "description": "History data source configuration for boatrace AI database rebuild.",
+  "csv_partition": {
+    "enabled": true,
+    "unit": "year",
+    "year_column": "race_date",
+    "file_name_pattern": "{data_type}_{year}.csv"
+  },
+  "race_id": {
+    "format": "YYYYMMDD-venue_code-race_no",
+    "example": "20260101-01-01",
+    "required": true
+  },
+  "google_sheets": [
+    {
+      "name": "google_sheet_1",
+      "spreadsheet_id": "1RteBnvLCXaLi5brLHgZhxGBOY6blfLYTPfRTcxlatwM",
+      "url": "https://docs.google.com/spreadsheets/d/1RteBnvLCXaLi5brLHgZhxGBOY6blfLYTPfRTcxlatwM/edit?usp=drivesdk",
+      "enabled": true,
+      "role": "history_source_candidate",
+      "export_format": "csv",
+      "raw_output_dir": "data/raw/google_sheets",
+      "normalized_output_dir": "data/import/google_sheets"
+    },
+    {
+      "name": "google_sheet_2",
+      "spreadsheet_id": "1XhurwQfrBdtvTRiTJx_n6MvC4ftqbPvLUr6ip1Pp3rE",
+      "url": "https://docs.google.com/spreadsheets/d/1XhurwQfrBdtvTRiTJx_n6MvC4ftqbPvLUr6ip1Pp3rE/edit?usp=drivesdk",
+      "enabled": true,
+      "role": "history_source_candidate",
+      "export_format": "csv",
+      "raw_output_dir": "data/raw/google_sheets",
+      "normalized_output_dir": "data/import/google_sheets"
+    },
+    {
+      "name": "google_sheet_3",
+      "spreadsheet_id": "1n50JSqeqnYwOPMM5grT8GjGmYc-rV6qQZFLSdRR17rI",
+      "url": "https://docs.google.com/spreadsheets/d/1n50JSqeqnYwOPMM5grT8GjGmYc-rV6qQZFLSdRR17rI/edit?usp=drivesdk",
+      "enabled": true,
+      "role": "history_source_candidate",
+      "export_format": "csv",
+      "raw_output_dir": "data/raw/google_sheets",
+      "normalized_output_dir": "data/import/google_sheets"
+    },
+    {
+      "name": "google_sheet_4",
+      "spreadsheet_id": "1YY2FhdWWUf9RV4e1gqu4qAadEtMD8qB_Bw6ejrGICOo",
+      "url": "https://docs.google.com/spreadsheets/d/1YY2FhdWWUf9RV4e1gqu4qAadEtMD8qB_Bw6ejrGICOo/edit?usp=drivesdk",
+      "enabled": true,
+      "role": "history_source_candidate",
+      "export_format": "csv",
+      "raw_output_dir": "data/raw/google_sheets",
+      "normalized_output_dir": "data/import/google_sheets"
+    }
+  ],
+  "official_sources": {
+    "boatrace_official_download_page": "https://www.boatrace.jp/owpc/pc/extra/data/download.html",
+    "raw_results_dir": "data/raw/boatrace_official/results",
+    "raw_programs_dir": "data/raw/boatrace_official/programs",
+    "raw_racer_term_stats_dir": "data/raw/boatrace_official/racer_term_stats",
+    "enabled": false,
+    "note": "Official data collection will be implemented after Google Sheets source inspection."
+  },
+  "yearly_csv_outputs": {
+    "races": "data/import/history/races/races_{year}.csv",
+    "race_entries": "data/import/history/race_entries/race_entries_{year}.csv",
+    "odds": "data/import/history/odds/odds_{year}.csv",
+    "results": "data/import/history/results/results_{year}.csv",
+    "predictions": "data/import/history/predictions/predictions_{year}.csv",
+    "bet_results": "data/import/history/bet_results/bet_results_{year}.csv",
+    "racer_term_stats": "data/import/history/racer_term_stats/racer_term_stats_{year}.csv"
+  },
+  "database": {
+    "path": "db/boatrace.sqlite3",
+    "rebuild_mode": "full_or_year_range",
+    "source_csv_policy": "yearly_partitioned_csv"
+  },
+  "required_common_columns": [
+    "race_id",
+    "race_date",
+    "venue_code",
+    "venue_name",
+    "race_no"
+  ],
+  "initial_implementation_steps": [
+    "inspect_google_sheets_columns",
+    "download_google_sheets_csv",
+    "normalize_to_yearly_csv",
+    "check_history_data_quality",
+    "build_sqlite_history_database",
+    "run_backtest_with_history_database"
+  ]
+}
