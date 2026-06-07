@@ -1,0 +1,44 @@
+name: Check History Database Readiness
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  check-history-database-readiness:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Compile history database scripts
+        run: |
+          python -m py_compile scripts/build_history_database.py
+          python -m py_compile scripts/export_history_database_summary.py
+          python -m py_compile scripts/check_history_sources_config.py
+          python -m py_compile scripts/check_google_sheets_history_profile.py
+          python -m py_compile scripts/check_google_sheets_column_mapping.py
+          python -m py_compile scripts/check_history_results_csv.py
+          python -m py_compile scripts/check_history_database.py
+          python -m py_compile scripts/check_history_database_summary.py
+          python -m py_compile scripts/check_history_database_readiness.py
+
+      - name: Build history database
+        run: |
+          python scripts/build_history_database.py
+
+      - name: Export history database summary
+        run: |
+          python scripts/export_history_database_summary.py
+
+      - name: Check history database readiness
+        run: |
+          python scripts/check_history_database_readiness.py
