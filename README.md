@@ -437,3 +437,10 @@ Expected success messages include:
 
 - [履歴データベース再構築計画](docs/history-database-rebuild-plan.md)
 
+## 履歴データベース
+
+- [履歴データベース再構築計画](docs/history-database-rebuild-plan.md)
+- [Google Sheets 過去データ取り込み計画](docs/google-sheets-history-import-plan.md)
+- [履歴データベースサマリー JSON](docs/history_database_summary.json)
+- GitHub Actions: `Check History Database Readiness`
+
