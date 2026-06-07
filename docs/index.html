@@ -5980,5 +5980,186 @@ setText("step114RunCount",summary.run_count||(data.runs?data.runs.length:"-"));s
 })();
 </script>
 
+
+
+<!-- STEP129-A: History feature summary dashboard section -->
+<section id="history-feature-summary-section" style="margin: 24px 0; padding: 16px; border: 1px solid #ddd; border-radius: 12px; background: #fafafa;">
+  <h2 style="margin-top: 0;">履歴DB・履歴特徴量サマリー</h2>
+
+  <p style="margin: 8px 0; color: #555;">
+    この表示は履歴DBおよび選手別履歴特徴量の準備状況を確認するためのものです。
+    現在、履歴特徴量は <code>enabled:false</code> のため、予測結果にはまだ反映されていません。
+  </p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px;">
+    <div style="padding: 12px; border: 1px solid #e0e0e0; border-radius: 10px; background: white;">
+      <h3 style="margin-top: 0;">履歴DB</h3>
+      <dl>
+        <dt>利用可能</dt><dd id="hfs-db-available">読み込み中...</dd>
+        <dt>総行数</dt><dd id="hfs-db-total-rows">-</dd>
+        <dt>総レース数</dt><dd id="hfs-db-total-races">-</dd>
+        <dt>データ期間</dt><dd id="hfs-db-date-range">-</dd>
+        <dt>会場数</dt><dd id="hfs-db-venue-count">-</dd>
+        <dt>選手数</dt><dd id="hfs-db-racer-count">-</dd>
+      </dl>
+    </div>
+
+    <div style="padding: 12px; border: 1px solid #e0e0e0; border-radius: 10px; background: white;">
+      <h3 style="margin-top: 0;">選手履歴特徴量</h3>
+      <dl>
+        <dt>選手数</dt><dd id="hfs-racer-count">読み込み中...</dd>
+        <dt>総出走数</dt><dd id="hfs-total-race-count">-</dd>
+        <dt>平均勝率</dt><dd id="hfs-average-win-rate">-</dd>
+        <dt>平均3連対率</dt><dd id="hfs-average-top3-rate">-</dd>
+        <dt>最終出走日範囲</dt><dd id="hfs-last-race-date-range">-</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 16px;">
+    <div style="padding: 12px; border: 1px solid #e0e0e0; border-radius: 10px; background: white;">
+      <h3 style="margin-top: 0;">出走数上位</h3>
+      <ol id="hfs-top-race-count">
+        <li>読み込み中...</li>
+      </ol>
+    </div>
+
+    <div style="padding: 12px; border: 1px solid #e0e0e0; border-radius: 10px; background: white;">
+      <h3 style="margin-top: 0;">勝率上位</h3>
+      <ol id="hfs-top-win-rate">
+        <li>読み込み中...</li>
+      </ol>
+    </div>
+
+    <div style="padding: 12px; border: 1px solid #e0e0e0; border-radius: 10px; background: white;">
+      <h3 style="margin-top: 0;">3連対率上位</h3>
+      <ol id="hfs-top-top3-rate">
+        <li>読み込み中...</li>
+      </ol>
+    </div>
+  </div>
+
+  <p id="hfs-load-status" style="margin-top: 12px; color: #666;">履歴特徴量サマリーを読み込み中...</p>
+</section>
+
+<script>
+(function () {
+  function getElement(id) {
+    return document.getElementById(id);
+  }
+
+  function setText(id, value) {
+    var el = getElement(id);
+    if (!el) return;
+    if (value === null || value === undefined || value === "") {
+      el.textContent = "-";
+    } else {
+      el.textContent = String(value);
+    }
+  }
+
+  function formatNumber(value) {
+    if (value === null || value === undefined || value === "") return "-";
+    var n = Number(value);
+    if (!Number.isFinite(n)) return String(value);
+    return n.toLocaleString("ja-JP");
+  }
+
+  function formatRate(value) {
+    if (value === null || value === undefined || value === "") return "-";
+    var n = Number(value);
+    if (!Number.isFinite(n)) return String(value);
+    if (n <= 1) return (n * 100).toFixed(1) + "%";
+    return n.toFixed(1) + "%";
+  }
+
+  function firstArray(obj, keys) {
+    for (var i = 0; i < keys.length; i++) {
+      if (Array.isArray(obj[keys[i]])) return obj[keys[i]];
+    }
+    return [];
+  }
+
+  function renderRanking(id, rows, valueKey, formatter) {
+    var el = getElement(id);
+    if (!el) return;
+
+    if (!Array.isArray(rows) || rows.length === 0) {
+      el.innerHTML = "<li>データなし</li>";
+      return;
+    }
+
+    var html = rows.slice(0, 5).map(function (row) {
+      var name = row.racer_name || row.name || "(名称なし)";
+      var racerId = row.racer_id || row.player_id || "";
+      var raceCount = row.race_count !== undefined ? " / 出走 " + formatNumber(row.race_count) : "";
+      var value = row[valueKey];
+      var valueText = formatter ? formatter(value) : formatNumber(value);
+      return "<li>" + name + " " + (racerId ? "(" + racerId + ")" : "") + " : " + valueText + raceCount + "</li>";
+    }).join("");
+
+    el.innerHTML = html;
+  }
+
+  async function loadJson(path) {
+    var response = await fetch(path + "?cache=" + Date.now(), { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error(path + " HTTP " + response.status);
+    }
+    return await response.json();
+  }
+
+  Promise.all([
+    loadJson("history_database_summary.json"),
+    loadJson("racer_history_features_summary.json")
+  ]).then(function (items) {
+    var db = items[0] || {};
+    var racer = items[1] || {};
+
+    setText("hfs-db-available", db.history_database_available === false ? "false" : "true");
+    setText("hfs-db-total-rows", formatNumber(db.total_rows));
+    setText("hfs-db-total-races", formatNumber(db.total_races));
+    setText("hfs-db-date-range", (db.min_race_date || "-") + " 〜 " + (db.max_race_date || "-"));
+    setText("hfs-db-venue-count", formatNumber(db.venue_count));
+    setText("hfs-db-racer-count", formatNumber(db.racer_count));
+
+    setText("hfs-racer-count", formatNumber(racer.racer_count));
+    setText("hfs-total-race-count", formatNumber(racer.total_race_count));
+    setText("hfs-average-win-rate", formatRate(racer.average_win_rate || racer.avg_win_rate));
+    setText("hfs-average-top3-rate", formatRate(racer.average_top3_rate || racer.avg_top3_rate));
+
+    var minLast = racer.min_last_race_date || racer.first_last_race_date || "";
+    var maxLast = racer.max_last_race_date || racer.latest_last_race_date || "";
+    setText("hfs-last-race-date-range", (minLast || "-") + " 〜 " + (maxLast || "-"));
+
+    renderRanking(
+      "hfs-top-race-count",
+      firstArray(racer, ["top_racers_by_race_count", "top_by_race_count", "top_race_count"]),
+      "race_count",
+      formatNumber
+    );
+
+    renderRanking(
+      "hfs-top-win-rate",
+      firstArray(racer, ["top_racers_by_win_rate", "top_by_win_rate", "top_win_rate"]),
+      "win_rate",
+      formatRate
+    );
+
+    renderRanking(
+      "hfs-top-top3-rate",
+      firstArray(racer, ["top_racers_by_top3_rate", "top_by_top3_rate", "top3_rate"]),
+      "top3_rate",
+      formatRate
+    );
+
+    setText("hfs-load-status", "履歴DB・履歴特徴量サマリーを読み込みました。");
+  }).catch(function (error) {
+    console.error(error);
+    setText("hfs-load-status", "履歴DB・履歴特徴量サマリーの読み込みに失敗しました: " + error.message);
+  });
+})();
+</script>
+
 </body>
 </html>
