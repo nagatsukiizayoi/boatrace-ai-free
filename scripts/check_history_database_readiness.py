@@ -13,6 +13,7 @@ CHECKS = [
     ["python", "scripts/check_racer_history_features.py"],
     ["python", "scripts/check_racer_history_features_summary.py"],
     ["python", "scripts/check_history_feature_config.py"],
+    ["python", "scripts/check_dashboard_history_feature_summary.py"],
 ]
 
 REQUIRED_FILES = [
@@ -29,8 +30,10 @@ REQUIRED_FILES = [
     "scripts/export_racer_history_features_summary.py",
     "scripts/check_racer_history_features_summary.py",
     "docs/racer_history_features_summary.json",
+    "docs/index.html",
     "data/history_feature_config.json",
     "scripts/check_history_feature_config.py",
+    "scripts/check_dashboard_history_feature_summary.py",
 ]
 
 REQUIRED_RESULT_CSV_GLOB = "data/import/history/results/results_*.csv"
