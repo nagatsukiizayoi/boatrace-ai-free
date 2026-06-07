@@ -443,4 +443,7 @@ Expected success messages include:
 - [Google Sheets 過去データ取り込み計画](docs/google-sheets-history-import-plan.md)
 - [履歴データベースサマリー JSON](docs/history_database_summary.json)
 - GitHub Actions: `Check History Database Readiness`
+## 履歴特徴量
+
+- [履歴特徴量連携メモ](docs/history-feature-integration.md)
 
