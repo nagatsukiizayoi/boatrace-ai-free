@@ -1,0 +1,819 @@
+{
+  "version": "1.0",
+  "source": "data/import/history/racer_history_features.csv",
+  "racer_count": 1602,
+  "total_race_count": 108651,
+  "average_win_rate": 0.1533119481897628,
+  "average_top3_rate": 0.4722465424469413,
+  "average_start_timing": 50.986111111111114,
+  "min_last_race_date": "2026-01-11",
+  "max_last_race_date": "2026-05-03",
+  "top_racers_by_race_count": [
+    {
+      "racer_id": "4061",
+      "racer_name": "萩原",
+      "race_count": 118,
+      "win_rate": 0.245763,
+      "top2_rate": 0.491525,
+      "top3_rate": 0.686441,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-26"
+    },
+    {
+      "racer_id": "5278",
+      "racer_name": "田中",
+      "race_count": 113,
+      "win_rate": 0.380531,
+      "top2_rate": 0.584071,
+      "top3_rate": 0.734513,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-25"
+    },
+    {
+      "racer_id": "4713",
+      "racer_name": "白神",
+      "race_count": 113,
+      "win_rate": 0.265487,
+      "top2_rate": 0.477876,
+      "top3_rate": 0.690265,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "5257",
+      "racer_name": "西丸",
+      "race_count": 113,
+      "win_rate": 0.247788,
+      "top2_rate": 0.40708,
+      "top3_rate": 0.619469,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "5088",
+      "racer_name": "高憧",
+      "race_count": 109,
+      "win_rate": 0.40367,
+      "top2_rate": 0.541284,
+      "top3_rate": 0.688073,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-29"
+    },
+    {
+      "racer_id": "5160",
+      "racer_name": "藤森",
+      "race_count": 109,
+      "win_rate": 0.211009,
+      "top2_rate": 0.394495,
+      "top3_rate": 0.587156,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-01"
+    },
+    {
+      "racer_id": "4199",
+      "racer_name": "北川",
+      "race_count": 107,
+      "win_rate": 0.233645,
+      "top2_rate": 0.448598,
+      "top3_rate": 0.663551,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "3833",
+      "racer_name": "中辻",
+      "race_count": 107,
+      "win_rate": 0.214953,
+      "top2_rate": 0.429907,
+      "top3_rate": 0.654206,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "5216",
+      "racer_name": "長谷川",
+      "race_count": 106,
+      "win_rate": 0.254717,
+      "top2_rate": 0.424528,
+      "top3_rate": 0.669811,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-02"
+    },
+    {
+      "racer_id": "3557",
+      "racer_name": "太田",
+      "race_count": 105,
+      "win_rate": 0.238095,
+      "top2_rate": 0.485714,
+      "top3_rate": 0.666667,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-26"
+    },
+    {
+      "racer_id": "5234",
+      "racer_name": "塚越",
+      "race_count": 104,
+      "win_rate": 0.298077,
+      "top2_rate": 0.519231,
+      "top3_rate": 0.740385,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-02"
+    },
+    {
+      "racer_id": "4137",
+      "racer_name": "君島",
+      "race_count": 104,
+      "win_rate": 0.230769,
+      "top2_rate": 0.480769,
+      "top3_rate": 0.653846,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-30"
+    },
+    {
+      "racer_id": "4084",
+      "racer_name": "杉山",
+      "race_count": 104,
+      "win_rate": 0.259615,
+      "top2_rate": 0.471154,
+      "top3_rate": 0.625,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-02"
+    },
+    {
+      "racer_id": "5018",
+      "racer_name": "竹下",
+      "race_count": 103,
+      "win_rate": 0.271845,
+      "top2_rate": 0.407767,
+      "top3_rate": 0.650485,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-16"
+    },
+    {
+      "racer_id": "4095",
+      "racer_name": "福来",
+      "race_count": 102,
+      "win_rate": 0.323529,
+      "top2_rate": 0.588235,
+      "top3_rate": 0.72549,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-01"
+    },
+    {
+      "racer_id": "5221",
+      "racer_name": "竹間",
+      "race_count": 102,
+      "win_rate": 0.22549,
+      "top2_rate": 0.441176,
+      "top3_rate": 0.627451,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-23"
+    },
+    {
+      "racer_id": "4738",
+      "racer_name": "清埜 翔子",
+      "race_count": 102,
+      "win_rate": 0.254902,
+      "top2_rate": 0.401961,
+      "top3_rate": 0.529412,
+      "avg_start_timing": 52.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4366",
+      "racer_name": "前沢",
+      "race_count": 101,
+      "win_rate": 0.306931,
+      "top2_rate": 0.514851,
+      "top3_rate": 0.762376,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "4308",
+      "racer_name": "河村",
+      "race_count": 101,
+      "win_rate": 0.277228,
+      "top2_rate": 0.455446,
+      "top3_rate": 0.722772,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "3711",
+      "racer_name": "江本",
+      "race_count": 101,
+      "win_rate": 0.158416,
+      "top2_rate": 0.425743,
+      "top3_rate": 0.693069,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    }
+  ],
+  "top_racers_by_win_rate": [
+    {
+      "racer_id": "4926",
+      "racer_name": "吉川",
+      "race_count": 67,
+      "win_rate": 0.507463,
+      "top2_rate": 0.671642,
+      "top3_rate": 0.850746,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-05"
+    },
+    {
+      "racer_id": "4238",
+      "racer_name": "毒島",
+      "race_count": 67,
+      "win_rate": 0.492537,
+      "top2_rate": 0.731343,
+      "top3_rate": 0.850746,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-02"
+    },
+    {
+      "racer_id": "4685",
+      "racer_name": "島村",
+      "race_count": 89,
+      "win_rate": 0.47191,
+      "top2_rate": 0.707865,
+      "top3_rate": 0.842697,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "4960",
+      "racer_name": "黒野",
+      "race_count": 80,
+      "win_rate": 0.4625,
+      "top2_rate": 0.675,
+      "top3_rate": 0.7625,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-02"
+    },
+    {
+      "racer_id": "4497",
+      "racer_name": "桑原",
+      "race_count": 70,
+      "win_rate": 0.442857,
+      "top2_rate": 0.557143,
+      "top3_rate": 0.7,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "4737",
+      "racer_name": "竹井",
+      "race_count": 89,
+      "win_rate": 0.426966,
+      "top2_rate": 0.651685,
+      "top3_rate": 0.820225,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-01"
+    },
+    {
+      "racer_id": "4538",
+      "racer_name": "笠置",
+      "race_count": 90,
+      "win_rate": 0.411111,
+      "top2_rate": 0.533333,
+      "top3_rate": 0.655556,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-25"
+    },
+    {
+      "racer_id": "5121",
+      "racer_name": "定松",
+      "race_count": 88,
+      "win_rate": 0.409091,
+      "top2_rate": 0.670455,
+      "top3_rate": 0.75,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-02"
+    },
+    {
+      "racer_id": "5034",
+      "racer_name": "若林",
+      "race_count": 93,
+      "win_rate": 0.408602,
+      "top2_rate": 0.580645,
+      "top3_rate": 0.72043,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-23"
+    },
+    {
+      "racer_id": "4083",
+      "racer_name": "福島",
+      "race_count": 89,
+      "win_rate": 0.404494,
+      "top2_rate": 0.629213,
+      "top3_rate": 0.775281,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-26"
+    },
+    {
+      "racer_id": "5088",
+      "racer_name": "高憧",
+      "race_count": 109,
+      "win_rate": 0.40367,
+      "top2_rate": 0.541284,
+      "top3_rate": 0.688073,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-29"
+    },
+    {
+      "racer_id": "4350",
+      "racer_name": "篠崎",
+      "race_count": 77,
+      "win_rate": 0.402597,
+      "top2_rate": 0.636364,
+      "top3_rate": 0.74026,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-01"
+    },
+    {
+      "racer_id": "3849",
+      "racer_name": "中岡",
+      "race_count": 74,
+      "win_rate": 0.391892,
+      "top2_rate": 0.554054,
+      "top3_rate": 0.648649,
+      "avg_start_timing": null,
+      "last_race_date": "2026-03-29"
+    },
+    {
+      "racer_id": "4496",
+      "racer_name": "内堀",
+      "race_count": 87,
+      "win_rate": 0.390805,
+      "top2_rate": 0.551724,
+      "top3_rate": 0.666667,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-01"
+    },
+    {
+      "racer_id": "4903",
+      "racer_name": "吉田",
+      "race_count": 64,
+      "win_rate": 0.390625,
+      "top2_rate": 0.53125,
+      "top3_rate": 0.703125,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-22"
+    },
+    {
+      "racer_id": "4351",
+      "racer_name": "里岡",
+      "race_count": 100,
+      "win_rate": 0.39,
+      "top2_rate": 0.58,
+      "top3_rate": 0.73,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "5087",
+      "racer_name": "佐藤",
+      "race_count": 77,
+      "win_rate": 0.38961,
+      "top2_rate": 0.623377,
+      "top3_rate": 0.74026,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-14"
+    },
+    {
+      "racer_id": "4847",
+      "racer_name": "佐藤",
+      "race_count": 52,
+      "win_rate": 0.384615,
+      "top2_rate": 0.557692,
+      "top3_rate": 0.75,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-01"
+    },
+    {
+      "racer_id": "4642",
+      "racer_name": "松尾",
+      "race_count": 84,
+      "win_rate": 0.380952,
+      "top2_rate": 0.52381,
+      "top3_rate": 0.654762,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "5278",
+      "racer_name": "田中",
+      "race_count": 113,
+      "win_rate": 0.380531,
+      "top2_rate": 0.584071,
+      "top3_rate": 0.734513,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-25"
+    }
+  ],
+  "top_racers_by_top3_rate": [
+    {
+      "racer_id": "4238",
+      "racer_name": "毒島",
+      "race_count": 67,
+      "win_rate": 0.492537,
+      "top2_rate": 0.731343,
+      "top3_rate": 0.850746,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-02"
+    },
+    {
+      "racer_id": "4926",
+      "racer_name": "吉川",
+      "race_count": 67,
+      "win_rate": 0.507463,
+      "top2_rate": 0.671642,
+      "top3_rate": 0.850746,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-05"
+    },
+    {
+      "racer_id": "4685",
+      "racer_name": "島村",
+      "race_count": 89,
+      "win_rate": 0.47191,
+      "top2_rate": 0.707865,
+      "top3_rate": 0.842697,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "4335",
+      "racer_name": "若林",
+      "race_count": 80,
+      "win_rate": 0.3125,
+      "top2_rate": 0.5375,
+      "top3_rate": 0.825,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-01"
+    },
+    {
+      "racer_id": "4737",
+      "racer_name": "竹井",
+      "race_count": 89,
+      "win_rate": 0.426966,
+      "top2_rate": 0.651685,
+      "top3_rate": 0.820225,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-01"
+    },
+    {
+      "racer_id": "4256",
+      "racer_name": "渡辺",
+      "race_count": 88,
+      "win_rate": 0.215909,
+      "top2_rate": 0.579545,
+      "top3_rate": 0.818182,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-25"
+    },
+    {
+      "racer_id": "4264",
+      "racer_name": "長尾",
+      "race_count": 90,
+      "win_rate": 0.3,
+      "top2_rate": 0.6,
+      "top3_rate": 0.8,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-22"
+    },
+    {
+      "racer_id": "5089",
+      "racer_name": "前田",
+      "race_count": 68,
+      "win_rate": 0.220588,
+      "top2_rate": 0.514706,
+      "top3_rate": 0.794118,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-03"
+    },
+    {
+      "racer_id": "4188",
+      "racer_name": "久田",
+      "race_count": 87,
+      "win_rate": 0.321839,
+      "top2_rate": 0.586207,
+      "top3_rate": 0.793103,
+      "avg_start_timing": null,
+      "last_race_date": "2026-05-02"
+    },
+    {
+      "racer_id": "5132",
+      "racer_name": "中野 希一",
+      "race_count": 87,
+      "win_rate": 0.333333,
+      "top2_rate": 0.643678,
+      "top3_rate": 0.793103,
+      "avg_start_timing": 52.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4600",
+      "racer_name": "井内",
+      "race_count": 82,
+      "win_rate": 0.268293,
+      "top2_rate": 0.52439,
+      "top3_rate": 0.792683,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-21"
+    },
+    {
+      "racer_id": "4288",
+      "racer_name": "永田",
+      "race_count": 90,
+      "win_rate": 0.355556,
+      "top2_rate": 0.566667,
+      "top3_rate": 0.788889,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "3576",
+      "racer_name": "白水",
+      "race_count": 98,
+      "win_rate": 0.214286,
+      "top2_rate": 0.459184,
+      "top3_rate": 0.785714,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "4357",
+      "racer_name": "田中",
+      "race_count": 83,
+      "win_rate": 0.313253,
+      "top2_rate": 0.578313,
+      "top3_rate": 0.783133,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "5280",
+      "racer_name": "廣瀬",
+      "race_count": 87,
+      "win_rate": 0.333333,
+      "top2_rate": 0.517241,
+      "top3_rate": 0.781609,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-30"
+    },
+    {
+      "racer_id": "4184",
+      "racer_name": "渡邊",
+      "race_count": 77,
+      "win_rate": 0.311688,
+      "top2_rate": 0.532468,
+      "top3_rate": 0.779221,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-22"
+    },
+    {
+      "racer_id": "4083",
+      "racer_name": "福島",
+      "race_count": 89,
+      "win_rate": 0.404494,
+      "top2_rate": 0.629213,
+      "top3_rate": 0.775281,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-26"
+    },
+    {
+      "racer_id": "4931",
+      "racer_name": "木谷",
+      "race_count": 89,
+      "win_rate": 0.247191,
+      "top2_rate": 0.460674,
+      "top3_rate": 0.775281,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "4544",
+      "racer_name": "松田",
+      "race_count": 93,
+      "win_rate": 0.376344,
+      "top2_rate": 0.612903,
+      "top3_rate": 0.774194,
+      "avg_start_timing": null,
+      "last_race_date": "2026-04-28"
+    },
+    {
+      "racer_id": "3412",
+      "racer_name": "鈴木 博",
+      "race_count": 98,
+      "win_rate": 0.244898,
+      "top2_rate": 0.510204,
+      "top3_rate": 0.765306,
+      "avg_start_timing": 50.0,
+      "last_race_date": "2026-05-03"
+    }
+  ],
+  "top_racers_by_start_timing": [
+    {
+      "racer_id": "3629",
+      "racer_name": "浅見 昌克",
+      "race_count": 84,
+      "win_rate": 0.261905,
+      "top2_rate": 0.416667,
+      "top3_rate": 0.630952,
+      "avg_start_timing": 48.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "5042",
+      "racer_name": "畑田 汰一",
+      "race_count": 61,
+      "win_rate": 0.229508,
+      "top2_rate": 0.360656,
+      "top3_rate": 0.57377,
+      "avg_start_timing": 48.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4159",
+      "racer_name": "向後 龍一",
+      "race_count": 95,
+      "win_rate": 0.2,
+      "top2_rate": 0.442105,
+      "top3_rate": 0.610526,
+      "avg_start_timing": 49.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4700",
+      "racer_name": "金子 和之",
+      "race_count": 85,
+      "win_rate": 0.188235,
+      "top2_rate": 0.4,
+      "top3_rate": 0.611765,
+      "avg_start_timing": 49.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4191",
+      "racer_name": "赤羽 克也",
+      "race_count": 60,
+      "win_rate": 0.25,
+      "top2_rate": 0.483333,
+      "top3_rate": 0.633333,
+      "avg_start_timing": 49.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "5220",
+      "racer_name": "青木 蓮",
+      "race_count": 99,
+      "win_rate": 0.313131,
+      "top2_rate": 0.434343,
+      "top3_rate": 0.585859,
+      "avg_start_timing": 50.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "3412",
+      "racer_name": "鈴木 博",
+      "race_count": 98,
+      "win_rate": 0.244898,
+      "top2_rate": 0.510204,
+      "top3_rate": 0.765306,
+      "avg_start_timing": 50.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4109",
+      "racer_name": "谷津 幸宏",
+      "race_count": 97,
+      "win_rate": 0.216495,
+      "top2_rate": 0.371134,
+      "top3_rate": 0.597938,
+      "avg_start_timing": 50.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4532",
+      "racer_name": "秋元 哲",
+      "race_count": 94,
+      "win_rate": 0.329787,
+      "top2_rate": 0.595745,
+      "top3_rate": 0.723404,
+      "avg_start_timing": 50.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4144",
+      "racer_name": "石塚 久也",
+      "race_count": 82,
+      "win_rate": 0.231707,
+      "top2_rate": 0.45122,
+      "top3_rate": 0.646341,
+      "avg_start_timing": 50.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4528",
+      "racer_name": "黒井 達矢",
+      "race_count": 74,
+      "win_rate": 0.216216,
+      "top2_rate": 0.445946,
+      "top3_rate": 0.716216,
+      "avg_start_timing": 50.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "3306",
+      "racer_name": "武田 正紀",
+      "race_count": 56,
+      "win_rate": 0.053571,
+      "top2_rate": 0.196429,
+      "top3_rate": 0.428571,
+      "avg_start_timing": 50.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "5005",
+      "racer_name": "石田 貴洋",
+      "race_count": 56,
+      "win_rate": 0.357143,
+      "top2_rate": 0.482143,
+      "top3_rate": 0.625,
+      "avg_start_timing": 50.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "5045",
+      "racer_name": "平川 香織",
+      "race_count": 91,
+      "win_rate": 0.153846,
+      "top2_rate": 0.384615,
+      "top3_rate": 0.626374,
+      "avg_start_timing": 50.5,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4444",
+      "racer_name": "桐生 順平",
+      "race_count": 71,
+      "win_rate": 0.169014,
+      "top2_rate": 0.394366,
+      "top3_rate": 0.647887,
+      "avg_start_timing": 50.5,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "3381",
+      "racer_name": "滝沢 芳行",
+      "race_count": 66,
+      "win_rate": 0.151515,
+      "top2_rate": 0.348485,
+      "top3_rate": 0.484848,
+      "avg_start_timing": 50.5,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "3251",
+      "racer_name": "平石 和男",
+      "race_count": 96,
+      "win_rate": 0.166667,
+      "top2_rate": 0.427083,
+      "top3_rate": 0.604167,
+      "avg_start_timing": 51.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "4547",
+      "racer_name": "中田 竜太",
+      "race_count": 92,
+      "win_rate": 0.130435,
+      "top2_rate": 0.380435,
+      "top3_rate": 0.641304,
+      "avg_start_timing": 51.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "5051",
+      "racer_name": "松本 純平",
+      "race_count": 82,
+      "win_rate": 0.231707,
+      "top2_rate": 0.439024,
+      "top3_rate": 0.670732,
+      "avg_start_timing": 51.0,
+      "last_race_date": "2026-05-03"
+    },
+    {
+      "racer_id": "3880",
+      "racer_name": "浅見 宗孝",
+      "race_count": 70,
+      "win_rate": 0.1,
+      "top2_rate": 0.228571,
+      "top3_rate": 0.4,
+      "avg_start_timing": 51.0,
+      "last_race_date": "2026-05-03"
+    }
+  ]
+}
