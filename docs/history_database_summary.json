@@ -1,0 +1,211 @@
+{
+  "version": "1.0",
+  "history_database_available": true,
+  "database_path": "db/boatrace.sqlite3",
+  "total_rows": 302918,
+  "total_races": 88106,
+  "min_race_date": "2023-01-01",
+  "max_race_date": "2026-05-03",
+  "venue_count": 24,
+  "racer_count": 1602,
+  "rows_by_year": [
+    {
+      "year": "2023",
+      "rows": 65134
+    },
+    {
+      "year": "2024",
+      "rows": 64395
+    },
+    {
+      "year": "2025",
+      "rows": 64729
+    },
+    {
+      "year": "2026",
+      "rows": 108660
+    }
+  ],
+  "races_by_year": [
+    {
+      "year": "2023",
+      "races": 23491
+    },
+    {
+      "year": "2024",
+      "races": 23151
+    },
+    {
+      "year": "2025",
+      "races": 23349
+    },
+    {
+      "year": "2026",
+      "races": 18115
+    }
+  ],
+  "top_venues_by_races": [
+    {
+      "venue_code": "07",
+      "venue_name": "蒲郡",
+      "races": 4202
+    },
+    {
+      "venue_code": "06",
+      "venue_name": "浜名湖",
+      "races": 4122
+    },
+    {
+      "venue_code": "16",
+      "venue_name": "児島",
+      "races": 3996
+    },
+    {
+      "venue_code": "17",
+      "venue_name": "宮島",
+      "races": 3964
+    },
+    {
+      "venue_code": "23",
+      "venue_name": "唐津",
+      "races": 3940
+    },
+    {
+      "venue_code": "08",
+      "venue_name": "常滑",
+      "races": 3840
+    },
+    {
+      "venue_code": "02",
+      "venue_name": "戸田",
+      "races": 3828
+    },
+    {
+      "venue_code": "13",
+      "venue_name": "尼崎",
+      "races": 3804
+    },
+    {
+      "venue_code": "12",
+      "venue_name": "住之江",
+      "races": 3755
+    },
+    {
+      "venue_code": "21",
+      "venue_name": "芦屋",
+      "races": 3725
+    },
+    {
+      "venue_code": "24",
+      "venue_name": "大村",
+      "races": 3725
+    },
+    {
+      "venue_code": "04",
+      "venue_name": "平和島",
+      "races": 3703
+    },
+    {
+      "venue_code": "19",
+      "venue_name": "下関",
+      "races": 3694
+    },
+    {
+      "venue_code": "20",
+      "venue_name": "若松",
+      "races": 3633
+    },
+    {
+      "venue_code": "15",
+      "venue_name": "丸亀",
+      "races": 3620
+    },
+    {
+      "venue_code": "09",
+      "venue_name": "津",
+      "races": 3616
+    },
+    {
+      "venue_code": "01",
+      "venue_name": "桐生",
+      "races": 3583
+    },
+    {
+      "venue_code": "05",
+      "venue_name": "多摩川",
+      "races": 3578
+    },
+    {
+      "venue_code": "11",
+      "venue_name": "びわこ",
+      "races": 3353
+    },
+    {
+      "venue_code": "22",
+      "venue_name": "福岡",
+      "races": 3336
+    },
+    {
+      "venue_code": "03",
+      "venue_name": "江戸川",
+      "races": 3315
+    },
+    {
+      "venue_code": "14",
+      "venue_name": "鳴門",
+      "races": 3302
+    },
+    {
+      "venue_code": "10",
+      "venue_name": "三国",
+      "races": 3282
+    },
+    {
+      "venue_code": "18",
+      "venue_name": "徳山",
+      "races": 3190
+    }
+  ],
+  "latest_race_dates": [
+    {
+      "race_date": "2026-05-03",
+      "races": 12
+    },
+    {
+      "race_date": "2026-05-02",
+      "races": 36
+    },
+    {
+      "race_date": "2026-05-01",
+      "races": 48
+    },
+    {
+      "race_date": "2026-04-30",
+      "races": 12
+    },
+    {
+      "race_date": "2026-04-29",
+      "races": 12
+    },
+    {
+      "race_date": "2026-04-28",
+      "races": 163
+    },
+    {
+      "race_date": "2026-04-27",
+      "races": 192
+    },
+    {
+      "race_date": "2026-04-26",
+      "races": 180
+    },
+    {
+      "race_date": "2026-04-25",
+      "races": 192
+    },
+    {
+      "race_date": "2026-04-24",
+      "races": 156
+    }
+  ]
+}
