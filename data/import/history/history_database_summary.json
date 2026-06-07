@@ -1,0 +1,69 @@
+{
+  "version": "1.0",
+  "database_path": "db/boatrace.sqlite3",
+  "source_results_dir": "data/import/history/results",
+  "total_rows": 302918,
+  "total_races": 88106,
+  "min_race_date": "2023-01-01",
+  "max_race_date": "2026-05-03",
+  "venue_count": 24,
+  "racer_count": 1602,
+  "rows_by_year": [
+    {
+      "year": "2023",
+      "rows": 65134
+    },
+    {
+      "year": "2024",
+      "rows": 64395
+    },
+    {
+      "year": "2025",
+      "rows": 64729
+    },
+    {
+      "year": "2026",
+      "rows": 108660
+    }
+  ],
+  "races_by_year": [
+    {
+      "year": "2023",
+      "races": 23491
+    },
+    {
+      "year": "2024",
+      "races": 23151
+    },
+    {
+      "year": "2025",
+      "races": 23349
+    },
+    {
+      "year": "2026",
+      "races": 18115
+    }
+  ],
+  "files": [
+    {
+      "file": "data/import/history/results/results_2023.csv",
+      "rows": 65134
+    },
+    {
+      "file": "data/import/history/results/results_2024.csv",
+      "rows": 64395
+    },
+    {
+      "file": "data/import/history/results/results_2025.csv",
+      "rows": 64729
+    },
+    {
+      "file": "data/import/history/results/results_2026.csv",
+      "rows": 108660
+    }
+  ],
+  "tables": [
+    "history_results",
+    "history_races"
+  ]
+}
