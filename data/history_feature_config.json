@@ -1,0 +1,54 @@
+{
+  "version": "1.0",
+  "description": "Configuration for optional history-based prediction features.",
+  "enabled": false,
+  "feature_sources": {
+    "racer_history_features": {
+      "path": "data/import/history/racer_history_features.csv",
+      "key": "racer_id",
+      "enabled": true,
+      "columns": [
+        "race_count",
+        "win_rate",
+        "top2_rate",
+        "top3_rate",
+        "avg_start_timing",
+        "last_race_date"
+      ]
+    },
+    "racer_history_features_summary": {
+      "path": "docs/racer_history_features_summary.json",
+      "enabled": true
+    },
+    "history_database_summary": {
+      "path": "docs/history_database_summary.json",
+      "enabled": true
+    }
+  },
+  "prediction_join_policy": {
+    "join_key": "racer_id",
+    "missing_racer_policy": "use_default_values",
+    "default_values": {
+      "race_count": 0,
+      "win_rate": 0.0,
+      "top2_rate": 0.0,
+      "top3_rate": 0.0,
+      "avg_start_timing": null,
+      "last_race_date": null
+    }
+  },
+  "feature_usage_plan": {
+    "current_status": "prepared_only_not_applied_to_prediction",
+    "planned_usage": [
+      "racer_recent_strength_score",
+      "racer_win_rate_adjustment",
+      "racer_top3_rate_adjustment",
+      "start_timing_adjustment"
+    ]
+  },
+  "safety": {
+    "affects_prediction_output": false,
+    "requires_explicit_enable": true,
+    "notes": "History features are prepared for future prediction improvements but are not applied while enabled=false."
+  }
+}
