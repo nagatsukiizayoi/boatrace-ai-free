@@ -1,0 +1,18 @@
+{
+  "version": "1.0",
+  "description": "Dry-run preview of joining prediction JSON racer IDs with history features. This file does not affect prediction output.",
+  "source_prediction": "docs/prediction.json",
+  "history_features_enabled": false,
+  "affects_prediction_output": false,
+  "prediction_output_modified": false,
+  "racer_id_count": 0,
+  "matched_racer_id_count": 0,
+  "missing_racer_id_count": 0,
+  "loaded_feature_racer_count": 1602,
+  "entries": [],
+  "notes": [
+    "data/history_feature_config.json remains enabled:false.",
+    "This preview is for validation only.",
+    "docs/prediction.json is not modified by this script."
+  ]
+}
