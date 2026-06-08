@@ -161,3 +161,135 @@ enabled:false のまま dry-run を行います。
 ただし、現在は安全性を優先し、enabled:false のまま維持します。
 
 次の段階では、まず予測結果に影響しない形で STEP134-B の読み込み処理を作成することが推奨されます。
+
+## 予測接続準備の追加完了状況
+
+設計書作成後、予測ロジック本体へ接続する前段階として、以下の準備が完了しています。
+
+### STEP134-B: 履歴特徴量ローダー作成
+
+追加ファイル:
+
+- scripts/history_feature_loader.py
+- scripts/check_history_feature_loader.py
+
+内容:
+
+- data/history_feature_config.json を読み込む
+- data/import/history/racer_history_features.csv を読み込む
+- racer_id で履歴特徴量を取得する
+- 見つからない racer_id には default values を返す
+- enabled:false を維持する
+- 予測ロジック本体には未接続
+
+確認コマンド:
+
+- python scripts/history_feature_loader.py
+- python scripts/check_history_feature_loader.py
+
+### STEP134-C: ローダーチェックを統合 readiness に追加
+
+scripts/check_history_database_readiness.py に以下を追加しました。
+
+- scripts/check_history_feature_loader.py
+- scripts/history_feature_loader.py
+
+これにより、GitHub Actions の Check History Database Readiness でも、履歴特徴量ローダーが自動確認されます。
+
+### STEP134-D: 予測JSONとの結合検証
+
+追加ファイル:
+
+- scripts/check_prediction_history_feature_join.py
+
+内容:
+
+- docs/prediction.json を読み込む
+- racer_id / player_id などの選手ID候補を探索する
+- 履歴特徴量CSVと結合できるか確認する
+- 見つからない選手には default values を適用できることを確認する
+- enabled:false のまま、予測結果は変更しない
+
+確認コマンド:
+
+- python scripts/check_prediction_history_feature_join.py
+
+### STEP134-E: 結合検証を統合 readiness に追加
+
+scripts/check_history_database_readiness.py に以下を追加しました。
+
+- scripts/check_prediction_history_feature_join.py
+
+これにより、GitHub Actions の Check History Database Readiness でも、予測JSONと履歴特徴量の結合準備が自動確認されます。
+
+### STEP134-F: dry-run preview JSON 出力
+
+追加ファイル:
+
+- scripts/export_prediction_history_feature_preview.py
+- docs/prediction_history_feature_preview.json
+
+内容:
+
+- docs/prediction.json を変更せずに dry-run preview を出力する
+- 履歴特徴量と結合できた選手ID件数を記録する
+- 結合できない選手には default values を使う
+- history_features_enabled:false を記録する
+- affects_prediction_output:false を記録する
+- prediction_output_modified:false を記録する
+
+確認コマンド:
+
+- python scripts/export_prediction_history_feature_preview.py
+
+### STEP134-G: preview JSON 検証
+
+追加ファイル:
+
+- scripts/check_prediction_history_feature_preview.py
+
+内容:
+
+- docs/prediction_history_feature_preview.json の存在確認
+- history_features_enabled:false の確認
+- affects_prediction_output:false の確認
+- prediction_output_modified:false の確認
+- entries 配列の確認
+- 予測結果本体に影響していないことの確認
+
+確認コマンド:
+
+- python scripts/check_prediction_history_feature_preview.py
+
+### STEP134-H: preview 検証を統合 readiness に追加
+
+scripts/check_history_database_readiness.py に以下を追加しました。
+
+- scripts/export_prediction_history_feature_preview.py
+- scripts/check_prediction_history_feature_preview.py
+- docs/prediction_history_feature_preview.json
+
+これにより、GitHub Actions の Check History Database Readiness でも、dry-run preview の安全性が自動確認されます。
+
+## 現時点の安全状態
+
+STEP134-H 完了時点でも、data/history_feature_config.json は enabled:false のままです。
+
+したがって、履歴特徴量は以下の状態です。
+
+- 読み込み可能
+- 予測JSONとの結合検証可能
+- dry-run preview 出力可能
+- ダッシュボードで確認可能
+- 統合 readiness で自動検証可能
+- ただし、予測結果にはまだ反映しない
+
+## 次の候補
+
+次の段階では、以下が候補になります。
+
+- STEP134-J: 予測履歴特徴量 dry-run 完了タグ作成
+- STEP135-A: 履歴特徴量を予測ロジックへ接続する前の A/B 比較設計
+- STEP135-B: enabled:false のまま、予測処理内で履歴特徴量を読み込む dry-run 実装
+
+現時点では、安全性を優先し、enabled:false を維持したまま進める方針です。
