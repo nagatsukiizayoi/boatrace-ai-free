@@ -14,6 +14,7 @@ CHECKS = [
     ["python", "scripts/check_racer_history_features_summary.py"],
     ["python", "scripts/check_history_feature_config.py"],
     ["python", "scripts/check_history_feature_loader.py"],
+    ["python", "scripts/check_prediction_history_feature_join.py"],
     ["python", "scripts/check_dashboard_history_feature_summary.py"],
 ]
 
@@ -36,6 +37,7 @@ REQUIRED_FILES = [
     "scripts/check_history_feature_config.py",
     "scripts/history_feature_loader.py",
     "scripts/check_history_feature_loader.py",
+    "scripts/check_prediction_history_feature_join.py",
     "scripts/check_dashboard_history_feature_summary.py",
 ]
 
