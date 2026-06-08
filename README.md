@@ -449,4 +449,7 @@ Expected success messages include:
 ## 履歴特徴量準備版
 
 - [履歴特徴量準備版 完了記録](docs/history-feature-prepared-completion.md)
+## 履歴特徴量予測連携
+
+- [履歴特徴量 予測ロジック接続設計書](docs/history-feature-prediction-integration-plan.md)
 
