@@ -1,0 +1,72 @@
+{
+  "version": "1.0",
+  "description": "Schema definition for dry-run A/B preview of history feature prediction integration.",
+  "target_file": "docs/prediction_history_feature_ab_preview.json",
+  "safety": {
+    "enabled_required": false,
+    "affects_prediction_output": false,
+    "prediction_output_modified": false,
+    "notes": [
+      "This schema is for preview only.",
+      "Existing prediction JSON files must not be modified.",
+      "data/history_feature_config.json should remain enabled:false during A/B preview generation."
+    ]
+  },
+  "required_top_level_keys": [
+    "version",
+    "description",
+    "source_prediction",
+    "source_history_feature_preview",
+    "history_features_enabled",
+    "affects_prediction_output",
+    "prediction_output_modified",
+    "summary",
+    "comparison_items",
+    "notes"
+  ],
+  "summary_keys": [
+    "prediction_racer_id_count",
+    "history_feature_matched_count",
+    "history_feature_missing_count",
+    "comparison_item_count",
+    "rank_change_candidate_count",
+    "recommendation_change_candidate_count"
+  ],
+  "comparison_item_keys": [
+    "racer_id",
+    "history_feature_available",
+    "current_prediction_snapshot",
+    "history_feature_snapshot",
+    "dry_run_adjustment_candidate",
+    "notes"
+  ],
+  "current_prediction_snapshot_keys": [
+    "source",
+    "rank",
+    "score",
+    "probability",
+    "recommendation_related"
+  ],
+  "history_feature_snapshot_keys": [
+    "race_count",
+    "win_rate",
+    "top2_rate",
+    "top3_rate",
+    "avg_start_timing",
+    "last_race_date"
+  ],
+  "dry_run_adjustment_candidate_keys": [
+    "candidate_score_delta",
+    "candidate_reason",
+    "would_change_rank",
+    "would_change_recommendation",
+    "applied_to_prediction"
+  ],
+  "required_safety_values": {
+    "history_features_enabled": false,
+    "affects_prediction_output": false,
+    "prediction_output_modified": false,
+    "applied_to_prediction": false
+  },
+  "planned_next_file": "docs/prediction_history_feature_ab_preview.json"
+}
