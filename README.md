@@ -452,4 +452,7 @@ Expected success messages include:
 ## 履歴特徴量予測連携
 
 - [履歴特徴量 予測ロジック接続設計書](docs/history-feature-prediction-integration-plan.md)
+## 履歴特徴量 A/B 比較
+
+- [履歴特徴量 A/B 比較設計書](docs/history-feature-ab-comparison-plan.md)
 
