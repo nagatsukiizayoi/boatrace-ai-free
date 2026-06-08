@@ -6161,5 +6161,99 @@ setText("step114RunCount",summary.run_count||(data.runs?data.runs.length:"-"));s
 })();
 </script>
 
+
+
+<!-- STEP135-G: History feature A/B preview dashboard section -->
+<section id="history-feature-ab-preview-section" style="margin: 24px 0; padding: 16px; border: 1px solid #ddd; border-radius: 12px; background: #f8fbff;">
+  <h2 style="margin-top: 0;">履歴特徴量 A/B 比較 preview</h2>
+
+  <p style="margin: 8px 0; color: #555;">
+    この表示は、履歴特徴量を予測へ反映する前の dry-run A/B 比較 preview です。
+    現在も <code>enabled:false</code> のため、予測結果には反映されていません。
+  </p>
+
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-top: 16px;">
+    <div style="padding: 12px; border: 1px solid #d8e6f8; border-radius: 10px; background: white;">
+      <h3 style="margin-top: 0;">安全状態</h3>
+      <dl>
+        <dt>history_features_enabled</dt><dd id="hfab-enabled">読み込み中...</dd>
+        <dt>affects_prediction_output</dt><dd id="hfab-affects">-</dd>
+        <dt>prediction_output_modified</dt><dd id="hfab-modified">-</dd>
+      </dl>
+    </div>
+
+    <div style="padding: 12px; border: 1px solid #d8e6f8; border-radius: 10px; background: white;">
+      <h3 style="margin-top: 0;">比較件数</h3>
+      <dl>
+        <dt>比較対象件数</dt><dd id="hfab-item-count">読み込み中...</dd>
+        <dt>履歴特徴量一致件数</dt><dd id="hfab-matched-count">-</dd>
+        <dt>履歴特徴量欠損件数</dt><dd id="hfab-missing-count">-</dd>
+      </dl>
+    </div>
+
+    <div style="padding: 12px; border: 1px solid #d8e6f8; border-radius: 10px; background: white;">
+      <h3 style="margin-top: 0;">変化候補</h3>
+      <dl>
+        <dt>順位変化候補</dt><dd id="hfab-rank-change-count">読み込み中...</dd>
+        <dt>推奨変化候補</dt><dd id="hfab-recommendation-change-count">-</dd>
+      </dl>
+    </div>
+  </div>
+
+  <p id="hfab-load-status" style="margin-top: 12px; color: #666;">履歴特徴量 A/B preview を読み込み中...</p>
+</section>
+
+<script>
+(function () {
+  function getElement(id) {
+    return document.getElementById(id);
+  }
+
+  function setText(id, value) {
+    var el = getElement(id);
+    if (!el) return;
+    if (value === null || value === undefined || value === "") {
+      el.textContent = "-";
+    } else {
+      el.textContent = String(value);
+    }
+  }
+
+  function formatNumber(value) {
+    if (value === null || value === undefined || value === "") return "-";
+    var n = Number(value);
+    if (!Number.isFinite(n)) return String(value);
+    return n.toLocaleString("ja-JP");
+  }
+
+  async function loadHistoryFeatureAbPreview() {
+    var response = await fetch("prediction_history_feature_ab_preview.json?cache=" + Date.now(), { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("prediction_history_feature_ab_preview.json HTTP " + response.status);
+    }
+    return await response.json();
+  }
+
+  loadHistoryFeatureAbPreview().then(function (data) {
+    var summary = data.summary || {};
+
+    setText("hfab-enabled", data.history_features_enabled);
+    setText("hfab-affects", data.affects_prediction_output);
+    setText("hfab-modified", data.prediction_output_modified);
+
+    setText("hfab-item-count", formatNumber(summary.comparison_item_count));
+    setText("hfab-matched-count", formatNumber(summary.history_feature_matched_count));
+    setText("hfab-missing-count", formatNumber(summary.history_feature_missing_count));
+    setText("hfab-rank-change-count", formatNumber(summary.rank_change_candidate_count));
+    setText("hfab-recommendation-change-count", formatNumber(summary.recommendation_change_candidate_count));
+
+    setText("hfab-load-status", "履歴特徴量 A/B preview を読み込みました。予測結果には反映されていません。");
+  }).catch(function (error) {
+    console.error(error);
+    setText("hfab-load-status", "履歴特徴量 A/B preview の読み込みに失敗しました: " + error.message);
+  });
+})();
+</script>
+
 </body>
 </html>
