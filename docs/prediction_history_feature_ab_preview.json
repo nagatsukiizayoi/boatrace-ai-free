@@ -1,0 +1,29 @@
+{
+  "version": "1.0",
+  "description": "Dry-run A/B preview for history feature prediction integration. This file does not modify prediction output.",
+  "source_prediction": "docs/prediction.json",
+  "source_history_feature_preview": "docs/prediction_history_feature_preview.json",
+  "history_features_enabled": false,
+  "affects_prediction_output": false,
+  "prediction_output_modified": false,
+  "summary": {
+    "prediction_racer_id_count": 0,
+    "history_feature_matched_count": 0,
+    "history_feature_missing_count": 0,
+    "comparison_item_count": 0,
+    "rank_change_candidate_count": 0,
+    "recommendation_change_candidate_count": 0
+  },
+  "comparison_items": [],
+  "notes": [
+    "This is a dry-run A/B preview.",
+    "data/history_feature_config.json remains enabled:false.",
+    "Existing prediction JSON files are not modified.",
+    "No adjustment is applied to prediction output."
+  ],
+  "schema": {
+    "path": "docs/history-feature-ab-preview-schema.json",
+    "version": "1.0"
+  },
+  "source_prediction_json_top_level_type": "dict"
+}
