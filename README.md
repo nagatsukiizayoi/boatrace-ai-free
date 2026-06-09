@@ -461,4 +461,7 @@ Expected success messages include:
 ## 履歴特徴量 予測ロジック接続調査
 
 - [履歴特徴量 予測ロジック接続ポイント調査結果](docs/history-feature-prediction-entrypoint-investigation.md)
+## 履歴特徴量 予測 adapter 設計
+
+- [履歴特徴量 予測 adapter 設計書](docs/history-feature-prediction-adapter-design.md)
 
