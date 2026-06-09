@@ -455,4 +455,7 @@ Expected success messages include:
 ## 履歴特徴量 A/B 比較
 
 - [履歴特徴量 A/B 比較設計書](docs/history-feature-ab-comparison-plan.md)
+## 履歴特徴量 有効化前安全監査
+
+- [履歴特徴量 有効化前 最終安全監査結果](docs/history-feature-pre-enable-safety-audit.md)
 
