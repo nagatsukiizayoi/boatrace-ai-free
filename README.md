@@ -458,4 +458,7 @@ Expected success messages include:
 ## 履歴特徴量 有効化前安全監査
 
 - [履歴特徴量 有効化前 最終安全監査結果](docs/history-feature-pre-enable-safety-audit.md)
+## 履歴特徴量 予測ロジック接続調査
+
+- [履歴特徴量 予測ロジック接続ポイント調査結果](docs/history-feature-prediction-entrypoint-investigation.md)
 
