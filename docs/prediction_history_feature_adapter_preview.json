@@ -1,0 +1,746 @@
+{
+  "affects_prediction_output": false,
+  "candidate_count": 25,
+  "description": "Dry-run adapter preview for history features. This file does not affect prediction output.",
+  "entries": [
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 0,
+      "prediction_output_modified": false,
+      "racer_id": "{'prediction_run_id': '20260610043459', 'updated_at': '2026-06-10 04:34:59', 'stage': 'FINAL', 'stage_usage': {'use_weather': True, 'use_exhibition': True, 'use_odds': True}, 'race_id': '2026-05-14_サンプル競艇場_12R', 'race': {'date': '2026-05-14', 'place': 'サンプル競艇場', 'stadium': 'サンプル競艇場', 'race_no': '12R', 'title': '優勝戦', 'deadline': '16:30'}, 'weather': {'weather': '晴れ', 'wind_direction': '追い風', 'wind_speed': 2, 'wave_height': 2, 'temperature': 24}, 'predictions': [{'rank': 1, 'mark': '◎', 'mark_name': '本命', 'boat': 1, 'course': 1, 'driver': '山田 太郎', 'label': '1着候補', 'confidence': 95, 'score': 172.0, 'base_score': 148.5, 'weather_score': 2, 'exhibition_score': 15.5, 'odds_score': 6}, {'rank': 2, 'mark': '○', 'mark_name': '対抗', 'boat': 3, 'course': 3, 'driver': '鈴木 三郎', 'label': '2着候補', 'confidence': 82, 'score': 146.45, 'base_score': 127.45, 'weather_score': 2, 'exhibition_score': 15.0, 'odds_score': 2}, {'rank': 3, 'mark': '▲', 'mark_name': '単穴', 'boat': 2, 'course': 2, 'driver': '佐藤 次郎', 'label': '3着候補', 'confidence': 76, 'score': 133.1, 'base_score': 121.6, 'weather_score': 2, 'exhibition_score': 7.5, 'odds_score': 2}], 'all_boats': [{'boat': 1, 'course': 1, 'driver': '山田 太郎', 'win_rate': 7.2, 'motor_rate': 45.0, 'avg_st': 0.13, 'exhibition_time': 6.78, 'exhibition_st': 0.12, 'tilt': -0.5, 'win_odds': 1.8, 'base_score': 148.5, 'weather_score': 2, 'exhibition_score': 15.5, 'odds_score': 6, 'score': 172.0, 'exhibition_time_rank': 1, 'exhibition_st_rank': 2, 'rank': 1, 'mark': '◎', 'mark_name': '本命', 'confidence': 95}, {'boat': 3, 'course': 3, 'driver': '鈴木 三郎', 'win_rate': 6.6, 'motor_rate': 41.5, 'avg_st': 0.14, 'exhibition_time': 6.8, 'exhibition_st': 0.11, 'tilt': 0, 'win_odds': 5.6, 'base_score': 127.45, 'weather_score': 2, 'exhibition_score': 15.0, 'odds_score': 2, 'score': 146.45, 'exhibition_time_rank': 2, 'exhibition_st_rank': 1, 'rank': 2, 'mark': '○', 'mark_name': '対抗', 'confidence': 82}, {'boat': 2, 'course': 2, 'driver': '佐藤 次郎', 'win_rate': 6.1, 'motor_rate': 38.0, 'avg_st': 0.15, 'exhibition_time': 6.82, 'exhibition_st': 0.15, 'tilt': -0.5, 'win_odds': 4.2, 'base_score': 121.6, 'weather_score': 2, 'exhibition_score': 7.5, 'odds_score': 2, 'score': 133.1, 'exhibition_time_rank': 3, 'exhibition_st_rank': 3, 'rank': 3, 'mark': '▲', 'mark_name': '単穴', 'confidence': 76}, {'boat': 4, 'course': 4, 'driver': '田中 四郎', 'win_rate': 5.8, 'motor_rate': 35.0, 'avg_st': 0.16, 'exhibition_time': 6.86, 'exhibition_st': 0.18, 'tilt': 0, 'win_odds': 9.8, 'base_score': 107.5, 'weather_score': 0, 'exhibition_score': 3.0, 'odds_score': 0, 'score': 110.5, 'exhibition_time_rank': 4, 'exhibition_st_rank': 5, 'rank': 4, 'mark': '△', 'mark_name': '連下', 'confidence': 65}, {'boat': 5, 'course': 5, 'driver': '高橋 五郎', 'win_rate': 5.2, 'motor_rate': 33.0, 'avg_st': 0.17, 'exhibition_time': 6.9, 'exhibition_st': 0.16, 'tilt': 0.5, 'win_odds': 14.5, 'base_score': 94.5, 'weather_score': 0, 'exhibition_score': 2.5, 'odds_score': 0, 'score': 97.0, 'exhibition_time_rank': 5, 'exhibition_st_rank': 4, 'rank': 5, 'mark': '☆', 'mark_name': '穴', 'confidence': 58}, {'boat': 6, 'course': 6, 'driver': '伊藤 六郎', 'win_rate': 4.9, 'motor_rate': 29.0, 'avg_st': 0.18, 'exhibition_time': 6.92, 'exhibition_st': 0.2, 'tilt': 0.5, 'win_odds': 28.0, 'base_score': 84.7, 'weather_score': 0, 'exhibition_score': -2.5, 'odds_score': -1, 'score': 81.2, 'exhibition_time_rank': 6, 'exhibition_st_rank': 6, 'rank': 6, 'mark': '×', 'mark_name': '押さえ', 'confidence': 50}], 'ticket_groups': [{'name': '本線', 'description': '◎本命を1着に固定した中心買い目です。', 'risk': '低リスク', 'tickets': [{'ticket': '1-3-2', 'amount': 300, 'reason': '◎→○→▲ の基本形', 'probability': 0.0189}, {'ticket': '1-2-3', 'amount': 300, 'reason': '◎→▲→○ の入れ替わり', 'probability': 0.01832}]}, {'name': '押さえ', 'description': '○や▲が上位に来る場合を押さえます。', 'risk': '中リスク', 'tickets': [{'ticket': '3-1-2', 'amount': 200, 'reason': '○が◎を逆転する形', 'probability': 0.01808}, {'ticket': '1-3-4', 'amount': 200, 'reason': '3着に△が入る形', 'probability': 0.01569}, {'ticket': '1-4-3', 'amount': 100, 'reason': '2着に△が浮上する形', 'probability': 0.01446}]}, {'name': '穴狙い', 'description': '△や☆が絡む高配当狙いです。', 'risk': '高リスク', 'tickets': [{'ticket': '2-1-3', 'amount': 100, 'reason': '▲が1着に来る波乱', 'probability': 0.01714}, {'ticket': '1-2-4', 'amount': 100, 'reason': '3着に△が絡む形', 'probability': 0.01382}, {'ticket': '1-3-5', 'amount': 100, 'reason': '3着に☆が絡む形', 'probability': 0.01377}]}], 'tickets': ['1-3-2', '1-2-3', '3-1-2', '1-3-4', '1-4-3', '2-1-3', '1-2-4', '1-3-5'], 'total_amount': 1400, 'source': {'race_file': 'docs/race.json', 'update_file': 'docs/race_update.json', 'update_file_exists': True, 'stage_file': 'docs/prediction_final.json'}, 'notice': 'このページは学習用・分析練習用です。実際の購入や利益を保証するものではありません。'}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 1,
+      "prediction_output_modified": false,
+      "racer_id": "{'use_weather': True, 'use_exhibition': True, 'use_odds': True}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 2,
+      "prediction_output_modified": false,
+      "racer_id": "{'date': '2026-05-14', 'place': 'サンプル競艇場', 'stadium': 'サンプル競艇場', 'race_no': '12R', 'title': '優勝戦', 'deadline': '16:30'}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 3,
+      "prediction_output_modified": false,
+      "racer_id": "{'weather': '晴れ', 'wind_direction': '追い風', 'wind_speed': 2, 'wave_height': 2, 'temperature': 24}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "confidence": 95,
+        "course": 1,
+        "rank": 1,
+        "score": 172.0
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 4,
+      "prediction_output_modified": false,
+      "racer_id": "{'rank': 1, 'mark': '◎', 'mark_name': '本命', 'boat': 1, 'course': 1, 'driver': '山田 太郎', 'label': '1着候補', 'confidence': 95, 'score': 172.0, 'base_score': 148.5, 'weather_score': 2, 'exhibition_score': 15.5, 'odds_score': 6}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "confidence": 82,
+        "course": 3,
+        "rank": 2,
+        "score": 146.45
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 5,
+      "prediction_output_modified": false,
+      "racer_id": "{'rank': 2, 'mark': '○', 'mark_name': '対抗', 'boat': 3, 'course': 3, 'driver': '鈴木 三郎', 'label': '2着候補', 'confidence': 82, 'score': 146.45, 'base_score': 127.45, 'weather_score': 2, 'exhibition_score': 15.0, 'odds_score': 2}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "confidence": 76,
+        "course": 2,
+        "rank": 3,
+        "score": 133.1
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 6,
+      "prediction_output_modified": false,
+      "racer_id": "{'rank': 3, 'mark': '▲', 'mark_name': '単穴', 'boat': 2, 'course': 2, 'driver': '佐藤 次郎', 'label': '3着候補', 'confidence': 76, 'score': 133.1, 'base_score': 121.6, 'weather_score': 2, 'exhibition_score': 7.5, 'odds_score': 2}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "confidence": 95,
+        "course": 1,
+        "rank": 1,
+        "score": 172.0
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 7,
+      "prediction_output_modified": false,
+      "racer_id": "{'boat': 1, 'course': 1, 'driver': '山田 太郎', 'win_rate': 7.2, 'motor_rate': 45.0, 'avg_st': 0.13, 'exhibition_time': 6.78, 'exhibition_st': 0.12, 'tilt': -0.5, 'win_odds': 1.8, 'base_score': 148.5, 'weather_score': 2, 'exhibition_score': 15.5, 'odds_score': 6, 'score': 172.0, 'exhibition_time_rank': 1, 'exhibition_st_rank': 2, 'rank': 1, 'mark': '◎', 'mark_name': '本命', 'confidence': 95}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "confidence": 82,
+        "course": 3,
+        "rank": 2,
+        "score": 146.45
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 8,
+      "prediction_output_modified": false,
+      "racer_id": "{'boat': 3, 'course': 3, 'driver': '鈴木 三郎', 'win_rate': 6.6, 'motor_rate': 41.5, 'avg_st': 0.14, 'exhibition_time': 6.8, 'exhibition_st': 0.11, 'tilt': 0, 'win_odds': 5.6, 'base_score': 127.45, 'weather_score': 2, 'exhibition_score': 15.0, 'odds_score': 2, 'score': 146.45, 'exhibition_time_rank': 2, 'exhibition_st_rank': 1, 'rank': 2, 'mark': '○', 'mark_name': '対抗', 'confidence': 82}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "confidence": 76,
+        "course": 2,
+        "rank": 3,
+        "score": 133.1
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 9,
+      "prediction_output_modified": false,
+      "racer_id": "{'boat': 2, 'course': 2, 'driver': '佐藤 次郎', 'win_rate': 6.1, 'motor_rate': 38.0, 'avg_st': 0.15, 'exhibition_time': 6.82, 'exhibition_st': 0.15, 'tilt': -0.5, 'win_odds': 4.2, 'base_score': 121.6, 'weather_score': 2, 'exhibition_score': 7.5, 'odds_score': 2, 'score': 133.1, 'exhibition_time_rank': 3, 'exhibition_st_rank': 3, 'rank': 3, 'mark': '▲', 'mark_name': '単穴', 'confidence': 76}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "confidence": 65,
+        "course": 4,
+        "rank": 4,
+        "score": 110.5
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 10,
+      "prediction_output_modified": false,
+      "racer_id": "{'boat': 4, 'course': 4, 'driver': '田中 四郎', 'win_rate': 5.8, 'motor_rate': 35.0, 'avg_st': 0.16, 'exhibition_time': 6.86, 'exhibition_st': 0.18, 'tilt': 0, 'win_odds': 9.8, 'base_score': 107.5, 'weather_score': 0, 'exhibition_score': 3.0, 'odds_score': 0, 'score': 110.5, 'exhibition_time_rank': 4, 'exhibition_st_rank': 5, 'rank': 4, 'mark': '△', 'mark_name': '連下', 'confidence': 65}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "confidence": 58,
+        "course": 5,
+        "rank": 5,
+        "score": 97.0
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 11,
+      "prediction_output_modified": false,
+      "racer_id": "{'boat': 5, 'course': 5, 'driver': '高橋 五郎', 'win_rate': 5.2, 'motor_rate': 33.0, 'avg_st': 0.17, 'exhibition_time': 6.9, 'exhibition_st': 0.16, 'tilt': 0.5, 'win_odds': 14.5, 'base_score': 94.5, 'weather_score': 0, 'exhibition_score': 2.5, 'odds_score': 0, 'score': 97.0, 'exhibition_time_rank': 5, 'exhibition_st_rank': 4, 'rank': 5, 'mark': '☆', 'mark_name': '穴', 'confidence': 58}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "confidence": 50,
+        "course": 6,
+        "rank": 6,
+        "score": 81.2
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 12,
+      "prediction_output_modified": false,
+      "racer_id": "{'boat': 6, 'course': 6, 'driver': '伊藤 六郎', 'win_rate': 4.9, 'motor_rate': 29.0, 'avg_st': 0.18, 'exhibition_time': 6.92, 'exhibition_st': 0.2, 'tilt': 0.5, 'win_odds': 28.0, 'base_score': 84.7, 'weather_score': 0, 'exhibition_score': -2.5, 'odds_score': -1, 'score': 81.2, 'exhibition_time_rank': 6, 'exhibition_st_rank': 6, 'rank': 6, 'mark': '×', 'mark_name': '押さえ', 'confidence': 50}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "name": "本線"
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 13,
+      "prediction_output_modified": false,
+      "racer_id": "{'name': '本線', 'description': '◎本命を1着に固定した中心買い目です。', 'risk': '低リスク', 'tickets': [{'ticket': '1-3-2', 'amount': 300, 'reason': '◎→○→▲ の基本形', 'probability': 0.0189}, {'ticket': '1-2-3', 'amount': 300, 'reason': '◎→▲→○ の入れ替わり', 'probability': 0.01832}]}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 14,
+      "prediction_output_modified": false,
+      "racer_id": "{'ticket': '1-3-2', 'amount': 300, 'reason': '◎→○→▲ の基本形', 'probability': 0.0189}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 15,
+      "prediction_output_modified": false,
+      "racer_id": "{'ticket': '1-2-3', 'amount': 300, 'reason': '◎→▲→○ の入れ替わり', 'probability': 0.01832}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "name": "押さえ"
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 16,
+      "prediction_output_modified": false,
+      "racer_id": "{'name': '押さえ', 'description': '○や▲が上位に来る場合を押さえます。', 'risk': '中リスク', 'tickets': [{'ticket': '3-1-2', 'amount': 200, 'reason': '○が◎を逆転する形', 'probability': 0.01808}, {'ticket': '1-3-4', 'amount': 200, 'reason': '3着に△が入る形', 'probability': 0.01569}, {'ticket': '1-4-3', 'amount': 100, 'reason': '2着に△が浮上する形', 'probability': 0.01446}]}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 17,
+      "prediction_output_modified": false,
+      "racer_id": "{'ticket': '3-1-2', 'amount': 200, 'reason': '○が◎を逆転する形', 'probability': 0.01808}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 18,
+      "prediction_output_modified": false,
+      "racer_id": "{'ticket': '1-3-4', 'amount': 200, 'reason': '3着に△が入る形', 'probability': 0.01569}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 19,
+      "prediction_output_modified": false,
+      "racer_id": "{'ticket': '1-4-3', 'amount': 100, 'reason': '2着に△が浮上する形', 'probability': 0.01446}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {
+        "name": "穴狙い"
+      },
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 20,
+      "prediction_output_modified": false,
+      "racer_id": "{'name': '穴狙い', 'description': '△や☆が絡む高配当狙いです。', 'risk': '高リスク', 'tickets': [{'ticket': '2-1-3', 'amount': 100, 'reason': '▲が1着に来る波乱', 'probability': 0.01714}, {'ticket': '1-2-4', 'amount': 100, 'reason': '3着に△が絡む形', 'probability': 0.01382}, {'ticket': '1-3-5', 'amount': 100, 'reason': '3着に☆が絡む形', 'probability': 0.01377}]}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 21,
+      "prediction_output_modified": false,
+      "racer_id": "{'ticket': '2-1-3', 'amount': 100, 'reason': '▲が1着に来る波乱', 'probability': 0.01714}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 22,
+      "prediction_output_modified": false,
+      "racer_id": "{'ticket': '1-2-4', 'amount': 100, 'reason': '3着に△が絡む形', 'probability': 0.01382}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 23,
+      "prediction_output_modified": false,
+      "racer_id": "{'ticket': '1-3-5', 'amount': 100, 'reason': '3着に☆が絡む形', 'probability': 0.01377}"
+    },
+    {
+      "affects_prediction_output": false,
+      "candidate": {},
+      "feature_key_count": 6,
+      "feature_keys": [
+        "avg_start_timing",
+        "last_race_date",
+        "race_count",
+        "top2_rate",
+        "top3_rate",
+        "win_rate"
+      ],
+      "feature_sample": {
+        "avg_start_timing": null,
+        "last_race_date": null,
+        "race_count": 0,
+        "top2_rate": 0.0,
+        "top3_rate": 0.0,
+        "win_rate": 0.0
+      },
+      "history_feature_available": false,
+      "history_feature_source": "default_values",
+      "history_features_enabled": false,
+      "index": 24,
+      "prediction_output_modified": false,
+      "racer_id": "{'race_file': 'docs/race.json', 'update_file': 'docs/race_update.json', 'update_file_exists': True, 'stage_file': 'docs/prediction_final.json'}"
+    }
+  ],
+  "generated_at": "2026-06-10T15:24:06.225910+00:00",
+  "history_features_enabled": false,
+  "loaded_feature_racer_count": 1602,
+  "matched_candidate_count": 0,
+  "missing_candidate_count": 25,
+  "prediction_json_modified": false,
+  "prediction_output_modified": false,
+  "source_adapter": "scripts/history_feature_prediction_adapter.py",
+  "source_config": "data/history_feature_config.json",
+  "source_prediction": "docs/prediction.json",
+  "step": "STEP137-F",
+  "unique_racer_id_count": 25,
+  "version": "1.0"
+}
