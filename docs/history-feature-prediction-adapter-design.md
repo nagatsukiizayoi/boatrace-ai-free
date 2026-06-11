@@ -196,3 +196,117 @@ STEP137-C では、履歴特徴量を予測処理へ安全に渡すための ada
 現時点では設計のみであり、実装変更は行わない。
 
 次の STEP137-D では、この設計に基づき、`enabled:false` のまま動作する adapter の dry-run 実装を検討する。
+
+## adapter dry-run 実装完了記録
+
+### 実施済みステップ
+
+以下の adapter dry-run 関連ステップを完了した。
+
+- STEP137-C: 履歴特徴量 prediction adapter 設計書作成
+- STEP137-D: 履歴特徴量 prediction adapter dry-run 実装
+- STEP137-E: adapter dry-run チェックを統合 readiness に追加
+- STEP137-F: adapter preview JSON 出力
+- STEP137-G: adapter preview JSON 検証スクリプト追加
+- STEP137-H: adapter preview チェックを統合 readiness に追加
+
+### 追加・更新された主なファイル
+
+- `docs/history-feature-prediction-adapter-design.md`
+- `scripts/history_feature_prediction_adapter.py`
+- `scripts/check_history_feature_prediction_adapter.py`
+- `scripts/check_history_database_readiness.py`
+- `scripts/export_history_feature_adapter_preview.py`
+- `docs/prediction_history_feature_adapter_preview.json`
+- `scripts/check_history_feature_adapter_preview.py`
+
+### 現在の安全状態
+
+`data/history_feature_config.json` は引き続き `enabled:false` である。
+
+そのため、履歴特徴量はまだ予測ロジック本体には反映されていない。
+
+また、以下は変更していない。
+
+- `docs/prediction.json`
+- 予測スコア
+- 予測順位
+- 推奨買い目
+- 期待値
+- 予測ロジック本体
+
+### adapter dry-run の役割
+
+adapter dry-run は、既存予測 JSON 内の選手 ID 候補を確認し、履歴特徴量 CSV の `racer_id` と照合できるかを検証するための中間層である。
+
+この adapter は、以下を行う。
+
+- `racer_id`, `player_id`, `racerId`, `playerId`, `registration_number`, `toban`, `登番` の ID 正規化
+- `scripts/history_feature_loader.py` を利用した履歴特徴量取得
+- 欠損時 default values の利用
+- `history_feature_preview` 用データの作成
+- `affects_prediction_output:false` の維持
+- `prediction_output_modified:false` の維持
+
+### adapter preview JSON
+
+adapter dry-run の結果は以下に出力した。
+
+- `docs/prediction_history_feature_adapter_preview.json`
+
+この JSON は確認用であり、既存の `docs/prediction.json` は変更しない。
+
+preview JSON には以下の安全フラグを含める。
+
+- `history_features_enabled:false`
+- `affects_prediction_output:false`
+- `prediction_output_modified:false`
+- `prediction_json_modified:false`
+
+### readiness 統合
+
+`scripts/check_history_database_readiness.py` に以下を統合した。
+
+- `scripts/check_history_feature_prediction_adapter.py`
+- `scripts/check_history_feature_adapter_preview.py`
+
+これにより、GitHub Actions の `Check History Database Readiness` で adapter dry-run と adapter preview の安全性を確認できる。
+
+期待される主な出力は以下。
+
+- `STEP 137-D CHECK: OK`
+- `STEP 137-G CHECK: OK`
+- `STEP 112 CHECK: OK`
+
+### GitHub Actions 確認
+
+以下の workflow に赤エラーがないことを確認した。
+
+- `Check History Database Readiness`
+- `Check Dashboard Final Readiness`
+- `pages-build-deployment`
+
+なお、`pages-build-deployment` で一時的に認証エラーが発生したが、再実行により解消した。
+
+### enabled:true 前の注意点
+
+`enabled:true` に進む前に、以下を確認する。
+
+- adapter preview の matched / missing 状況
+- 欠損 racer_id の扱い
+- default values 利用時の影響
+- 現行予測との差分
+- 予測順位への影響
+- 推奨買い目への影響
+- 期待値への影響
+- ダッシュボード表示崩れの有無
+- GitHub Actions の全成功
+- rollback タグの存在
+
+### 結論
+
+STEP137-C〜H により、履歴特徴量を予測ロジックへ接続する前段階の adapter dry-run 基盤が完成した。
+
+現時点では `enabled:false` が維持されており、予測本体は未変更である。
+
+次の段階では、adapter dry-run 状態に安定タグを付けたうえで、さらに予測本体へ接続する前の差分確認または dashboard 表示を検討する。
