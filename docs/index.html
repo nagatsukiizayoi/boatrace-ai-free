@@ -6255,5 +6255,100 @@ setText("step114RunCount",summary.run_count||(data.runs?data.runs.length:"-"));s
 })();
 </script>
 
+
+<section id="history-feature-adapter-preview-section" style="margin: 24px 0; padding: 16px; border: 1px solid #ddd; border-radius: 8px;">
+  <h2>履歴特徴量 adapter preview</h2>
+  <p>
+    履歴特徴量 adapter の dry-run preview を表示します。
+    現在は enabled:false のため、予測本体には影響しません。
+  </p>
+
+  <div id="hfap-status">adapter preview を読み込み中です...</div>
+
+  <div id="hfap-summary" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; margin-top: 12px;">
+    <div><strong>enabled</strong><br><span id="hfap-enabled">-</span></div>
+    <div><strong>affects prediction</strong><br><span id="hfap-affects">-</span></div>
+    <div><strong>prediction modified</strong><br><span id="hfap-modified">-</span></div>
+    <div><strong>prediction JSON modified</strong><br><span id="hfap-json-modified">-</span></div>
+    <div><strong>candidates</strong><br><span id="hfap-candidate-count">-</span></div>
+    <div><strong>unique racer IDs</strong><br><span id="hfap-unique-count">-</span></div>
+    <div><strong>matched</strong><br><span id="hfap-matched-count">-</span></div>
+    <div><strong>missing</strong><br><span id="hfap-missing-count">-</span></div>
+    <div><strong>loaded feature racers</strong><br><span id="hfap-loaded-count">-</span></div>
+  </div>
+
+  <div style="margin-top: 12px;">
+    <strong>source</strong><br>
+    <span id="hfap-source">-</span>
+  </div>
+
+  <div style="margin-top: 12px;">
+    <strong>sample entries</strong>
+    <pre id="hfap-sample" style="white-space: pre-wrap; background: #f7f7f7; padding: 8px; border-radius: 6px; overflow-x: auto;">-</pre>
+  </div>
+</section>
+
+<script>
+(function () {
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.textContent = String(value);
+    }
+  }
+
+  function boolText(value) {
+    if (value === true) {
+      return "true";
+    }
+    if (value === false) {
+      return "false";
+    }
+    return "-";
+  }
+
+  function loadHistoryFeatureAdapterPreview() {
+    var status = document.getElementById("hfap-status");
+    fetch("prediction_history_feature_adapter_preview.json")
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("HTTP " + response.status);
+        }
+        return response.json();
+      })
+      .then(function (data) {
+        setText("hfap-enabled", boolText(data.history_features_enabled));
+        setText("hfap-affects", boolText(data.affects_prediction_output));
+        setText("hfap-modified", boolText(data.prediction_output_modified));
+        setText("hfap-json-modified", boolText(data.prediction_json_modified));
+        setText("hfap-candidate-count", data.candidate_count);
+        setText("hfap-unique-count", data.unique_racer_id_count);
+        setText("hfap-matched-count", data.matched_candidate_count);
+        setText("hfap-missing-count", data.missing_candidate_count);
+        setText("hfap-loaded-count", data.loaded_feature_racer_count);
+        setText("hfap-source", data.source_prediction + " / " + data.source_adapter);
+
+        var entries = Array.isArray(data.entries) ? data.entries.slice(0, 5) : [];
+        setText("hfap-sample", JSON.stringify(entries, null, 2));
+
+        if (status) {
+          status.textContent = "adapter preview 読み込み完了。予測本体への影響はありません。";
+        }
+      })
+      .catch(function (error) {
+        if (status) {
+          status.textContent = "adapter preview の読み込みに失敗しました: " + error.message;
+        }
+      });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadHistoryFeatureAdapterPreview);
+  } else {
+    loadHistoryFeatureAdapterPreview();
+  }
+})();
+</script>
+
 </body>
 </html>
