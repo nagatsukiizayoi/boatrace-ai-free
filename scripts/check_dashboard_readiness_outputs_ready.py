@@ -19,6 +19,7 @@ REQUIRED_FILES = [
 ]
 
 CHECK_SCRIPTS = [
+        "scripts/check_dashboard_history_feature_adapter_preview.py",
     "scripts/ensure_prediction_json_dashboard_compat.py",
     "scripts/check_recommendation_reasons.py",
     "scripts/check_dashboard_final_readiness.py",
