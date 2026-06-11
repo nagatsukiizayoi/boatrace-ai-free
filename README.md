@@ -465,3 +465,7 @@ Expected success messages include:
 
 - [履歴特徴量 予測 adapter 設計書](docs/history-feature-prediction-adapter-design.md)
 
+## 履歴特徴量 adapter preview dashboard 統合記録
+
+- [履歴特徴量 adapter preview ダッシュボード統合 完了記録](docs/history-feature-adapter-preview-dashboard-completion.md)
+
