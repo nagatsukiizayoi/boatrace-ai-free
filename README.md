@@ -469,3 +469,7 @@ Expected success messages include:
 
 - [履歴特徴量 adapter preview ダッシュボード統合 完了記録](docs/history-feature-adapter-preview-dashboard-completion.md)
 
+## 履歴特徴量 prediction core 接続前監査
+
+- [履歴特徴量 prediction core 接続前 final diff audit](docs/history-feature-final-diff-audit.md)
+
