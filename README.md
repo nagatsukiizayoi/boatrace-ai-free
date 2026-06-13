@@ -473,3 +473,7 @@ Expected success messages include:
 
 - [履歴特徴量 prediction core 接続前 final diff audit](docs/history-feature-final-diff-audit.md)
 
+## 履歴特徴量 prediction core 接続候補調査
+
+- [履歴特徴量 prediction core 接続候補 調査結果](docs/history-feature-prediction-core-connection-candidates.md)
+
