@@ -1,0 +1,146 @@
+{
+  "affects_prediction_output": false,
+  "candidate_count": 3,
+  "entries": [
+    {
+      "candidate": {
+        "base_score": 148.5,
+        "boat": 1,
+        "confidence": 95,
+        "course": 1,
+        "driver": "山田 太郎",
+        "exhibition_score": 15.5,
+        "label": "1着候補",
+        "mark": "◎",
+        "mark_name": "本命",
+        "odds_score": 6,
+        "rank": 1,
+        "score": 172.0,
+        "weather_score": 2
+      },
+      "expected_value_unchanged": true,
+      "history_feature_shadow": {
+        "affects_prediction_output": false,
+        "available": false,
+        "enabled": false,
+        "features": {
+          "avg_start_timing": null,
+          "last_race_date": null,
+          "race_count": 0,
+          "top2_rate": 0.0,
+          "top3_rate": 0.0,
+          "win_rate": 0.0
+        },
+        "prediction_json_modified": false,
+        "prediction_output_modified": false,
+        "source": "default_values"
+      },
+      "index": 1,
+      "race_id": null,
+      "race_no": null,
+      "racer_id": null,
+      "rank_unchanged": true,
+      "recommendation_unchanged": true,
+      "score_unchanged": true,
+      "venue_name": null
+    },
+    {
+      "candidate": {
+        "base_score": 127.45,
+        "boat": 3,
+        "confidence": 82,
+        "course": 3,
+        "driver": "鈴木 三郎",
+        "exhibition_score": 15.0,
+        "label": "2着候補",
+        "mark": "○",
+        "mark_name": "対抗",
+        "odds_score": 2,
+        "rank": 2,
+        "score": 146.45,
+        "weather_score": 2
+      },
+      "expected_value_unchanged": true,
+      "history_feature_shadow": {
+        "affects_prediction_output": false,
+        "available": false,
+        "enabled": false,
+        "features": {
+          "avg_start_timing": null,
+          "last_race_date": null,
+          "race_count": 0,
+          "top2_rate": 0.0,
+          "top3_rate": 0.0,
+          "win_rate": 0.0
+        },
+        "prediction_json_modified": false,
+        "prediction_output_modified": false,
+        "source": "default_values"
+      },
+      "index": 2,
+      "race_id": null,
+      "race_no": null,
+      "racer_id": null,
+      "rank_unchanged": true,
+      "recommendation_unchanged": true,
+      "score_unchanged": true,
+      "venue_name": null
+    },
+    {
+      "candidate": {
+        "base_score": 121.6,
+        "boat": 2,
+        "confidence": 76,
+        "course": 2,
+        "driver": "佐藤 次郎",
+        "exhibition_score": 7.5,
+        "label": "3着候補",
+        "mark": "▲",
+        "mark_name": "単穴",
+        "odds_score": 2,
+        "rank": 3,
+        "score": 133.1,
+        "weather_score": 2
+      },
+      "expected_value_unchanged": true,
+      "history_feature_shadow": {
+        "affects_prediction_output": false,
+        "available": false,
+        "enabled": false,
+        "features": {
+          "avg_start_timing": null,
+          "last_race_date": null,
+          "race_count": 0,
+          "top2_rate": 0.0,
+          "top3_rate": 0.0,
+          "win_rate": 0.0
+        },
+        "prediction_json_modified": false,
+        "prediction_output_modified": false,
+        "source": "default_values"
+      },
+      "index": 3,
+      "race_id": null,
+      "race_no": null,
+      "racer_id": null,
+      "rank_unchanged": true,
+      "recommendation_unchanged": true,
+      "score_unchanged": true,
+      "venue_name": null
+    }
+  ],
+  "expected_value_modified": false,
+  "history_features_enabled": false,
+  "matched_candidate_count": 0,
+  "missing_candidate_count": 3,
+  "prediction_json_modified": false,
+  "prediction_output_modified": false,
+  "rank_modified": false,
+  "recommendation_modified": false,
+  "schema_version": "history_feature_shadow_preview_v1",
+  "score_modified": false,
+  "source_adapter": "scripts/history_feature_prediction_adapter.py",
+  "source_prediction": "docs/prediction.json",
+  "step": "STEP141-A",
+  "unique_racer_id_count": 0
+}
