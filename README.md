@@ -477,3 +477,7 @@ Expected success messages include:
 
 - [履歴特徴量 prediction core 接続候補 調査結果](docs/history-feature-prediction-core-connection-candidates.md)
 
+## 履歴特徴量 prediction core 最小安全接続案
+
+- [履歴特徴量 prediction core 最小安全接続案](docs/history-feature-prediction-core-minimal-connection-design.md)
+
