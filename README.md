@@ -481,3 +481,9 @@ Expected success messages include:
 
 - [履歴特徴量 prediction core 最小安全接続案](docs/history-feature-prediction-core-minimal-connection-design.md)
 
+
+
+## 履歴特徴量 shadow preview dashboard 統合記録
+
+- [履歴特徴量 shadow preview ダッシュボード統合 完了記録](docs/history-feature-shadow-preview-dashboard-completion.md)
+
