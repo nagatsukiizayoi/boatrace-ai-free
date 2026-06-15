@@ -3978,7 +3978,38 @@
     setupAlertShareButton();
     setupAlertResetButton();
     loadPrediction();
-  </script>
+  
+      async function loadHistoryFeatureShadowPreview() {
+        const section = document.getElementById("history-feature-shadow-preview-section");
+        if (!section) return;
+        try {
+          const response = await fetch("prediction_history_feature_shadow_preview.json", { cache: "no-store" });
+          if (!response.ok) {
+            section.querySelector(".muted").textContent = "shadow preview JSON を読み込めませんでした。";
+            return;
+          }
+          const data = await response.json();
+
+          const setText = (id, value) => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = String(value);
+          };
+
+          setText("history-feature-shadow-step", data.step ?? "-");
+          setText("history-feature-shadow-schema-version", data.schema_version ?? "-");
+          setText("history-feature-shadow-candidate-count", data.candidate_count ?? 0);
+          setText("history-feature-shadow-matched-count", data.matched_candidate_count ?? 0);
+          setText("history-feature-shadow-missing-count", data.missing_candidate_count ?? 0);
+          setText("history-feature-shadow-enabled", data.history_features_enabled ?? false);
+          setText("history-feature-shadow-affects-output", data.affects_prediction_output ?? false);
+          setText("history-feature-shadow-prediction-json-unchanged", data.prediction_json_unchanged ?? true);
+          setText("history-feature-shadow-preview-only", data.shadow_preview_only ?? true);
+        } catch (error) {
+          console.error("Failed to load history feature shadow preview", error);
+        }
+      }
+
+</script>
 
 <!-- STEP67_DATA_STATUS_PANEL_HTML -->
 <div id="step67DataStatusPanel" class="data-status-panel" aria-live="polite">
@@ -6288,6 +6319,40 @@ setText("step114RunCount",summary.run_count||(data.runs?data.runs.length:"-"));s
   </div>
 </section>
 
+        <section id="history-feature-shadow-preview-section" class="card history-feature-card">
+          <h2>履歴特徴量 shadow preview</h2>
+          <p class="muted">
+            Prediction core へ接続する前の shadow preview です。
+            <code>docs/prediction.json</code> には影響せず、履歴特徴量の候補・欠損・安全フラグのみを表示します。
+          </p>
+          <div class="history-feature-grid">
+            <div>
+              <h3>Shadow preview summary</h3>
+              <ul>
+                <li>step: <code id="history-feature-shadow-step">-</code></li>
+                <li>schema_version: <code id="history-feature-shadow-schema-version">-</code></li>
+                <li>candidate_count: <code id="history-feature-shadow-candidate-count">-</code></li>
+                <li>matched_candidate_count: <code id="history-feature-shadow-matched-count">-</code></li>
+                <li>missing_candidate_count: <code id="history-feature-shadow-missing-count">-</code></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Safety flags</h3>
+              <ul>
+                <li>history_features_enabled: <code id="history-feature-shadow-enabled">-</code></li>
+                <li>affects_prediction_output: <code id="history-feature-shadow-affects-output">-</code></li>
+                <li>prediction_json_unchanged: <code id="history-feature-shadow-prediction-json-unchanged">-</code></li>
+                <li>shadow_preview_only: <code id="history-feature-shadow-preview-only">-</code></li>
+              </ul>
+            </div>
+          </div>
+          <p class="muted">
+            source:
+            <code>docs/prediction_history_feature_shadow_preview.json</code>
+          </p>
+        </section>
+
+
 <script>
 (function () {
   function setText(id, value) {
@@ -6346,6 +6411,7 @@ setText("step114RunCount",summary.run_count||(data.runs?data.runs.length:"-"));s
     document.addEventListener("DOMContentLoaded", loadHistoryFeatureAdapterPreview);
   } else {
     loadHistoryFeatureAdapterPreview();
+      loadHistoryFeatureShadowPreview();
   }
 })();
 </script>
