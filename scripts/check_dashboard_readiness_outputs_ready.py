@@ -28,6 +28,7 @@ CHECK_SCRIPTS = [
     "scripts/check_readme_dashboard_readiness_doc.py",
     "scripts/check_readme_dashboard_readiness_badge.py",
     "scripts/check_history_feature_shadow_preview.py",
+    "scripts/check_dashboard_history_feature_shadow_preview.py",
 ]
 
 

@@ -24,6 +24,7 @@ CHECKS = [
     ["python", "scripts/check_history_feature_prediction_adapter.py"],
     ["python", "scripts/check_history_feature_adapter_preview.py"],
     ["python", "scripts/check_history_feature_shadow_preview.py"],
+    ["python", "scripts/check_dashboard_history_feature_shadow_preview.py"],
 ]
 
 REQUIRED_FILES = [
@@ -62,6 +63,7 @@ REQUIRED_FILES = [
     "docs/prediction_history_feature_adapter_preview.json",
     "scripts/check_history_feature_shadow_preview.py",
     "docs/prediction_history_feature_shadow_preview.json",
+    "scripts/check_dashboard_history_feature_shadow_preview.py",
 ]
 
 REQUIRED_RESULT_CSV_GLOB = "data/import/history/results/results_*.csv"
