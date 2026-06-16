@@ -487,3 +487,9 @@ Expected success messages include:
 
 - [履歴特徴量 shadow preview ダッシュボード統合 完了記録](docs/history-feature-shadow-preview-dashboard-completion.md)
 
+
+
+## 履歴特徴量 pre-enable safety audit 記録
+
+- [履歴特徴量 pre-enable safety audit 記録](docs/history-feature-pre-enable-safety-audit.md)
+
