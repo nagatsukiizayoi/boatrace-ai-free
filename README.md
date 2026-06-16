@@ -493,3 +493,9 @@ Expected success messages include:
 
 - [履歴特徴量 pre-enable safety audit 記録](docs/history-feature-pre-enable-safety-audit.md)
 
+
+
+## 履歴特徴量 prediction core 接続ポイント最終監査
+
+- [履歴特徴量 prediction core 接続ポイント最終監査 記録](docs/history-feature-prediction-core-connection-point-audit.md)
+
