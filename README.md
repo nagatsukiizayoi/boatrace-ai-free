@@ -499,3 +499,9 @@ Expected success messages include:
 
 - [履歴特徴量 prediction core 接続ポイント最終監査 記録](docs/history-feature-prediction-core-connection-point-audit.md)
 
+
+
+## 履歴特徴量 prediction writer 最終特定
+
+- [履歴特徴量 prediction writer 最終特定 記録](docs/history-feature-prediction-writer-final-identification.md)
+
