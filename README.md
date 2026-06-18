@@ -505,3 +505,9 @@ Expected success messages include:
 
 - [履歴特徴量 prediction writer 最終特定 記録](docs/history-feature-prediction-writer-final-identification.md)
 
+
+
+## 履歴特徴量 minimal safe connection plan
+
+- [履歴特徴量 minimal safe connection plan](docs/history-feature-minimal-safe-connection-plan.md)
+
