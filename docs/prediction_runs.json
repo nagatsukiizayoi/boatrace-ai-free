@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-06-19 23:34:11",
+  "updated_at": "2026-06-20 22:19:10",
   "runs": [
     {
       "prediction_run_id": "20260514162134",
@@ -1915,6 +1915,55 @@
     {
       "prediction_run_id": "20260619233411",
       "updated_at": "2026-06-19 23:34:11",
+      "stage": "FINAL",
+      "race_id": "2026-05-14_サンプル競艇場_12R",
+      "race": {
+        "date": "2026-05-14",
+        "place": "サンプル競艇場",
+        "stadium": "サンプル競艇場",
+        "race_no": "12R",
+        "title": "優勝戦",
+        "deadline": "16:30"
+      },
+      "stage_file": "docs/prediction_final.json",
+      "top_boats": [
+        {
+          "rank": 1,
+          "mark": "◎",
+          "boat": 1,
+          "driver": "山田 太郎",
+          "score": 172.0
+        },
+        {
+          "rank": 2,
+          "mark": "○",
+          "boat": 3,
+          "driver": "鈴木 三郎",
+          "score": 146.45
+        },
+        {
+          "rank": 3,
+          "mark": "▲",
+          "boat": 2,
+          "driver": "佐藤 次郎",
+          "score": 133.1
+        }
+      ],
+      "tickets": [
+        "1-3-2",
+        "1-2-3",
+        "3-1-2",
+        "1-3-4",
+        "1-4-3",
+        "2-1-3",
+        "1-2-4",
+        "1-3-5"
+      ],
+      "total_amount": 1400
+    },
+    {
+      "prediction_run_id": "20260620221910",
+      "updated_at": "2026-06-20 22:19:10",
       "stage": "FINAL",
       "race_id": "2026-05-14_サンプル競艇場_12R",
       "race": {
