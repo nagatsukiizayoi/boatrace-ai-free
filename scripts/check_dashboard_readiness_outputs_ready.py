@@ -18,6 +18,7 @@ REQUIRED_FILES = [
     ".github/workflows/check-dashboard-final-readiness.yml",
     "docs/prediction_history_feature_shadow_preview.json",
     "scripts/check_history_feature_shadow_preview.py",
+    "docs/prediction_history_feature_core_shadow_connection_preview.json",
 ]
 
 CHECK_SCRIPTS = [
@@ -29,6 +30,7 @@ CHECK_SCRIPTS = [
     "scripts/check_readme_dashboard_readiness_badge.py",
     "scripts/check_history_feature_shadow_preview.py",
     "scripts/check_dashboard_history_feature_shadow_preview.py",
+    "scripts/check_history_feature_core_shadow_connection_preview.py",
 ]
 
 
