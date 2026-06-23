@@ -511,3 +511,7 @@ Expected success messages include:
 
 - [履歴特徴量 minimal safe connection plan](docs/history-feature-minimal-safe-connection-plan.md)
 
+
+## 履歴特徴量 core shadow connection preview
+
+- [履歴特徴量 core shadow connection preview 記録](docs/history-feature-core-shadow-connection-preview.md)
