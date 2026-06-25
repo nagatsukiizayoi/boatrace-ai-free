@@ -515,3 +515,7 @@ Expected success messages include:
 ## 履歴特徴量 core shadow connection preview
 
 - [履歴特徴量 core shadow connection preview 記録](docs/history-feature-core-shadow-connection-preview.md)
+
+## 履歴特徴量 candidate key matching audit
+
+- [履歴特徴量 candidate key matching audit 記録](docs/history-feature-candidate-key-matching-audit.md)
