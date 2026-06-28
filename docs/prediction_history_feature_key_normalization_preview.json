@@ -1,0 +1,46 @@
+{
+  "step": "STEP148-A",
+  "preview_type": "candidate-key-normalization",
+  "connection_mode": "shadow-only",
+  "safe_mode": true,
+  "config_enabled": false,
+  "core_connection_enabled": false,
+  "affects_prediction_output": false,
+  "writes_prediction_json": false,
+  "history_features_enabled": false,
+  "prediction_core_connected": false,
+  "source_files": {
+    "config": "data/history_feature_config.json",
+    "prediction": "docs/prediction.json",
+    "core_shadow_connection_preview": "docs/prediction_history_feature_core_shadow_connection_preview.json"
+  },
+  "output_file": "docs/prediction_history_feature_key_normalization_preview.json",
+  "original_core_shadow_preview_counts": {
+    "candidate_count": 11,
+    "prediction_candidate_count": null,
+    "shadow_candidate_count": null,
+    "matched_candidate_count": 0,
+    "missing_candidate_count": 11
+  },
+  "normalization_rules": [
+    "NFKC unicode normalization",
+    "strip leading and trailing whitespace",
+    "lowercase ASCII letters",
+    "remove whitespace, underscore, hyphen, colon, slash, and pipe separators",
+    "keep only digits, ASCII letters, kana, and common CJK characters"
+  ],
+  "normalization_preview_counts": {
+    "prediction_key_count": 0,
+    "shadow_key_count": 0,
+    "matched_after_normalization_count": 0
+  },
+  "matched_normalized_keys_sample": [],
+  "normalization_samples": [],
+  "decision": {
+    "matched_candidate_count_zero_is_allowed_in_shadow_only_preview": true,
+    "do_not_enable_history_features": true,
+    "do_not_connect_prediction_core": true,
+    "do_not_modify_prediction_json": true,
+    "next_step": "STEP148-B will add a checker for this key normalization preview."
+  }
+}
