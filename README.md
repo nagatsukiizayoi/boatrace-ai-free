@@ -519,3 +519,7 @@ Expected success messages include:
 ## 履歴特徴量 candidate key matching audit
 
 - [履歴特徴量 candidate key matching audit 記録](docs/history-feature-candidate-key-matching-audit.md)
+
+## 履歴特徴量 key normalization preview
+
+- [履歴特徴量 key normalization preview 記録](docs/history-feature-key-normalization-preview.md)
