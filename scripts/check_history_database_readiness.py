@@ -27,6 +27,7 @@ CHECKS = [
     ["python", "scripts/check_dashboard_history_feature_shadow_preview.py"],
     ["python", "scripts/check_history_feature_core_shadow_connection_preview.py"],
     ["python", "scripts/check_history_feature_key_normalization_preview.py"],
+    ["python", "scripts/check_phase1_mvp_db_schema_preview.py"],
 ]
 
 REQUIRED_FILES = [
@@ -69,6 +70,7 @@ REQUIRED_FILES = [
     "scripts/check_history_feature_core_shadow_connection_preview.py",
     "docs/prediction_history_feature_core_shadow_connection_preview.json",
     "docs/prediction_history_feature_key_normalization_preview.json",
+    "docs/phase1_mvp_db_schema_preview.json",
 ]
 
 REQUIRED_RESULT_CSV_GLOB = "data/import/history/results/results_*.csv"
