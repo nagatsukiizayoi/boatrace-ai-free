@@ -1,0 +1,890 @@
+{
+  "step": "STEP150-B",
+  "preview_type": "phase1-mvp-db-schema",
+  "connection_mode": "design-only",
+  "safe_mode": true,
+  "generated_at_utc": "2026-06-30T15:28:05.470325+00:00",
+  "config_enabled": false,
+  "history_features_enabled": false,
+  "prediction_core_connected": false,
+  "affects_prediction_output": false,
+  "modifies_prediction_json": false,
+  "writes_prediction_json": false,
+  "writes_schema_sql": false,
+  "writes_database": false,
+  "creates_tables": false,
+  "alters_tables": false,
+  "source_files": {
+    "history_feature_config": "data/history_feature_config.json",
+    "prediction_json": "docs/prediction.json",
+    "schema_sql": "db/schema.sql",
+    "database": "db/boatrace.sqlite3"
+  },
+  "output_file": "docs/phase1_mvp_db_schema_preview.json",
+  "canonical_keys": {
+    "canonical_race_key": {
+      "components": [
+        "race_date",
+        "venue_id",
+        "race_no"
+      ],
+      "recommended_format": "race_date + '_' + venue_id + '_' + race_no",
+      "purpose": "stable race identity"
+    },
+    "canonical_candidate_key": {
+      "components": [
+        "race_date",
+        "venue_id",
+        "race_no",
+        "lane"
+      ],
+      "recommended_format": "race_date + '_' + venue_id + '_' + race_no + '_' + lane",
+      "purpose": "stable candidate identity"
+    }
+  },
+  "existing_database_inspection": {
+    "db_path": "db/boatrace.sqlite3",
+    "db_exists": true,
+    "table_count": 3,
+    "tables": [
+      "history_races",
+      "history_results",
+      "sqlite_sequence"
+    ],
+    "history_results_exists": true,
+    "history_races_exists": true,
+    "history_results_row_count": 302918,
+    "history_races_row_count": 88106
+  },
+  "phase1_mvp_goal": [
+    "ingest race/program data",
+    "store races and entries",
+    "generate PRE_NIGHT features",
+    "run PRE_NIGHT prediction",
+    "store predictions",
+    "later ingest results",
+    "evaluate PRE_NIGHT performance"
+  ],
+  "minimal_tables": [
+    {
+      "table_name": "races",
+      "phase": "Phase 1 MVP",
+      "role": "one row per race",
+      "primary_key": [
+        "race_id"
+      ],
+      "key_policy": {
+        "race_id_should_align_with": "canonical_race_key",
+        "canonical_race_key": "race_date + venue_id + race_no"
+      },
+      "suggested_columns": [
+        {
+          "name": "race_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "canonical_race_key"
+        },
+        {
+          "name": "race_date",
+          "type": "TEXT",
+          "required": true,
+          "note": "YYYYMMDD or ISO date normalized later"
+        },
+        {
+          "name": "venue_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "stable venue identifier"
+        },
+        {
+          "name": "venue_name",
+          "type": "TEXT",
+          "required": false,
+          "note": "display name"
+        },
+        {
+          "name": "race_no",
+          "type": "INTEGER",
+          "required": true,
+          "note": "1-12"
+        },
+        {
+          "name": "grade",
+          "type": "TEXT",
+          "required": false,
+          "note": "race grade if available"
+        },
+        {
+          "name": "race_type",
+          "type": "TEXT",
+          "required": false,
+          "note": "race type if available"
+        },
+        {
+          "name": "distance",
+          "type": "INTEGER",
+          "required": false,
+          "note": "race distance"
+        },
+        {
+          "name": "deadline_time",
+          "type": "TEXT",
+          "required": false,
+          "note": "not required for PRE_NIGHT identity"
+        },
+        {
+          "name": "created_at",
+          "type": "TEXT",
+          "required": false,
+          "note": "audit timestamp"
+        },
+        {
+          "name": "updated_at",
+          "type": "TEXT",
+          "required": false,
+          "note": "audit timestamp"
+        }
+      ]
+    },
+    {
+      "table_name": "entries",
+      "phase": "Phase 1 MVP",
+      "role": "six candidates per race",
+      "primary_key": [
+        "race_id",
+        "lane"
+      ],
+      "key_policy": {
+        "canonical_candidate_key": "race_date + venue_id + race_no + lane",
+        "race_id": "canonical_race_key",
+        "lane": "integer 1-6"
+      },
+      "suggested_columns": [
+        {
+          "name": "race_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "references races.race_id"
+        },
+        {
+          "name": "lane",
+          "type": "INTEGER",
+          "required": true,
+          "note": "1-6"
+        },
+        {
+          "name": "racer_id",
+          "type": "TEXT",
+          "required": false,
+          "note": "feature or validation field"
+        },
+        {
+          "name": "racer_name",
+          "type": "TEXT",
+          "required": false,
+          "note": "not primary key component"
+        },
+        {
+          "name": "class",
+          "type": "TEXT",
+          "required": false,
+          "note": "racer class"
+        },
+        {
+          "name": "branch",
+          "type": "TEXT",
+          "required": false,
+          "note": "racer branch"
+        },
+        {
+          "name": "age",
+          "type": "INTEGER",
+          "required": false,
+          "note": "feature"
+        },
+        {
+          "name": "weight",
+          "type": "REAL",
+          "required": false,
+          "note": "feature"
+        },
+        {
+          "name": "motor_no",
+          "type": "TEXT",
+          "required": false,
+          "note": "feature, not identity"
+        },
+        {
+          "name": "boat_no",
+          "type": "TEXT",
+          "required": false,
+          "note": "feature, not identity"
+        },
+        {
+          "name": "entry_source_date",
+          "type": "TEXT",
+          "required": false,
+          "note": "source date"
+        },
+        {
+          "name": "created_at",
+          "type": "TEXT",
+          "required": false,
+          "note": "audit timestamp"
+        },
+        {
+          "name": "updated_at",
+          "type": "TEXT",
+          "required": false,
+          "note": "audit timestamp"
+        }
+      ]
+    },
+    {
+      "table_name": "feature_sets",
+      "phase": "Phase 1 MVP",
+      "role": "metadata for generated feature files",
+      "primary_key": [
+        "feature_set_id"
+      ],
+      "key_policy": {
+        "race_id": "canonical_race_key",
+        "stage": "PRE_NIGHT first"
+      },
+      "suggested_columns": [
+        {
+          "name": "feature_set_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "primary key"
+        },
+        {
+          "name": "race_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "references races.race_id"
+        },
+        {
+          "name": "stage",
+          "type": "TEXT",
+          "required": true,
+          "note": "PRE_NIGHT initially"
+        },
+        {
+          "name": "as_of_time",
+          "type": "TEXT",
+          "required": true,
+          "note": "data cutoff time"
+        },
+        {
+          "name": "feature_version",
+          "type": "TEXT",
+          "required": true,
+          "note": "feature version"
+        },
+        {
+          "name": "has_weather",
+          "type": "INTEGER",
+          "required": false,
+          "note": "0 for PRE_NIGHT"
+        },
+        {
+          "name": "has_odds",
+          "type": "INTEGER",
+          "required": false,
+          "note": "0 for PRE_NIGHT"
+        },
+        {
+          "name": "has_exhibition",
+          "type": "INTEGER",
+          "required": false,
+          "note": "0 for PRE_NIGHT"
+        },
+        {
+          "name": "feature_hash",
+          "type": "TEXT",
+          "required": false,
+          "note": "feature file hash"
+        },
+        {
+          "name": "feature_file_path",
+          "type": "TEXT",
+          "required": false,
+          "note": "feature file path"
+        },
+        {
+          "name": "feature_summary_json",
+          "type": "TEXT",
+          "required": false,
+          "note": "summary JSON"
+        },
+        {
+          "name": "created_at",
+          "type": "TEXT",
+          "required": false,
+          "note": "audit timestamp"
+        }
+      ]
+    },
+    {
+      "table_name": "prediction_runs",
+      "phase": "Phase 1 MVP",
+      "role": "one prediction execution per race, stage, model, feature, and code version",
+      "primary_key": [
+        "prediction_run_id"
+      ],
+      "key_policy": {
+        "race_id": "canonical_race_key",
+        "stage": "PRE_NIGHT first"
+      },
+      "suggested_columns": [
+        {
+          "name": "prediction_run_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "primary key"
+        },
+        {
+          "name": "race_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "references races.race_id"
+        },
+        {
+          "name": "stage",
+          "type": "TEXT",
+          "required": true,
+          "note": "PRE_NIGHT initially"
+        },
+        {
+          "name": "predicted_at",
+          "type": "TEXT",
+          "required": true,
+          "note": "prediction timestamp"
+        },
+        {
+          "name": "data_cutoff_at",
+          "type": "TEXT",
+          "required": true,
+          "note": "prevents future leakage"
+        },
+        {
+          "name": "model_version",
+          "type": "TEXT",
+          "required": true,
+          "note": "model version"
+        },
+        {
+          "name": "feature_version",
+          "type": "TEXT",
+          "required": true,
+          "note": "feature version"
+        },
+        {
+          "name": "code_version",
+          "type": "TEXT",
+          "required": false,
+          "note": "git commit or tag"
+        },
+        {
+          "name": "input_data_hash",
+          "type": "TEXT",
+          "required": false,
+          "note": "input hash"
+        },
+        {
+          "name": "feature_set_id",
+          "type": "TEXT",
+          "required": false,
+          "note": "references feature_sets"
+        },
+        {
+          "name": "has_weather",
+          "type": "INTEGER",
+          "required": false,
+          "note": "0 for PRE_NIGHT"
+        },
+        {
+          "name": "has_odds",
+          "type": "INTEGER",
+          "required": false,
+          "note": "0 for PRE_NIGHT"
+        },
+        {
+          "name": "has_exhibition",
+          "type": "INTEGER",
+          "required": false,
+          "note": "0 for PRE_NIGHT"
+        },
+        {
+          "name": "status",
+          "type": "TEXT",
+          "required": false,
+          "note": "success or failed"
+        },
+        {
+          "name": "message",
+          "type": "TEXT",
+          "required": false,
+          "note": "status message"
+        },
+        {
+          "name": "created_at",
+          "type": "TEXT",
+          "required": false,
+          "note": "audit timestamp"
+        }
+      ]
+    },
+    {
+      "table_name": "predictions",
+      "phase": "Phase 1 MVP",
+      "role": "predicted probabilities and later expected value fields",
+      "primary_key": [
+        "prediction_id"
+      ],
+      "key_policy": {
+        "candidate_level_prediction": "race_id + lane",
+        "combination_prediction": "race_id + bet_type + combination",
+        "stage": "PRE_NIGHT first"
+      },
+      "suggested_columns": [
+        {
+          "name": "prediction_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "primary key"
+        },
+        {
+          "name": "prediction_run_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "references prediction_runs"
+        },
+        {
+          "name": "race_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "references races.race_id"
+        },
+        {
+          "name": "stage",
+          "type": "TEXT",
+          "required": true,
+          "note": "PRE_NIGHT initially"
+        },
+        {
+          "name": "lane",
+          "type": "INTEGER",
+          "required": false,
+          "note": "for candidate-level probabilities"
+        },
+        {
+          "name": "bet_type",
+          "type": "TEXT",
+          "required": true,
+          "note": "win, quinella, trifecta, etc."
+        },
+        {
+          "name": "combination",
+          "type": "TEXT",
+          "required": false,
+          "note": "for combination bets"
+        },
+        {
+          "name": "predicted_probability",
+          "type": "REAL",
+          "required": true,
+          "note": "model output"
+        },
+        {
+          "name": "odds",
+          "type": "REAL",
+          "required": false,
+          "note": "null for PRE_NIGHT"
+        },
+        {
+          "name": "expected_value",
+          "type": "REAL",
+          "required": false,
+          "note": "null for PRE_NIGHT initially"
+        },
+        {
+          "name": "recommended_stake",
+          "type": "INTEGER",
+          "required": false,
+          "note": "null until recommendation phase"
+        },
+        {
+          "name": "rank",
+          "type": "INTEGER",
+          "required": false,
+          "note": "ranking within race/bet_type"
+        },
+        {
+          "name": "is_recommended",
+          "type": "INTEGER",
+          "required": false,
+          "note": "0 or null for early preview"
+        },
+        {
+          "name": "confidence",
+          "type": "TEXT",
+          "required": false,
+          "note": "display confidence"
+        },
+        {
+          "name": "created_at",
+          "type": "TEXT",
+          "required": false,
+          "note": "audit timestamp"
+        }
+      ]
+    },
+    {
+      "table_name": "results",
+      "phase": "Phase 1 MVP",
+      "role": "race result by race_id and lane",
+      "primary_key": [
+        "race_id",
+        "lane"
+      ],
+      "key_policy": {
+        "race_id": "canonical_race_key",
+        "lane": "integer 1-6"
+      },
+      "suggested_columns": [
+        {
+          "name": "race_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "references races.race_id"
+        },
+        {
+          "name": "lane",
+          "type": "INTEGER",
+          "required": true,
+          "note": "1-6"
+        },
+        {
+          "name": "finish_position",
+          "type": "INTEGER",
+          "required": false,
+          "note": "result"
+        },
+        {
+          "name": "course",
+          "type": "INTEGER",
+          "required": false,
+          "note": "actual course"
+        },
+        {
+          "name": "start_timing",
+          "type": "REAL",
+          "required": false,
+          "note": "result ST"
+        },
+        {
+          "name": "decided_by",
+          "type": "TEXT",
+          "required": false,
+          "note": "winning method"
+        },
+        {
+          "name": "disqualified",
+          "type": "INTEGER",
+          "required": false,
+          "note": "0 or 1"
+        },
+        {
+          "name": "created_at",
+          "type": "TEXT",
+          "required": false,
+          "note": "audit timestamp"
+        }
+      ]
+    },
+    {
+      "table_name": "payouts",
+      "phase": "Phase 1 MVP",
+      "role": "payout by race, bet type, and combination",
+      "primary_key": [
+        "race_id",
+        "bet_type",
+        "combination"
+      ],
+      "key_policy": {
+        "race_id": "canonical_race_key",
+        "combination": "bet-specific combination string"
+      },
+      "suggested_columns": [
+        {
+          "name": "race_id",
+          "type": "TEXT",
+          "required": true,
+          "note": "references races.race_id"
+        },
+        {
+          "name": "bet_type",
+          "type": "TEXT",
+          "required": true,
+          "note": "bet type"
+        },
+        {
+          "name": "combination",
+          "type": "TEXT",
+          "required": true,
+          "note": "winning combination"
+        },
+        {
+          "name": "payout",
+          "type": "INTEGER",
+          "required": false,
+          "note": "payout per 100 yen"
+        },
+        {
+          "name": "popularity",
+          "type": "INTEGER",
+          "required": false,
+          "note": "result popularity"
+        },
+        {
+          "name": "created_at",
+          "type": "TEXT",
+          "required": false,
+          "note": "audit timestamp"
+        }
+      ]
+    },
+    {
+      "table_name": "stage_metrics",
+      "phase": "Phase 1 MVP",
+      "role": "aggregated evaluation metrics by stage and period",
+      "primary_key": [
+        "id"
+      ],
+      "key_policy": {
+        "stage": "PRE_NIGHT first",
+        "period": "daily, weekly, or monthly aggregation"
+      },
+      "suggested_columns": [
+        {
+          "name": "id",
+          "type": "INTEGER",
+          "required": true,
+          "note": "autoincrement primary key"
+        },
+        {
+          "name": "evaluated_at",
+          "type": "TEXT",
+          "required": true,
+          "note": "evaluation timestamp"
+        },
+        {
+          "name": "period",
+          "type": "TEXT",
+          "required": true,
+          "note": "evaluation period"
+        },
+        {
+          "name": "stage",
+          "type": "TEXT",
+          "required": true,
+          "note": "PRE_NIGHT initially"
+        },
+        {
+          "name": "model_version",
+          "type": "TEXT",
+          "required": false,
+          "note": "model version"
+        },
+        {
+          "name": "bet_type",
+          "type": "TEXT",
+          "required": false,
+          "note": "bet type"
+        },
+        {
+          "name": "races_count",
+          "type": "INTEGER",
+          "required": false,
+          "note": "evaluated race count"
+        },
+        {
+          "name": "bets_count",
+          "type": "INTEGER",
+          "required": false,
+          "note": "evaluated bet count"
+        },
+        {
+          "name": "hit_count",
+          "type": "INTEGER",
+          "required": false,
+          "note": "hit count"
+        },
+        {
+          "name": "hit_rate",
+          "type": "REAL",
+          "required": false,
+          "note": "hit rate"
+        },
+        {
+          "name": "total_stake",
+          "type": "INTEGER",
+          "required": false,
+          "note": "total stake"
+        },
+        {
+          "name": "total_payout",
+          "type": "INTEGER",
+          "required": false,
+          "note": "total payout"
+        },
+        {
+          "name": "profit",
+          "type": "INTEGER",
+          "required": false,
+          "note": "profit"
+        },
+        {
+          "name": "roi",
+          "type": "REAL",
+          "required": false,
+          "note": "return on investment"
+        },
+        {
+          "name": "logloss",
+          "type": "REAL",
+          "required": false,
+          "note": "log loss"
+        },
+        {
+          "name": "brier_score",
+          "type": "REAL",
+          "required": false,
+          "note": "Brier score"
+        },
+        {
+          "name": "created_at",
+          "type": "TEXT",
+          "required": false,
+          "note": "audit timestamp"
+        }
+      ]
+    }
+  ],
+  "minimal_table_names": [
+    "races",
+    "entries",
+    "feature_sets",
+    "prediction_runs",
+    "predictions",
+    "results",
+    "payouts",
+    "stage_metrics"
+  ],
+  "minimal_table_count": 8,
+  "optional_early_tables": [
+    {
+      "table_name": "model_registry",
+      "role": "track model versions and active model",
+      "reason": "useful once PRE_NIGHT model training begins"
+    },
+    {
+      "table_name": "training_runs",
+      "role": "track training execution and metrics",
+      "reason": "useful for reproducibility after model training begins"
+    },
+    {
+      "table_name": "ingestion_runs",
+      "role": "track data ingestion status and source logs",
+      "reason": "useful once program/result ingestion is implemented"
+    }
+  ],
+  "optional_early_table_names": [
+    "model_registry",
+    "training_runs",
+    "ingestion_runs"
+  ],
+  "deferred_tables": [
+    {
+      "table_name": "weather_water_snapshots",
+      "deferred_until": "Phase 2 MORNING or later",
+      "reason": "PRE_NIGHT must not use same-day weather or water information"
+    },
+    {
+      "table_name": "exhibition_snapshots",
+      "deferred_until": "Phase 3 POST_EXHIBITION",
+      "reason": "exhibition data is unavailable for PRE_NIGHT"
+    },
+    {
+      "table_name": "odds_snapshots",
+      "deferred_until": "Phase 4 odds and expected value",
+      "reason": "PRE_NIGHT must not use same-day odds"
+    },
+    {
+      "table_name": "prediction_changes",
+      "deferred_until": "stage comparison after multiple stages exist",
+      "reason": "requires MORNING, POST_EXHIBITION, or FINAL predictions"
+    },
+    {
+      "table_name": "stage_transition_metrics",
+      "deferred_until": "Phase 5 continuous improvement",
+      "reason": "requires multiple stages and enough evaluation history"
+    },
+    {
+      "table_name": "racer_stats_snapshot",
+      "deferred_until": "after minimal PRE_NIGHT flow is defined",
+      "reason": "can be introduced as feature source table after schema preview"
+    },
+    {
+      "table_name": "motor_boat_stats_snapshot",
+      "deferred_until": "after minimal PRE_NIGHT flow is defined",
+      "reason": "can be introduced as feature source table after schema preview"
+    },
+    {
+      "table_name": "venue_bias_daily",
+      "deferred_until": "after minimal PRE_NIGHT flow is defined",
+      "reason": "can be introduced as feature source table after schema preview"
+    }
+  ],
+  "deferred_table_names": [
+    "weather_water_snapshots",
+    "exhibition_snapshots",
+    "odds_snapshots",
+    "prediction_changes",
+    "stage_transition_metrics",
+    "racer_stats_snapshot",
+    "motor_boat_stats_snapshot",
+    "venue_bias_daily"
+  ],
+  "pre_night_forbidden_information": [
+    "same-day odds",
+    "exhibition_time",
+    "exhibition_st",
+    "exhibition_course",
+    "same-day wind_speed",
+    "same-day wave_height",
+    "same-day weather snapshots not available at previous night",
+    "results",
+    "payouts",
+    "final odds",
+    "popularity after market movement"
+  ],
+  "safety_decision": {
+    "do_not_enable_history_features": true,
+    "do_not_connect_prediction_core": true,
+    "do_not_modify_prediction_json": true,
+    "do_not_modify_schema_sql": true,
+    "do_not_modify_database": true,
+    "do_not_create_tables_in_step150b": true,
+    "do_not_change_prediction_scores": true,
+    "do_not_change_ranks": true,
+    "do_not_change_recommendations": true,
+    "do_not_change_expected_values": true
+  },
+  "next_step": {
+    "step": "STEP150-C",
+    "purpose": "add a checker for this Phase 1 MVP DB schema preview"
+  }
+}
