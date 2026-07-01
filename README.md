@@ -527,3 +527,7 @@ Expected success messages include:
 ## 履歴特徴量 candidate key schema decision
 
 - [履歴特徴量 candidate key schema decision 記録](docs/history-feature-candidate-key-schema-decision.md)
+
+## Phase 1 MVP DB schema preview
+
+- [Phase 1 MVP DB schema preview 記録](docs/phase1-mvp-db-schema-preview.md)
