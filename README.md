@@ -531,3 +531,7 @@ Expected success messages include:
 ## Phase 1 MVP DB schema preview
 
 - [Phase 1 MVP DB schema preview 記録](docs/phase1-mvp-db-schema-preview.md)
+
+## Phase 1 MVP DB schema implementation plan preview
+
+- [Phase 1 MVP DB schema implementation plan preview 記録](docs/phase1-mvp-db-schema-implementation-plan-preview.md)
