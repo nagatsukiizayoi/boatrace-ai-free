@@ -1,0 +1,380 @@
+{
+  "alters_tables": false,
+  "canonical_keys": {
+    "canonical_candidate_key": {
+      "components": [
+        "race_date",
+        "venue_id",
+        "race_no",
+        "lane"
+      ],
+      "format": "race_date + '_' + venue_id + '_' + race_no + '_' + lane"
+    },
+    "canonical_race_key": {
+      "components": [
+        "race_date",
+        "venue_id",
+        "race_no"
+      ],
+      "format": "race_date + '_' + venue_id + '_' + race_no"
+    },
+    "not_primary_key_components": [
+      "racer_name",
+      "motor_no",
+      "boat_no",
+      "odds",
+      "exhibition_time",
+      "weather",
+      "result",
+      "payout"
+    ]
+  },
+  "config_enabled": false,
+  "connection_mode": "ddl-preview-only",
+  "creates_tables": false,
+  "current_repository_state": {
+    "config_currently_modified": false,
+    "missing_minimal_tables_in_database": [
+      "races",
+      "entries",
+      "feature_sets",
+      "prediction_runs",
+      "predictions",
+      "results",
+      "payouts",
+      "stage_metrics"
+    ],
+    "prediction_json_currently_modified": false,
+    "schema_sql": {
+      "currently_modified": false,
+      "exists": true,
+      "history_table_name_mentions": {
+        "history_races": false,
+        "history_results": false
+      },
+      "line_count": 699,
+      "minimal_table_name_mentions": {
+        "entries": true,
+        "feature_sets": false,
+        "payouts": true,
+        "prediction_runs": true,
+        "predictions": true,
+        "races": true,
+        "results": true,
+        "stage_metrics": false
+      },
+      "path": "db/schema.sql"
+    },
+    "sqlite_database": {
+      "currently_modified": false,
+      "exists": true,
+      "history_table_presence": {
+        "history_races": true,
+        "history_results": true
+      },
+      "history_table_row_counts": {
+        "history_races": 88106,
+        "history_results": 302918
+      },
+      "minimal_table_presence": {
+        "entries": false,
+        "feature_sets": false,
+        "payouts": false,
+        "prediction_runs": false,
+        "predictions": false,
+        "races": false,
+        "results": false,
+        "stage_metrics": false
+      },
+      "path": "db/boatrace.sqlite3",
+      "table_count": 3,
+      "table_names": [
+        "history_races",
+        "history_results",
+        "sqlite_sequence"
+      ]
+    }
+  },
+  "ddl_direction": {
+    "add_only": true,
+    "destructive_alter_allowed": false,
+    "drop_table_allowed": false,
+    "future_candidate_statement": "CREATE TABLE IF NOT EXISTS",
+    "migration_execution_allowed_in_this_step": false,
+    "schema_sql_write_allowed_in_this_step": false,
+    "sqlite_write_allowed_in_this_step": false
+  },
+  "ddl_execution_mode": "not-executed",
+  "ddl_preview_only": true,
+  "ddl_preview_tables": [
+    {
+      "candidate_columns": [
+        "canonical_race_key TEXT PRIMARY KEY",
+        "race_date TEXT NOT NULL",
+        "venue_id TEXT NOT NULL",
+        "race_no INTEGER NOT NULL",
+        "race_grade TEXT",
+        "scheduled_deadline_at TEXT",
+        "created_at TEXT NOT NULL",
+        "updated_at TEXT NOT NULL"
+      ],
+      "candidate_ddl_preview": "CREATE TABLE IF NOT EXISTS races (\n  canonical_race_key TEXT PRIMARY KEY,\n  race_date TEXT NOT NULL,\n  venue_id TEXT NOT NULL,\n  race_no INTEGER NOT NULL,\n  race_grade TEXT,\n  scheduled_deadline_at TEXT,\n  created_at TEXT NOT NULL,\n  updated_at TEXT NOT NULL\n);",
+      "key_policy": {
+        "canonical_race_key_components": [
+          "race_date",
+          "venue_id",
+          "race_no"
+        ]
+      },
+      "primary_key": [
+        "canonical_race_key"
+      ],
+      "role": "Race-level master table for Phase 1 MVP.",
+      "table_name": "races"
+    },
+    {
+      "candidate_columns": [
+        "canonical_candidate_key TEXT PRIMARY KEY",
+        "canonical_race_key TEXT NOT NULL",
+        "race_date TEXT NOT NULL",
+        "venue_id TEXT NOT NULL",
+        "race_no INTEGER NOT NULL",
+        "lane INTEGER NOT NULL",
+        "racer_id TEXT",
+        "racer_name TEXT",
+        "created_at TEXT NOT NULL",
+        "updated_at TEXT NOT NULL"
+      ],
+      "candidate_ddl_preview": "CREATE TABLE IF NOT EXISTS entries (\n  canonical_candidate_key TEXT PRIMARY KEY,\n  canonical_race_key TEXT NOT NULL,\n  race_date TEXT NOT NULL,\n  venue_id TEXT NOT NULL,\n  race_no INTEGER NOT NULL,\n  lane INTEGER NOT NULL,\n  racer_id TEXT,\n  racer_name TEXT,\n  created_at TEXT NOT NULL,\n  updated_at TEXT NOT NULL\n);",
+      "foreign_keys_preview": [
+        {
+          "column": "canonical_race_key",
+          "references": "races(canonical_race_key)"
+        }
+      ],
+      "key_policy": {
+        "canonical_candidate_key_components": [
+          "race_date",
+          "venue_id",
+          "race_no",
+          "lane"
+        ]
+      },
+      "primary_key": [
+        "canonical_candidate_key"
+      ],
+      "role": "Lane/candidate-level entry table for each race.",
+      "table_name": "entries"
+    },
+    {
+      "candidate_columns": [
+        "feature_set_id TEXT PRIMARY KEY",
+        "canonical_candidate_key TEXT NOT NULL",
+        "canonical_race_key TEXT NOT NULL",
+        "feature_version TEXT NOT NULL",
+        "feature_stage TEXT NOT NULL",
+        "feature_payload_json TEXT NOT NULL",
+        "created_at TEXT NOT NULL"
+      ],
+      "candidate_ddl_preview": "CREATE TABLE IF NOT EXISTS feature_sets (\n  feature_set_id TEXT PRIMARY KEY,\n  canonical_candidate_key TEXT NOT NULL,\n  canonical_race_key TEXT NOT NULL,\n  feature_version TEXT NOT NULL,\n  feature_stage TEXT NOT NULL,\n  feature_payload_json TEXT NOT NULL,\n  created_at TEXT NOT NULL\n);",
+      "foreign_keys_preview": [
+        {
+          "column": "canonical_candidate_key",
+          "references": "entries(canonical_candidate_key)"
+        }
+      ],
+      "primary_key": [
+        "feature_set_id"
+      ],
+      "role": "PRE_NIGHT-safe feature snapshot metadata for each candidate.",
+      "table_name": "feature_sets"
+    },
+    {
+      "candidate_columns": [
+        "prediction_run_id TEXT PRIMARY KEY",
+        "run_stage TEXT NOT NULL",
+        "model_version TEXT",
+        "feature_version TEXT",
+        "connection_mode TEXT NOT NULL",
+        "created_at TEXT NOT NULL"
+      ],
+      "candidate_ddl_preview": "CREATE TABLE IF NOT EXISTS prediction_runs (\n  prediction_run_id TEXT PRIMARY KEY,\n  run_stage TEXT NOT NULL,\n  model_version TEXT,\n  feature_version TEXT,\n  connection_mode TEXT NOT NULL,\n  created_at TEXT NOT NULL\n);",
+      "primary_key": [
+        "prediction_run_id"
+      ],
+      "role": "Prediction run metadata table.",
+      "table_name": "prediction_runs"
+    },
+    {
+      "candidate_columns": [
+        "prediction_id TEXT PRIMARY KEY",
+        "prediction_run_id TEXT NOT NULL",
+        "canonical_candidate_key TEXT NOT NULL",
+        "canonical_race_key TEXT NOT NULL",
+        "predicted_score REAL",
+        "predicted_rank INTEGER",
+        "prediction_payload_json TEXT NOT NULL",
+        "created_at TEXT NOT NULL"
+      ],
+      "candidate_ddl_preview": "CREATE TABLE IF NOT EXISTS predictions (\n  prediction_id TEXT PRIMARY KEY,\n  prediction_run_id TEXT NOT NULL,\n  canonical_candidate_key TEXT NOT NULL,\n  canonical_race_key TEXT NOT NULL,\n  predicted_score REAL,\n  predicted_rank INTEGER,\n  prediction_payload_json TEXT NOT NULL,\n  created_at TEXT NOT NULL\n);",
+      "foreign_keys_preview": [
+        {
+          "column": "prediction_run_id",
+          "references": "prediction_runs(prediction_run_id)"
+        },
+        {
+          "column": "canonical_candidate_key",
+          "references": "entries(canonical_candidate_key)"
+        }
+      ],
+      "primary_key": [
+        "prediction_id"
+      ],
+      "role": "Candidate-level prediction output archive table.",
+      "table_name": "predictions"
+    },
+    {
+      "candidate_columns": [
+        "canonical_race_key TEXT PRIMARY KEY",
+        "race_date TEXT NOT NULL",
+        "venue_id TEXT NOT NULL",
+        "race_no INTEGER NOT NULL",
+        "result_payload_json TEXT NOT NULL",
+        "created_at TEXT NOT NULL"
+      ],
+      "candidate_ddl_preview": "CREATE TABLE IF NOT EXISTS results (\n  canonical_race_key TEXT PRIMARY KEY,\n  race_date TEXT NOT NULL,\n  venue_id TEXT NOT NULL,\n  race_no INTEGER NOT NULL,\n  result_payload_json TEXT NOT NULL,\n  created_at TEXT NOT NULL\n);",
+      "pre_night_input_allowed": false,
+      "primary_key": [
+        "canonical_race_key"
+      ],
+      "role": "Post-race result table. Not usable as PRE_NIGHT input.",
+      "table_name": "results"
+    },
+    {
+      "candidate_columns": [
+        "canonical_race_key TEXT PRIMARY KEY",
+        "race_date TEXT NOT NULL",
+        "venue_id TEXT NOT NULL",
+        "race_no INTEGER NOT NULL",
+        "payout_payload_json TEXT NOT NULL",
+        "created_at TEXT NOT NULL"
+      ],
+      "candidate_ddl_preview": "CREATE TABLE IF NOT EXISTS payouts (\n  canonical_race_key TEXT PRIMARY KEY,\n  race_date TEXT NOT NULL,\n  venue_id TEXT NOT NULL,\n  race_no INTEGER NOT NULL,\n  payout_payload_json TEXT NOT NULL,\n  created_at TEXT NOT NULL\n);",
+      "pre_night_input_allowed": false,
+      "primary_key": [
+        "canonical_race_key"
+      ],
+      "role": "Post-race payout table. Not usable as PRE_NIGHT input.",
+      "table_name": "payouts"
+    },
+    {
+      "candidate_columns": [
+        "stage_metric_id TEXT PRIMARY KEY",
+        "stage_name TEXT NOT NULL",
+        "metric_name TEXT NOT NULL",
+        "metric_value REAL",
+        "metric_payload_json TEXT NOT NULL",
+        "created_at TEXT NOT NULL"
+      ],
+      "candidate_ddl_preview": "CREATE TABLE IF NOT EXISTS stage_metrics (\n  stage_metric_id TEXT PRIMARY KEY,\n  stage_name TEXT NOT NULL,\n  metric_name TEXT NOT NULL,\n  metric_value REAL,\n  metric_payload_json TEXT NOT NULL,\n  created_at TEXT NOT NULL\n);",
+      "primary_key": [
+        "stage_metric_id"
+      ],
+      "role": "Stage-level metrics and monitoring table.",
+      "table_name": "stage_metrics"
+    }
+  ],
+  "drops_tables": false,
+  "executes_ddl": false,
+  "existing_history_tables_policy": {
+    "destructive_alter_allowed": false,
+    "drop_allowed": false,
+    "existing_history_tables_preserved": true,
+    "policy": "preserve",
+    "recreate_allowed": false,
+    "tables": [
+      "history_races",
+      "history_results"
+    ]
+  },
+  "generated_at": "2026-07-04T14:24:16.428173+00:00",
+  "history_features_enabled": false,
+  "implementation_order": [
+    "races",
+    "entries",
+    "feature_sets",
+    "prediction_runs",
+    "predictions",
+    "results",
+    "payouts",
+    "stage_metrics"
+  ],
+  "minimal_table_count": 8,
+  "minimal_tables": [
+    "races",
+    "entries",
+    "feature_sets",
+    "prediction_runs",
+    "predictions",
+    "results",
+    "payouts",
+    "stage_metrics"
+  ],
+  "modifies_prediction_json": false,
+  "next_step": {
+    "description": "Create checker for Phase 1 MVP DB schema DDL preview JSON.",
+    "step": "STEP152-C"
+  },
+  "output": "docs/phase1_mvp_db_schema_ddl_preview.json",
+  "pre_night_safety_constraints": {
+    "forbidden_information": [
+      "same-day odds",
+      "final odds",
+      "exhibition data",
+      "exhibition_time",
+      "same-day weather",
+      "same-day water condition",
+      "results",
+      "payouts",
+      "confirmed race outcome",
+      "post-race information"
+    ],
+    "pre_night_only": true,
+    "results_and_payouts_allowed_as_pre_night_inputs": false,
+    "results_and_payouts_allowed_as_training_labels_after_race": true
+  },
+  "prediction_core_connected": false,
+  "preview_type": "phase1-mvp-db-schema-ddl-preview",
+  "previous_preview_validation": {
+    "implementation_plan_connection_mode": "planning-only",
+    "implementation_plan_preview_type": "phase1-mvp-db-schema-implementation-plan",
+    "implementation_plan_step": "STEP151-B",
+    "schema_preview_step": "STEP150-B",
+    "schema_preview_type": "phase1-mvp-db-schema"
+  },
+  "runs_migration": false,
+  "safe_mode": true,
+  "safety_decisions": {
+    "do_not_connect_prediction_core": true,
+    "do_not_enable_history_features": true,
+    "do_not_execute_alter_table_in_step152_b": true,
+    "do_not_execute_create_table_in_step152_b": true,
+    "do_not_execute_drop_table_in_step152_b": true,
+    "do_not_modify_prediction_json": true,
+    "do_not_modify_schema_sql_in_step152_b": true,
+    "do_not_modify_sqlite_db_in_step152_b": true,
+    "do_not_run_migration_in_step152_b": true
+  },
+  "source_files": {
+    "config": "data/history_feature_config.json",
+    "implementation_plan_preview": "docs/phase1_mvp_db_schema_implementation_plan_preview.json",
+    "phase1_schema_preview": "docs/phase1_mvp_db_schema_preview.json",
+    "prediction_json": "docs/prediction.json",
+    "schema_sql": "db/schema.sql",
+    "sqlite_database": "db/boatrace.sqlite3"
+  },
+  "step": "STEP152-B",
+  "writes_database": false,
+  "writes_prediction_json": false,
+  "writes_schema_sql": false
+}
