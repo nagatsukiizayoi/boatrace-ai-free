@@ -1,0 +1,371 @@
+{
+  "alters_tables": false,
+  "config_enabled": false,
+  "connection_mode": "migration-preview-only",
+  "creates_migration_script": false,
+  "creates_tables": false,
+  "current_repository_state": {
+    "config_currently_modified": false,
+    "ddl_preview_currently_modified": false,
+    "prediction_json_currently_modified": false,
+    "schema_sql": {
+      "currently_modified": false,
+      "exists": true,
+      "history_table_name_mentions": {
+        "history_races": false,
+        "history_results": false
+      },
+      "line_count": 699,
+      "minimal_table_name_mentions": {
+        "entries": true,
+        "feature_sets": false,
+        "payouts": true,
+        "prediction_runs": true,
+        "predictions": true,
+        "races": true,
+        "results": true,
+        "stage_metrics": false
+      },
+      "path": "db/schema.sql"
+    },
+    "sqlite_database": {
+      "currently_modified": false,
+      "exists": true,
+      "history_table_presence": {
+        "history_races": true,
+        "history_results": true
+      },
+      "history_table_row_counts": {
+        "history_races": 88106,
+        "history_results": 302918
+      },
+      "minimal_table_presence": {
+        "entries": false,
+        "feature_sets": false,
+        "payouts": false,
+        "prediction_runs": false,
+        "predictions": false,
+        "races": false,
+        "results": false,
+        "stage_metrics": false
+      },
+      "path": "db/boatrace.sqlite3",
+      "table_count": 3,
+      "table_names": [
+        "history_races",
+        "history_results",
+        "sqlite_sequence"
+      ]
+    }
+  },
+  "ddl_candidate_audit": [
+    {
+      "candidate_ddl_not_executed": true,
+      "danger_pattern_count": 0,
+      "danger_patterns": [],
+      "has_create_table_if_not_exists": true,
+      "table_name": "races"
+    },
+    {
+      "candidate_ddl_not_executed": true,
+      "danger_pattern_count": 0,
+      "danger_patterns": [],
+      "has_create_table_if_not_exists": true,
+      "table_name": "entries"
+    },
+    {
+      "candidate_ddl_not_executed": true,
+      "danger_pattern_count": 0,
+      "danger_patterns": [],
+      "has_create_table_if_not_exists": true,
+      "table_name": "feature_sets"
+    },
+    {
+      "candidate_ddl_not_executed": true,
+      "danger_pattern_count": 0,
+      "danger_patterns": [],
+      "has_create_table_if_not_exists": true,
+      "table_name": "prediction_runs"
+    },
+    {
+      "candidate_ddl_not_executed": true,
+      "danger_pattern_count": 0,
+      "danger_patterns": [],
+      "has_create_table_if_not_exists": true,
+      "table_name": "predictions"
+    },
+    {
+      "candidate_ddl_not_executed": true,
+      "danger_pattern_count": 0,
+      "danger_patterns": [],
+      "has_create_table_if_not_exists": true,
+      "table_name": "results"
+    },
+    {
+      "candidate_ddl_not_executed": true,
+      "danger_pattern_count": 0,
+      "danger_patterns": [],
+      "has_create_table_if_not_exists": true,
+      "table_name": "payouts"
+    },
+    {
+      "candidate_ddl_not_executed": true,
+      "danger_pattern_count": 0,
+      "danger_patterns": [],
+      "has_create_table_if_not_exists": true,
+      "table_name": "stage_metrics"
+    }
+  ],
+  "ddl_execution_mode": "not-executed",
+  "drops_tables": false,
+  "executes_ddl": false,
+  "existing_history_tables_policy": {
+    "delete_allowed": false,
+    "destructive_alter_allowed": false,
+    "drop_allowed": false,
+    "existing_history_tables_preserved": true,
+    "policy": "preserve",
+    "recreate_allowed": false,
+    "tables": [
+      "history_races",
+      "history_results"
+    ],
+    "update_allowed": false
+  },
+  "final_design_pdf_compatibility": {
+    "covered_phase1_tables": [
+      "races",
+      "entries",
+      "feature_sets",
+      "prediction_runs",
+      "predictions",
+      "results",
+      "payouts",
+      "stage_metrics"
+    ],
+    "deferred_final_design_tables": [
+      "racer_stats_snapshot",
+      "motor_boat_stats_snapshot",
+      "venue_bias_daily",
+      "weather_water_snapshots",
+      "exhibition_snapshots",
+      "odds_snapshots",
+      "ingestion_runs",
+      "prediction_changes",
+      "stage_transition_metrics",
+      "model_registry",
+      "training_runs"
+    ],
+    "deferred_tables_not_forgotten": true,
+    "phase1_is_safe_subset_of_final_design": true,
+    "phase_mapping": {
+      "Phase 1": [
+        "PRE_NIGHT prediction",
+        "PRE_NIGHT evaluation",
+        "minimal DB schema"
+      ],
+      "Phase 2": [
+        "MORNING update",
+        "weather_water_snapshots"
+      ],
+      "Phase 3": [
+        "POST_EXHIBITION update",
+        "exhibition_snapshots"
+      ],
+      "Phase 4": [
+        "odds_snapshots",
+        "expected value",
+        "FINAL stage",
+        "prediction_changes"
+      ],
+      "Phase 5": [
+        "stage_transition_metrics",
+        "model_registry",
+        "training_runs",
+        "LLM weekly evaluation analysis"
+      ]
+    }
+  },
+  "generated_at": "2026-07-04T16:04:37.889951+00:00",
+  "history_features_enabled": false,
+  "implementation_order": [
+    "races",
+    "entries",
+    "feature_sets",
+    "prediction_runs",
+    "predictions",
+    "results",
+    "payouts",
+    "stage_metrics"
+  ],
+  "key_policy": {
+    "canonical_candidate_key": {
+      "components": [
+        "race_date",
+        "venue_id",
+        "race_no",
+        "lane"
+      ],
+      "format": "race_date + '_' + venue_id + '_' + race_no + '_' + lane"
+    },
+    "canonical_candidate_key_policy": "canonical_candidate_key = race_id + '_' + lane",
+    "canonical_race_key": {
+      "components": [
+        "race_date",
+        "venue_id",
+        "race_no"
+      ],
+      "format": "race_date + '_' + venue_id + '_' + race_no"
+    },
+    "not_primary_key_components": [
+      "racer_name",
+      "motor_no",
+      "boat_no",
+      "odds",
+      "exhibition_time",
+      "weather",
+      "result",
+      "payout"
+    ],
+    "pdf_entries_primary_key_mapping": {
+      "pdf_primary_key": [
+        "race_id",
+        "lane"
+      ],
+      "phase1_equivalent": "canonical_candidate_key"
+    },
+    "race_id_policy": "race_id = canonical_race_key"
+  },
+  "migration_script_design_direction": {
+    "add_only": true,
+    "delete_from_history_tables_allowed": false,
+    "destructive_alter_allowed": false,
+    "drop_index_allowed": false,
+    "drop_table_allowed": false,
+    "future_candidate_statement": "CREATE TABLE IF NOT EXISTS",
+    "guarded_by_safety_checks": true,
+    "idempotent": true,
+    "migration_execution_allowed_in_this_step": false,
+    "migration_script_file_created_in_this_step": false,
+    "replace_into_history_tables_allowed": false,
+    "requires_pre_migration_hash_record": true,
+    "requires_sqlite_backup_before_execution": true,
+    "schema_sql_write_allowed_in_this_step": false,
+    "sqlite_write_allowed_in_this_step": false,
+    "update_history_tables_allowed": false
+  },
+  "migration_script_execution_mode": "not-created-not-executed",
+  "migration_script_preview_only": true,
+  "minimal_table_count": 8,
+  "minimal_tables": [
+    "races",
+    "entries",
+    "feature_sets",
+    "prediction_runs",
+    "predictions",
+    "results",
+    "payouts",
+    "stage_metrics"
+  ],
+  "modifies_prediction_json": false,
+  "next_step": {
+    "description": "Create checker for Phase 1 MVP DB schema migration script preview JSON.",
+    "step": "STEP153-C"
+  },
+  "output": "docs/phase1_mvp_db_schema_migration_script_preview.json",
+  "pdf_operation_constraints": {
+    "avoid_high_frequency_fetching": true,
+    "cache_fetched_data": true,
+    "collection_interval_policy": "5 to 15 minutes",
+    "fallback_on_failure": true,
+    "intraday_updates": "JSON-centered updates",
+    "llm_allowed_scope": "weekly evaluation analysis only",
+    "llm_usage_policy": "LLM not used for normal prediction",
+    "no_automatic_betting": true,
+    "smartphone_operation_supported": true,
+    "sqlite_commit_policy": "nightly SQLite merge"
+  },
+  "pre_night_safety_constraints": {
+    "forbidden_information": [
+      "same-day odds",
+      "final odds",
+      "exhibition data",
+      "exhibition_time",
+      "exhibition ST",
+      "exhibition course",
+      "same-day weather",
+      "same-day water condition",
+      "results",
+      "payouts",
+      "confirmed race outcome",
+      "post-race information"
+    ],
+    "pre_night_only": true,
+    "results_and_payouts_allowed_as_pre_night_inputs": false,
+    "results_and_payouts_allowed_as_training_labels_after_race": true
+  },
+  "prediction_core_connected": false,
+  "preview_type": "phase1-mvp-db-schema-migration-script-preview",
+  "previous_preview_validation": {
+    "ddl_preview": {
+      "connection_mode": "ddl-preview-only",
+      "ddl_execution_mode": "not-executed",
+      "ddl_preview_only": true,
+      "minimal_table_count": 8,
+      "preview_type": "phase1-mvp-db-schema-ddl-preview",
+      "step": "STEP152-B"
+    },
+    "implementation_plan_preview": {
+      "connection_mode": "planning-only",
+      "minimal_table_count": 8,
+      "preview_type": "phase1-mvp-db-schema-implementation-plan",
+      "step": "STEP151-B"
+    },
+    "schema_preview": {
+      "minimal_table_count": 8,
+      "preview_type": "phase1-mvp-db-schema",
+      "step": "STEP150-B"
+    }
+  },
+  "rollback_requirements_for_future_migration": {
+    "create_sqlite_backup_before_execution": true,
+    "record_config_sha256": true,
+    "record_existing_sqlite_table_list": true,
+    "record_git_hash": true,
+    "record_git_status": true,
+    "record_history_races_row_count": true,
+    "record_history_results_row_count": true,
+    "record_prediction_json_sha256": true,
+    "record_schema_sql_sha256": true,
+    "record_sqlite_db_sha256": true,
+    "restore_path_required": true
+  },
+  "runs_migration": false,
+  "safe_mode": true,
+  "safety_decisions": {
+    "do_not_add_dashboard_ui": true,
+    "do_not_change_prediction_scores_or_ranks": true,
+    "do_not_connect_prediction_core": true,
+    "do_not_create_migration_script_in_step153_b": true,
+    "do_not_enable_history_features": true,
+    "do_not_execute_ddl_in_step153_b": true,
+    "do_not_execute_migration_in_step153_b": true,
+    "do_not_modify_ddl_preview_json": true,
+    "do_not_modify_prediction_json": true,
+    "do_not_modify_schema_sql_in_step153_b": true,
+    "do_not_modify_sqlite_db_in_step153_b": true
+  },
+  "source_files": {
+    "config": "data/history_feature_config.json",
+    "ddl_preview": "docs/phase1_mvp_db_schema_ddl_preview.json",
+    "implementation_plan_preview": "docs/phase1_mvp_db_schema_implementation_plan_preview.json",
+    "phase1_schema_preview": "docs/phase1_mvp_db_schema_preview.json",
+    "prediction_json": "docs/prediction.json",
+    "schema_sql": "db/schema.sql",
+    "sqlite_database": "db/boatrace.sqlite3"
+  },
+  "step": "STEP153-B",
+  "writes_database": false,
+  "writes_prediction_json": false,
+  "writes_schema_sql": false
+}
