@@ -539,3 +539,7 @@ Expected success messages include:
 ## Phase 1 MVP DB schema DDL preview
 
 - [Phase 1 MVP DB schema DDL preview 記録](docs/phase1-mvp-db-schema-ddl-preview.md)
+
+## Phase 1 MVP DB schema migration script preview
+
+- [Phase 1 MVP DB schema migration script preview 記録](docs/phase1-mvp-db-schema-migration-script-preview.md)
