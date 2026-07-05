@@ -31,6 +31,7 @@ CHECKS = [
     ["python", "scripts/check_phase1_mvp_db_schema_implementation_plan_preview.py"],
     ["python", "scripts/check_phase1_mvp_db_schema_ddl_preview.py"],
     ["python", "scripts/check_phase1_mvp_db_schema_migration_script_preview.py"],
+    ["python", "scripts/check_phase1_mvp_db_schema_migration_draft.py"],
 ]
 
 REQUIRED_FILES = [
@@ -77,6 +78,8 @@ REQUIRED_FILES = [
     "docs/phase1_mvp_db_schema_implementation_plan_preview.json",
     "docs/phase1_mvp_db_schema_ddl_preview.json",
     "docs/phase1_mvp_db_schema_migration_script_preview.json",
+    "scripts/check_phase1_mvp_db_schema_migration_draft.py",
+    "scripts/migrate_phase1_mvp_db_schema.py",
 ]
 
 REQUIRED_RESULT_CSV_GLOB = "data/import/history/results/results_*.csv"

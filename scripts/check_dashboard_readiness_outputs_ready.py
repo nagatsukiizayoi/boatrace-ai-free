@@ -24,6 +24,8 @@ REQUIRED_FILES = [
     "docs/phase1_mvp_db_schema_implementation_plan_preview.json",
     "docs/phase1_mvp_db_schema_ddl_preview.json",
     "docs/phase1_mvp_db_schema_migration_script_preview.json",
+    "scripts/check_phase1_mvp_db_schema_migration_draft.py",
+    "scripts/migrate_phase1_mvp_db_schema.py",
 ]
 
 CHECK_SCRIPTS = [
@@ -41,6 +43,7 @@ CHECK_SCRIPTS = [
     "scripts/check_phase1_mvp_db_schema_implementation_plan_preview.py",
     "scripts/check_phase1_mvp_db_schema_ddl_preview.py",
     "scripts/check_phase1_mvp_db_schema_migration_script_preview.py",
+    "scripts/check_phase1_mvp_db_schema_migration_draft.py",
 ]
 
 
