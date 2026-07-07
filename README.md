@@ -547,3 +547,7 @@ Expected success messages include:
 ## Phase 1 MVP DB schema migration draft
 
 - [Phase 1 MVP DB schema migration draft 記録](docs/phase1-mvp-db-schema-migration-draft.md)
+
+## Phase 1 MVP DB schema migration execution preview
+
+- [Phase 1 MVP DB schema migration execution preview 記録](docs/phase1-mvp-db-schema-migration-execution-preview.md)
