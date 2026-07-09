@@ -551,3 +551,7 @@ Expected success messages include:
 ## Phase 1 MVP DB schema migration execution preview
 
 - [Phase 1 MVP DB schema migration execution preview 記録](docs/phase1-mvp-db-schema-migration-execution-preview.md)
+
+## Phase 1 MVP DB schema runtime guard preview
+
+- [Phase 1 MVP DB schema runtime guard preview 記録](docs/phase1-mvp-db-schema-runtime-guard-preview.md)
