@@ -33,6 +33,7 @@ CHECKS = [
     ["python", "scripts/check_phase1_mvp_db_schema_migration_script_preview.py"],
     ["python", "scripts/check_phase1_mvp_db_schema_migration_draft.py"],
     ["python", "scripts/check_phase1_mvp_db_schema_migration_execution_preview.py"],
+    ["python", "scripts/check_phase1_mvp_db_schema_runtime_guard_preview.py"],
 ]
 
 REQUIRED_FILES = [
@@ -83,6 +84,8 @@ REQUIRED_FILES = [
     "scripts/migrate_phase1_mvp_db_schema.py",
     "scripts/check_phase1_mvp_db_schema_migration_execution_preview.py",
     "docs/phase1_mvp_db_schema_migration_execution_preview.json",
+    "scripts/check_phase1_mvp_db_schema_runtime_guard_preview.py",
+    "docs/phase1_mvp_db_schema_runtime_guard_preview.json",
 ]
 
 REQUIRED_RESULT_CSV_GLOB = "data/import/history/results/results_*.csv"
