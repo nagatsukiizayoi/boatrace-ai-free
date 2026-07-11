@@ -555,3 +555,7 @@ Expected success messages include:
 ## Phase 1 MVP DB schema runtime guard preview
 
 - [Phase 1 MVP DB schema runtime guard preview 記録](docs/phase1-mvp-db-schema-runtime-guard-preview.md)
+
+## Phase 1 MVP DB schema explicit execution gate preview
+
+- [Phase 1 MVP DB schema explicit execution gate preview 記録](docs/phase1-mvp-db-schema-explicit-execution-gate-preview.md)
