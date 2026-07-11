@@ -30,6 +30,8 @@ REQUIRED_FILES = [
     "docs/phase1_mvp_db_schema_migration_execution_preview.json",
     "scripts/check_phase1_mvp_db_schema_runtime_guard_preview.py",
     "docs/phase1_mvp_db_schema_runtime_guard_preview.json",
+    "scripts/check_phase1_mvp_db_schema_explicit_execution_gate_preview.py",
+    "docs/phase1_mvp_db_schema_explicit_execution_gate_preview.json",
 ]
 
 CHECK_SCRIPTS = [
@@ -50,6 +52,7 @@ CHECK_SCRIPTS = [
     "scripts/check_phase1_mvp_db_schema_migration_draft.py",
     "scripts/check_phase1_mvp_db_schema_migration_execution_preview.py",
     "scripts/check_phase1_mvp_db_schema_runtime_guard_preview.py",
+    "scripts/check_phase1_mvp_db_schema_explicit_execution_gate_preview.py",
 ]
 
 
