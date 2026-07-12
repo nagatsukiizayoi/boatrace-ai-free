@@ -1,0 +1,250 @@
+{
+  "alters_tables": false,
+  "collection_interval_policy": "5 to 15 minutes",
+  "compatibility_decisions": {
+    "future_phases_required_for_full_design": true,
+    "live_update_tables_deferred": true,
+    "model_training_tables_deferred": true,
+    "odds_exhibition_weather_tables_deferred": true,
+    "phase1_is_safe_subset_of_final_design": true,
+    "phase1_mvp_is_pre_night_first": true,
+    "stage_transition_tables_deferred": true
+  },
+  "config_enabled": false,
+  "confirmed_outcomes_allowed": false,
+  "connection_mode": "final-design-compatibility-preview-only",
+  "creates_tables": false,
+  "ddl_candidate_audit": {
+    "ddl_candidates_danger_pattern_count": 0,
+    "ddl_candidates_table_count": 8,
+    "ddl_candidates_tables": [
+      "races",
+      "entries",
+      "feature_sets",
+      "prediction_runs",
+      "predictions",
+      "results",
+      "payouts",
+      "stage_metrics"
+    ],
+    "table_audits": [
+      {
+        "danger_hits": [],
+        "has_create_table_if_not_exists": true,
+        "table": "races"
+      },
+      {
+        "danger_hits": [],
+        "has_create_table_if_not_exists": true,
+        "table": "entries"
+      },
+      {
+        "danger_hits": [],
+        "has_create_table_if_not_exists": true,
+        "table": "feature_sets"
+      },
+      {
+        "danger_hits": [],
+        "has_create_table_if_not_exists": true,
+        "table": "prediction_runs"
+      },
+      {
+        "danger_hits": [],
+        "has_create_table_if_not_exists": true,
+        "table": "predictions"
+      },
+      {
+        "danger_hits": [],
+        "has_create_table_if_not_exists": true,
+        "table": "results"
+      },
+      {
+        "danger_hits": [],
+        "has_create_table_if_not_exists": true,
+        "table": "payouts"
+      },
+      {
+        "danger_hits": [],
+        "has_create_table_if_not_exists": true,
+        "table": "stage_metrics"
+      }
+    ]
+  },
+  "ddl_candidates_danger_pattern_count": 0,
+  "ddl_candidates_table_count": 8,
+  "ddl_execution_mode": "not-executed",
+  "deferred_table_count": 11,
+  "deferred_tables": [
+    "racer_stats_snapshot",
+    "motor_boat_stats_snapshot",
+    "venue_bias_daily",
+    "weather_water_snapshots",
+    "exhibition_snapshots",
+    "odds_snapshots",
+    "ingestion_runs",
+    "prediction_changes",
+    "stage_transition_metrics",
+    "model_registry",
+    "training_runs"
+  ],
+  "drops_tables": false,
+  "executes_ddl": false,
+  "exhibition_data_allowed": false,
+  "final_design_compatibility_preview_only": true,
+  "final_design_table_count": 19,
+  "final_design_tables": [
+    "races",
+    "entries",
+    "racer_stats_snapshot",
+    "motor_boat_stats_snapshot",
+    "venue_bias_daily",
+    "weather_water_snapshots",
+    "exhibition_snapshots",
+    "odds_snapshots",
+    "ingestion_runs",
+    "feature_sets",
+    "prediction_runs",
+    "predictions",
+    "prediction_changes",
+    "results",
+    "payouts",
+    "stage_metrics",
+    "stage_transition_metrics",
+    "model_registry",
+    "training_runs"
+  ],
+  "final_odds_allowed": false,
+  "forbidden_sql_patterns": [
+    "DROP TABLE",
+    "DROP INDEX",
+    "ALTER TABLE",
+    "INSERT INTO",
+    "UPDATE ",
+    "DELETE FROM",
+    "REPLACE INTO",
+    "TRUNCATE"
+  ],
+  "future_phases_required_for_full_design": true,
+  "generated_at": "2026-07-12T15:36:38.273242+00:00",
+  "history_features_enabled": false,
+  "key_policy": {
+    "canonical_candidate_key_policy": "canonical_candidate_key = race_id + \"_\" + lane",
+    "canonical_race_key_policy": "canonical_race_key = race_date + \"_\" + venue_id + \"_\" + race_no",
+    "race_id_policy": "race_id = canonical_race_key"
+  },
+  "live_update_tables_deferred": true,
+  "llm_usage_policy": "LLM not used for normal prediction",
+  "migration_execution_mode": "not-executed",
+  "minimal_table_count": 8,
+  "minimal_tables": [
+    "races",
+    "entries",
+    "feature_sets",
+    "prediction_runs",
+    "predictions",
+    "results",
+    "payouts",
+    "stage_metrics"
+  ],
+  "model_training_tables_deferred": true,
+  "modifies_prediction_json": false,
+  "no_automatic_betting": true,
+  "odds_exhibition_weather_tables_deferred": true,
+  "pdf_operation_constraints": {
+    "cache_collected_data": true,
+    "collection_interval_policy": "5 to 15 minutes",
+    "llm_usage_policy": "LLM not used for normal prediction",
+    "low_frequency_collection": true,
+    "nightly_sqlite_merge": true,
+    "no_automatic_betting": true,
+    "smartphone_centric_operation": true,
+    "sqlite_commit_policy": "nightly SQLite merge"
+  },
+  "phase1_is_safe_subset_of_final_design": true,
+  "phase1_mvp_is_pre_night_first": true,
+  "pre_night_constraints": {
+    "confirmed_outcomes_allowed": false,
+    "exhibition_data_allowed": false,
+    "final_odds_allowed": false,
+    "pre_night_only": true,
+    "results_and_payouts_allowed_as_pre_night_inputs": false,
+    "same_day_odds_allowed": false,
+    "same_day_weather_after_cutoff_allowed": false
+  },
+  "pre_night_only": true,
+  "prediction_core_connected": false,
+  "preview_type": "phase1-mvp-db-schema-final-design-compatibility-preview",
+  "protected_file_hashes": {
+    "data/history_feature_config.json": "acb87475eb1d3e3c63891049fd7f465caedf4312a0fa2dccb1dec7820ab309e3",
+    "db/boatrace.sqlite3": "c37a6f0a60a7ad02c26c68f6044910deaaa6d64dfba3d1b228d0f8b9b96f875e",
+    "db/schema.sql": "1e1b6d6e7c82d29414772c82f70573152e01cf4a3142f0d4722945cae1586f1e",
+    "docs/phase1_mvp_db_schema_explicit_execution_gate_preview.json": "d1e1765ceb2b991f74cd84dd1d30e0678bb61a0352a840099f32a3227987aff6",
+    "docs/phase1_mvp_db_schema_migration_execution_preview.json": "b8981fb26996de5348bcbe70f86b8d616131e02de909940dee21d52ce5b01ec8",
+    "docs/phase1_mvp_db_schema_runtime_guard_preview.json": "663f7bb24cbfc72c5d056984618ebda3f9f0eadf4f234e93f0a3f3751ca0d90b",
+    "docs/prediction.json": "f8d560bd0677d95af7dca841c219efeab835c6a92d8c55076427a64384b57c6a"
+  },
+  "references": {
+    "execution_preview_json": "docs/phase1_mvp_db_schema_migration_execution_preview.json",
+    "execution_preview_step": "STEP155-B",
+    "explicit_execution_gate_checker": "STEP157-C",
+    "explicit_execution_gate_preview_json": "docs/phase1_mvp_db_schema_explicit_execution_gate_preview.json",
+    "explicit_execution_gate_preview_step": "STEP157-B",
+    "migration_draft_script": "scripts/migrate_phase1_mvp_db_schema.py",
+    "migration_draft_step": "STEP154-B",
+    "runtime_guard_preview_json": "docs/phase1_mvp_db_schema_runtime_guard_preview.json",
+    "runtime_guard_preview_step": "STEP156-B",
+    "step158a_audit_dir": "/tmp/history_feature_158a"
+  },
+  "results_and_payouts_allowed_as_pre_night_inputs": false,
+  "runs_migration": false,
+  "safe_mode": true,
+  "safety_decision": {
+    "future_execution_requires_separate_explicit_step": true,
+    "no_automatic_betting": true,
+    "no_config_enablement": true,
+    "no_database_write": true,
+    "no_ddl_execution": true,
+    "no_migration_execution": true,
+    "no_prediction_core_connection": true,
+    "no_prediction_json_write": true,
+    "no_schema_sql_write": true,
+    "status": "preview-only"
+  },
+  "same_day_odds_allowed": false,
+  "same_day_weather_after_cutoff_allowed": false,
+  "smartphone_centric_operation": true,
+  "sqlite_commit_policy": "nightly SQLite merge",
+  "stage_transition_tables_deferred": true,
+  "step": "STEP158-B",
+  "step158a_audit_reference": {
+    "audit_dir": "/tmp/history_feature_158a",
+    "required_files": [
+      "/tmp/history_feature_158a/explicit_execution_gate_preview_audit.txt",
+      "/tmp/history_feature_158a/final_design_table_mapping.txt",
+      "/tmp/history_feature_158a/phase1_mvp_scope_audit.txt",
+      "/tmp/history_feature_158a/deferred_tables_policy.txt",
+      "/tmp/history_feature_158a/pre_night_constraints_audit.txt",
+      "/tmp/history_feature_158a/pdf_operation_constraints_audit.txt",
+      "/tmp/history_feature_158a/future_migration_execution_readiness_notes.txt",
+      "/tmp/history_feature_158a/protected_file_hashes.txt",
+      "/tmp/history_feature_158a/step158a_summary.txt"
+    ],
+    "required_markers": [
+      "explicit execution gate preview audit: OK",
+      "Phase 1 MVP is a safe subset of the final design",
+      "minimal_table_count=8",
+      "PRE_NIGHT",
+      "same-day odds",
+      "results_and_payouts_allowed_as_pre_night_inputs=False",
+      "no automatic betting",
+      "5 to 15 minutes",
+      "nightly SQLite merge",
+      "LLM not used for normal prediction",
+      "sha256=",
+      "audit-only"
+    ]
+  },
+  "writes_database": false,
+  "writes_prediction_json": false,
+  "writes_schema_sql": false
+}
