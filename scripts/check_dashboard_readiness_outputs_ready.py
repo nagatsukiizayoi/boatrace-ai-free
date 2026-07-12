@@ -125,6 +125,20 @@ def main():
     run(["python", "scripts/check_dashboard_readiness_workflows.py"])
     run(["python", "scripts/check_dashboard_readiness_runbook.py"])
 
+    print("=== STEP 158-C final design compatibility preview readiness check ===")
+    _step158c_proc = __import__("subprocess").run(
+        [__import__("sys").executable, "scripts/check_phase1_mvp_db_schema_final_design_compatibility_preview.py"],
+        text=True,
+        stdout=__import__("subprocess").PIPE,
+        stderr=__import__("subprocess").STDOUT,
+    )
+    print(_step158c_proc.stdout, end="")
+    if _step158c_proc.returncode != 0:
+        raise SystemExit("ERROR: STEP 158-C checker failed in readiness")
+    if "STEP 158-C CHECK: OK" not in _step158c_proc.stdout:
+        raise SystemExit("ERROR: missing STEP 158-C CHECK: OK in readiness")
+    if "Phase 1 MVP DB schema final design compatibility preview validation: OK" not in _step158c_proc.stdout:
+        raise SystemExit("ERROR: missing final design compatibility validation OK in readiness")
     print("Dashboard readiness outputs validation: OK")
     print("STEP 85 CHECK: OK")
 
