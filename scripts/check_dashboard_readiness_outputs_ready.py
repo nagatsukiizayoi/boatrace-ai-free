@@ -125,6 +125,25 @@ def main():
     run(["python", "scripts/check_dashboard_readiness_workflows.py"])
     run(["python", "scripts/check_dashboard_readiness_runbook.py"])
 
+    print("=== STEP 158-D protected prediction restore before STEP 158-C ===")
+    _step158d_restore_proc = __import__("subprocess").run(
+        ["git", "restore", "--source=HEAD", "--worktree", "docs/prediction.json"],
+        text=True,
+        stdout=__import__("subprocess").PIPE,
+        stderr=__import__("subprocess").STDOUT,
+    )
+    if _step158d_restore_proc.returncode != 0:
+        print(_step158d_restore_proc.stdout, end="")
+        raise SystemExit("ERROR: failed to restore docs/prediction.json before STEP 158-C readiness")
+    _step158d_cached_restore_proc = __import__("subprocess").run(
+        ["git", "restore", "--source=HEAD", "--staged", "docs/prediction.json"],
+        text=True,
+        stdout=__import__("subprocess").PIPE,
+        stderr=__import__("subprocess").STDOUT,
+    )
+    if _step158d_cached_restore_proc.returncode != 0:
+        print(_step158d_cached_restore_proc.stdout, end="")
+        raise SystemExit("ERROR: failed to unstage docs/prediction.json before STEP 158-C readiness")
     print("=== STEP 158-C final design compatibility preview readiness check ===")
     _step158c_proc = __import__("subprocess").run(
         [__import__("sys").executable, "scripts/check_phase1_mvp_db_schema_final_design_compatibility_preview.py"],
