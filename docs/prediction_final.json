@@ -1,6 +1,6 @@
 {
-  "prediction_run_id": "20261119043906",
-  "updated_at": "2026-11-19 04:39:06",
+  "prediction_run_id": "20261120043920",
+  "updated_at": "2026-11-20 04:39:20",
   "stage": "FINAL",
   "stage_usage": {
     "use_weather": true,
